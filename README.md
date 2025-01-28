@@ -42,7 +42,7 @@ These badges represent the results of Lighthouse audits, which are run to ensure
 
 ## Overview
 
-Erisfy is a fantasy island playground for experimenting with UI and UX for FinTech applications. This repository is a fork of "erisfy" and focuses on building prototype UIs with shadcn/ui components as their foundation. It serves as a sandbox for testing UI/UX concepts and design patterns.
+Erisfy is a fantasy island playground for experimenting with UI and UX for FinTech applications. This repository is a fork of [React Weapons Of Choice](https://cambridgemonorail.github.io/react-weapons-of-choice/) and focuses on building prototype UIs with shadcn/ui components as their foundation. It serves as a sandbox for testing UI/UX concepts and design patterns.
 
 The name "Erisfy" is derived from combining "Eris," the Greek goddess of chaos, strife, and discord, with "fy," which stands for finance. Eris was known as Discordia in Roman mythology. Some texts hold her to be one of the eldest goddesses, the daughter of Nyx, the goddess of night, while others say she is the sister of the war god Ares. The combination of "Eris" and "fy" reflects the project's focus on experimenting with UI and UX for FinTech applications, embracing the dynamic and innovative nature of the field.
 
