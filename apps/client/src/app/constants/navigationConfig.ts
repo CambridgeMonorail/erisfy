@@ -86,7 +86,7 @@ const sidebarData: SidebarConfiguration = {
         { title: 'FAQ', url: paths.faq },
         { title: 'Contact', url: paths.contact },
         { title: 'Blog', url: paths.blog },
-        { title: 'Terms and Conditions', url: paths.termsAnd-conditions },
+        { title: 'Terms and Conditions', url: paths.termsAndConditions },
         { title: 'StatusBoard', url: paths.statusBoard },
       ],
     },

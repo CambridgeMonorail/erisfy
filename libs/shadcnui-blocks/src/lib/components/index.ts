@@ -17,6 +17,8 @@ export * from './state-performance/index';
 export * from './stats-block/StatItem';
 export * from './stats-block/StatsBlock';
 export * from './steps/index';
+export * from './tag/index';
+export * from './tag-group/index';
 export * from './tagline/index';
 export * from './target-achievement-chart/index';
 export * from './testimonials/index';

@@ -1,5 +1,7 @@
 import { FC, useState } from 'react';
-import { Input, Tag, TagGroup } from '@erisfy/shadcnui';
+import { Input } from '@erisfy/shadcnui';
+import { Tag, TagGroup } from '@erisfy/shadcnui-blocks';
+
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
