@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider } from '@erisfy/shadcnui';
+import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@erisfy/shadcnui';
 import { Pagination } from '../../components/Pagination'; // Ensure correct import
 import { StockTable } from '../../components/StockTable';
 import { StockFilters } from '../../components/StockFilters';
@@ -62,18 +62,20 @@ const ScreenerResultsPage: FC = () => {
           <StockFilters onChange={handleFilterChange} />
           <div className="mt-4">
             <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
-            <ul className="list-disc list-inside">
-              {selectedFilters.map((filter) => (
-                <li key={filter}>
-                  <Tooltip>
-                    <TooltipTrigger>{filter}</TooltipTrigger>
-                    <TooltipContent>
-                      <p>Definition and example of {filter}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </li>
-              ))}
-            </ul>
+            <TooltipProvider>
+              <ul className="list-disc list-inside">
+                {selectedFilters.map((filter) => (
+                  <li key={filter}>
+                    <Tooltip>
+                      <TooltipTrigger>{filter}</TooltipTrigger>
+                      <TooltipContent>
+                        <p>Definition and example of {filter}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </li>
+                ))}
+              </ul>
+            </TooltipProvider>
           </div>
           <StockTable stocks={paginatedStocks} />
           <Pagination
