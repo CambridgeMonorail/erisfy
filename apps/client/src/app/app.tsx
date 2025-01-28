@@ -5,6 +5,7 @@ import { navigationConfig } from './constants/navigationConfig';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ScreenerResultsPage } from './pages/screener-results/ScreenerResults';
 import { StockDetailPage } from './pages/stock-detail/StockDetail';
+import { FilterSelectionScreen } from './pages/filter-selection/FilterSelectionScreen';
 
 const App: FC = () => {
   const location = useLocation();
@@ -45,6 +46,14 @@ const App: FC = () => {
           element={
             <ErrorBoundary>
               <StockDetailPage />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="/screener/filter-selection"
+          element={
+            <ErrorBoundary>
+              <FilterSelectionScreen />
             </ErrorBoundary>
           }
         />

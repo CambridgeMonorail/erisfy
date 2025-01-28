@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Slider, Card, CardHeader, CardTitle, CardContent, Button } from '@erisfy/shadcnui';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Slider, Card, CardHeader, CardTitle, CardContent, Button, Tooltip, TooltipTrigger, TooltipContent } from '@erisfy/shadcnui';
 
 interface StockFiltersProps {
   onChange: (filters: any) => void;
@@ -12,6 +12,7 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
   const [marketCap, setMarketCap] = useState<[number, number]>([0, 1000000]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleFilterChange = () => {
     onChange({
@@ -21,6 +22,14 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
       marketCap,
       priceRange,
     });
+  };
+
+  const handleFilterSelect = (filter: string) => {
+    setSelectedFilters((prevFilters) =>
+      prevFilters.includes(filter)
+        ? prevFilters.filter((f) => f !== filter)
+        : [...prevFilters, filter]
+    );
   };
 
   return (
@@ -115,6 +124,21 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 max={1000}
                 step={10}
               />
+            </div>
+            <div className="mt-4">
+              <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
+              <ul className="list-disc list-inside">
+                {selectedFilters.map((filter) => (
+                  <li key={filter}>
+                    <Tooltip>
+                      <TooltipTrigger>{filter}</TooltipTrigger>
+                      <TooltipContent>
+                        <p>Definition and example of {filter}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </CardContent>
