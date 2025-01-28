@@ -17,6 +17,7 @@ import { PricingPage } from '../pages/pricing/Pricing';
 import { StatusBoardPage } from '../pages/status-board/StatusBoard';
 import { TermsAndConditionsPage } from '../pages/terms-and-conditions/TermsAndConditions';
 import { StockScreenerPage } from '../pages/stock-screener/StockScreener';
+import { StockProfilePage } from '../pages/stock-profile/StockProfile';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -41,6 +42,7 @@ const paths = {
   },
   trading: {
     stockScreener: '/trading/stock-screener',
+    stockProfile: '/trading/stock-profile/:ticker',
   },
   notFound: '*',
 };
@@ -100,6 +102,7 @@ const sidebarData: SidebarConfiguration = {
       icon: Landmark,
       items: [
         { title: 'Stock Screener', url: paths.trading.stockScreener },
+        { title: 'Stock Profile', url: paths.trading.stockProfile },
       ],
     },
   ],
@@ -130,6 +133,7 @@ export const navigationConfig = {
       path: paths.trading.stockScreener,
       children: [
         { label: 'Stock Screener', path: paths.trading.stockScreener },
+        { label: 'Stock Profile', path: paths.trading.stockProfile },
       ],
     },
     {
@@ -213,6 +217,7 @@ navigationConfig.routes = [
   createRoute(paths.statusBoard, StatusBoardPage),
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
   createRoute(paths.trading.stockScreener, StockScreenerPage),
+  createRoute(paths.trading.stockProfile, StockProfilePage),
   createRoute(paths.notFound, NotFound, false),
 ] as Array<{ path: string; element: React.ReactElement }>;
 
