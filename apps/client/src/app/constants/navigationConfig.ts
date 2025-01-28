@@ -19,6 +19,7 @@ import { StatusBoardPage } from '../pages/status-board/StatusBoard';
 import { TermsAndConditionsPage } from '../pages/terms-and-conditions/TermsAndConditions';
 import { ScreenerResultsPage } from '../pages/screener-results/ScreenerResults';
 import { StockDetailPage } from '../pages/stock-detail/StockDetail';
+import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelectionScreen';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -44,6 +45,7 @@ const paths = {
   screener: {
     results: '/screener/results',
     stockDetail: '/screener/stock-detail/:ticker',
+    filterSelection: '/screener/filter-selection',
   },
   notFound: '*',
 };
@@ -84,7 +86,7 @@ const sidebarData: SidebarConfiguration = {
         { title: 'FAQ', url: paths.faq },
         { title: 'Contact', url: paths.contact },
         { title: 'Blog', url: paths.blog },
-        { title: 'Terms and Conditions', url: paths.termsAndConditions },
+        { title: 'Terms and Conditions', url: paths.termsAnd-conditions },
         { title: 'StatusBoard', url: paths.statusBoard },
       ],
     },
@@ -104,6 +106,7 @@ const sidebarData: SidebarConfiguration = {
       items: [
         { title: 'Screener Results', url: paths.screener.results },
         { title: 'Stock Detail', url: paths.screener.stockDetail },
+        { title: 'Filter Selection', url: paths.screener.filterSelection },
       ],
     },
   ],
@@ -135,6 +138,7 @@ export const navigationConfig = {
       children: [
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
+        { label: 'Filter Selection', path: paths.screener.filterSelection },
       ],
     },
     {
@@ -224,6 +228,7 @@ navigationConfig.routes = [
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
   createRoute(paths.screener.results, ScreenerResultsPage),
   createRoute(paths.screener.stockDetail, StockDetailPage),
+  createRoute(paths.screener.filterSelection, FilterSelectionScreen),
   createRoute(paths.notFound, NotFound, false),
 ] as Array<{ path: string; element: React.ReactElement }>;
 

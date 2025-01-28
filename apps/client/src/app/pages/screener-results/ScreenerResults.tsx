@@ -7,13 +7,12 @@ import { SearchBar } from '../../components/SearchBar';
 import { generateMockData, StockData } from '../../utils/mockData';
 
 const ScreenerResultsPage: FC = () => {
-
-
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   useEffect(() => {
     const data = generateMockData(100);
@@ -30,6 +29,14 @@ const ScreenerResultsPage: FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+  };
+
+  const handleFilterSelect = (filter: string) => {
+    setSelectedFilters((prevFilters) =>
+      prevFilters.includes(filter)
+        ? prevFilters.filter((f) => f !== filter)
+        : [...prevFilters, filter]
+    );
   };
 
   const filteredStocks = stocks.filter((stock) => {
@@ -53,6 +60,21 @@ const ScreenerResultsPage: FC = () => {
         <CardContent>
           <SearchBar onSearch={handleSearch} />
           <StockFilters onChange={handleFilterChange} />
+          <div className="mt-4">
+            <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
+            <ul className="list-disc list-inside">
+              {selectedFilters.map((filter) => (
+                <li key={filter}>
+                  <Tooltip>
+                    <TooltipTrigger>{filter}</TooltipTrigger>
+                    <TooltipContent>
+                      <p>Definition and example of {filter}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </li>
+              ))}
+            </ul>
+          </div>
           <StockTable stocks={paginatedStocks} />
           <Pagination
             currentPage={currentPage}
