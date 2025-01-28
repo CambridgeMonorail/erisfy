@@ -17,8 +17,8 @@ import { NotFound } from '../pages/not-found/NotFound';
 import { PricingPage } from '../pages/pricing/Pricing';
 import { StatusBoardPage } from '../pages/status-board/StatusBoard';
 import { TermsAndConditionsPage } from '../pages/terms-and-conditions/TermsAndConditions';
-import { StockScreenerPage } from '../pages/stock-screener/StockScreener';
-import { StockProfilePage } from '../pages/stock-profile/StockProfile';
+import { ScreenerResultsPage } from '../pages/screener-results/ScreenerResults';
+import { StockDetailPage } from '../pages/stock-detail/StockDetail';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -41,9 +41,9 @@ const paths = {
     colorPalette: '/color-palette',
     library: '/library',
   },
-  trading: {
-    stockScreener: '/trading/stock-screener',
-    stockProfile: '/trading/stock-profile/:ticker',
+  screener: {
+    results: '/screener/results',
+    stockDetail: '/screener/stock-detail/:ticker',
   },
   notFound: '*',
 };
@@ -98,12 +98,12 @@ const sidebarData: SidebarConfiguration = {
       ],
     },
     {
-      title: 'Trading',
-      url: paths.trading.stockScreener,
+      title: 'Screener',
+      url: paths.screener.results,
       icon: Landmark,
       items: [
-        { title: 'Stock Screener', url: paths.trading.stockScreener },
-        { title: 'Stock Profile', url: paths.trading.stockProfile },
+        { title: 'Screener Results', url: paths.screener.results },
+        { title: 'Stock Detail', url: paths.screener.stockDetail },
       ],
     },
   ],
@@ -130,11 +130,11 @@ export const navigationConfig = {
   ],
   menuItems: [
     {
-      label: 'Trading',
-      path: paths.trading.stockScreener,
+      label: 'Screener',
+      path: paths.screener.results,
       children: [
-        { label: 'Stock Screener', path: paths.trading.stockScreener },
-        { label: 'Stock Profile', path: paths.trading.stockProfile },
+        { label: 'Screener Results', path: paths.screener.results },
+        { label: 'Stock Detail', path: paths.screener.stockDetail },
       ],
     },
     {
@@ -222,8 +222,8 @@ navigationConfig.routes = [
   createRoute(paths.pricing, PricingPage),
   createRoute(paths.statusBoard, StatusBoardPage),
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
-  createRoute(paths.trading.stockScreener, StockScreenerPage),
-  createRoute(paths.trading.stockProfile, StockProfilePage),
+  createRoute(paths.screener.results, ScreenerResultsPage),
+  createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.notFound, NotFound, false),
 ] as Array<{ path: string; element: React.ReactElement }>;
 

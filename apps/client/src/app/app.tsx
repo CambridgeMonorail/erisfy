@@ -3,8 +3,8 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { Toaster } from '@erisfy/shadcnui';
 import { navigationConfig } from './constants/navigationConfig';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { StockScreenerPage } from './pages/stock-screener/StockScreener';
-import { StockProfilePage } from './pages/stock-profile/StockProfile';
+import { ScreenerResultsPage } from './pages/screener-results/ScreenerResults';
+import { StockDetailPage } from './pages/stock-detail/StockDetail';
 
 const App: FC = () => {
   const location = useLocation();
@@ -33,18 +33,18 @@ const App: FC = () => {
           />
         ))}
         <Route
-          path="/trading/stock-screener"
+          path="/screener/results"
           element={
             <ErrorBoundary>
-              <StockScreenerPage />
+              <ScreenerResultsPage />
             </ErrorBoundary>
           }
         />
         <Route
-          path="/trading/stock-profile/:ticker"
+          path="/screener/stock-detail/:ticker"
           element={
             <ErrorBoundary>
-              <StockProfilePage />
+              <StockDetailPage />
             </ErrorBoundary>
           }
         />
