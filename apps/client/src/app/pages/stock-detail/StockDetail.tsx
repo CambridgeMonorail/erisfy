@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@erisfy/shadcnui';
 
-interface StockProfileProps {
+interface StockDetailProps {
   ticker: string;
   companyName: string;
   sector: string;
@@ -19,7 +19,7 @@ interface StockProfileProps {
   peRatio: number;
 }
 
-const StockProfile: FC<StockProfileProps> = ({
+const StockDetail: FC<StockDetailProps> = ({
   ticker,
   companyName,
   sector,
@@ -86,11 +86,11 @@ const StockProfile: FC<StockProfileProps> = ({
   );
 };
 
-const StockProfilePage: FC = () => {
+const StockDetailPage: FC = () => {
   const { ticker } = useParams<{ ticker: string }>();
 
   // Placeholder for fetching stock data based on the ticker
-  const stockData: StockProfileProps = {
+  const stockData: StockDetailProps = {
     ticker: 'AAPL',
     companyName: 'Apple Inc.',
     sector: 'Technology',
@@ -107,7 +107,7 @@ const StockProfilePage: FC = () => {
     peRatio: 30,
   };
 
-  return <StockProfile {...stockData} />;
+  return <StockDetail {...stockData} />;
 };
 
-export { StockProfilePage };
+export { StockDetailPage };

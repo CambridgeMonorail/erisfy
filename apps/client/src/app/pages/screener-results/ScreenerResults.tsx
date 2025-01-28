@@ -6,7 +6,7 @@ import { StockFilters } from '../../components/StockFilters';
 import { SearchBar } from '../../components/SearchBar';
 import { generateMockData, StockData } from '../../utils/mockData';
 
-const StockScreenerPage: FC = () => {
+const ScreenerResultsPage: FC = () => {
 
 
   const [stocks, setStocks] = useState<StockData[]>([]);
@@ -47,7 +47,7 @@ const StockScreenerPage: FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-semibold mb-2 text-primary">
-            Stock Screener Page
+            Screener Results Page
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -66,4 +66,4 @@ const StockScreenerPage: FC = () => {
   );
 };
 
-export { StockScreenerPage };
+export { ScreenerResultsPage };
