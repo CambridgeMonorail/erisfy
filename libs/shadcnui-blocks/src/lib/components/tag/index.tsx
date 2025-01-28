@@ -1,7 +1,7 @@
 import { FC, HTMLAttributes } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../../../../shadcnui/src/lib/utils";
 import { X } from "lucide-react";
+import { cn } from "@erisfy/shadcnui";
 
 const tagVariants = cva(
   "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -27,11 +27,9 @@ const tagVariants = cva(
  * TagProps interface extends HTML attributes and VariantProps for the Tag component.
  * It includes properties for className, variant, and onRemove.
  */
-export interface TagProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof tagVariants> {
+export type TagProps = HTMLAttributes<HTMLDivElement> & VariantProps<typeof tagVariants> & {
   onRemove?: () => void;
-}
+};
 
 /**
  * Tag component is used to display a small tag with different variants and a remove button.
