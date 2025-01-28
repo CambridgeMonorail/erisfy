@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { Table, TableHeader, TableRow, TableCell, TableBody } from '@erisfy/shadcnui';
-import { StockData } from '../../utils/mockData';
+import { StockData } from '../utils/mockData';
+
 
 interface StockTableProps {
   stocks: StockData[];

@@ -1,15 +1,19 @@
 import { FC, useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider, Pagination } from '@erisfy/shadcnui';
+import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider } from '@erisfy/shadcnui';
+import { Pagination } from '../../components/Pagination'; // Ensure correct import
 import { StockTable } from '../../components/StockTable';
 import { StockFilters } from '../../components/StockFilters';
 import { SearchBar } from '../../components/SearchBar';
-import { generateMockData } from '../../utils/mockData';
+import { generateMockData, StockData } from '../../utils/mockData';
 
 const StockScreenerPage: FC = () => {
-  const [stocks, setStocks] = useState([]);
+
+
+  const [stocks, setStocks] = useState<StockData[]>([]);
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const data = generateMockData(100);
@@ -24,9 +28,13 @@ const StockScreenerPage: FC = () => {
     setCurrentPage(page);
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   const filteredStocks = stocks.filter((stock) => {
     // Apply filters to the stock data
-    return true; // Placeholder for filter logic
+    return stock.ticker.includes(searchQuery) || stock.companyName.includes(searchQuery);
   });
 
   const paginatedStocks = filteredStocks.slice(
@@ -43,7 +51,7 @@ const StockScreenerPage: FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
           <StockFilters onChange={handleFilterChange} />
           <StockTable stocks={paginatedStocks} />
           <Pagination

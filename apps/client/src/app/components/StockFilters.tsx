@@ -6,9 +6,9 @@ interface StockFiltersProps {
 }
 
 const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
-  const [sector, setSector] = useState<string | null>(null);
-  const [industry, setIndustry] = useState<string | null>(null);
-  const [country, setCountry] = useState<string | null>(null);
+  const [sector, setSector] = useState<string>('');
+  const [industry, setIndustry] = useState<string>('');
+  const [country, setCountry] = useState<string>('');
   const [marketCap, setMarketCap] = useState<[number, number]>([0, 1000000]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -36,11 +36,11 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
       {!isCollapsed && (
         <CardContent>
           <div className="space-y-4">
+            <label className="block text-sm font-medium text-gray-700">Sector</label>
             <Select
-              label="Sector"
               value={sector}
-              onChange={(e) => {
-                setSector(e.target.value);
+              onValueChange={(value) => {
+                setSector(value as string);
                 handleFilterChange();
               }}
             >
@@ -50,11 +50,11 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
               <option value="Healthcare">Healthcare</option>
               <option value="Energy">Energy</option>
             </Select>
+            <label className="block text-sm font-medium text-gray-700">Industry</label>
             <Select
-              label="Industry"
               value={industry}
-              onChange={(e) => {
-                setIndustry(e.target.value);
+              onValueChange={(value) => {
+                setIndustry(value as string);
                 handleFilterChange();
               }}
             >
@@ -64,11 +64,11 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
               <option value="Pharmaceuticals">Pharmaceuticals</option>
               <option value="Oil & Gas">Oil & Gas</option>
             </Select>
+            <label className="block text-sm font-medium text-gray-700">Country</label>
             <Select
-              label="Country"
               value={country}
-              onChange={(e) => {
-                setCountry(e.target.value);
+              onValueChange={(value) => {
+                setCountry(value as string);
                 handleFilterChange();
               }}
             >
@@ -82,8 +82,8 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
               <label>Market Cap</label>
               <Slider
                 value={marketCap}
-                onChange={(value) => {
-                  setMarketCap(value);
+                onValueChange={(value) => {
+                  setMarketCap(value as [number, number]);
                   handleFilterChange();
                 }}
                 min={0}
@@ -95,8 +95,8 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
               <label>Price Range</label>
               <Slider
                 value={priceRange}
-                onChange={(value) => {
-                  setPriceRange(value);
+                onValueChange={(value) => {
+                  setPriceRange(value as [number, number]);
                   handleFilterChange();
                 }}
                 min={0}
