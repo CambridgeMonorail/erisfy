@@ -4,6 +4,7 @@ import { Toaster } from '@erisfy/shadcnui';
 import { navigationConfig } from './constants/navigationConfig';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { StockScreenerPage } from './pages/stock-screener/StockScreener';
+import { StockProfilePage } from './pages/stock-profile/StockProfile';
 
 const App: FC = () => {
   const location = useLocation();
@@ -36,6 +37,14 @@ const App: FC = () => {
           element={
             <ErrorBoundary>
               <StockScreenerPage />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="/trading/stock-profile/:ticker"
+          element={
+            <ErrorBoundary>
+              <StockProfilePage />
             </ErrorBoundary>
           }
         />
