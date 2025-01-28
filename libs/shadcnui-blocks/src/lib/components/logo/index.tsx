@@ -6,15 +6,17 @@ import { PnpmLogo } from './logos/PnpmLogo';
 import { ReactLogo } from './logos/ReactLogo';
 import { StorybookLogo } from './logos/StorybookLogo';
 import { ViteLogo } from './logos/ViteLogo';
+import { ErisfyLogo } from './logos/EristfyLogo';
 
 // Map of available logos
 const logoMap: Record<string, FC<SVGProps<SVGSVGElement>>> = {
-  shadcn: ShadcnLogo,
+  erisfy: ErisfyLogo,
   nx: NxLogo,
   pnpm: PnpmLogo,
   react: ReactLogo,
-  tailwind: TailwindLogo,
+  shadcn: ShadcnLogo,
   storybook: StorybookLogo,
+  tailwind: TailwindLogo,
   vite: ViteLogo,
 };
 

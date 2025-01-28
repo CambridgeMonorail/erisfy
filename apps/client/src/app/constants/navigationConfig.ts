@@ -1,6 +1,7 @@
 import { createElement } from 'react';
 import { SidebarConfiguration } from '../types/sidebarTypes';
 import { Swords, AudioWaveform, SquareTerminal, Bot, Landmark } from 'lucide-react';
+import { Logo } from '@erisfy/shadcnui-blocks';
 
 import { LandingPage } from '../pages/landing/Landing';
 import { AboutPage } from '../pages/about/About';
@@ -191,7 +192,12 @@ const createRoute = (
         menuItems,
         mode,
         title,
-        logoIcon: createElement(LogoIcon),
+        logoIcon: createElement(Logo, {
+          fill: 'currentColor',
+          height: '24px',
+          name: 'erisfy',
+          width: '24px',
+        }),
         children: createElement(component),
       }),
     }
