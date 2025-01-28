@@ -1,186 +1,74 @@
-# Erisfy
+# Erosfy Project Goals
 
-**Erisfy** is an open-source boilerplate designed to streamline the development of single-page React applications (SPAs). By integrating powerful tools like Nx, Tailwind CSS, and Shadcn UI, this project provides developers with a robust and efficient starting point for building modern client-side applications.
+## Overview
 
----
+This document outlines the goals for an **exploration of building a FinTech UI** using [Shadcn components](https://ui.shadcn.com/) in a **React Single-Page Application (SPA)**. The primary focus is to develop a **user-centric stock screener** that integrates **advanced AI capabilities** to streamline fundamental analysis, filtering, and personalized insights.
+
+## Background
+
+Through our discussions, we identified multiple **pain points** in traditional stock screening:
+
+- **Overwhelming Metrics**: Users struggle to pick from dozens of ratios and fundamental data points.  
+- **Analysis Paralysis**: Even after selecting filters, large result sets make it hard to pinpoint top picks.  
+- **Lack of Forward-Looking Insights**: Most screeners rely on static, historical data and ignore real-time catalysts or sentiment.  
+- **Difficulty Incorporating Intangibles**: Factors like management quality or brand perception are rarely captured by numeric filters.  
+- **Limited Personalization**: Generic filters do not adjust to different investor styles, risk profiles, or market conditions.
+
+After conducting **competitor analysis** of existing platforms with customizable fundamental scoring and comprehensive screening features, we identified these potential strategies:
+
+- **Rule Types for Scoring**: Custom scoring models leveraging criteria like static ranges, historical comparisons, metric comparisons, growth rates over time, etc.  
+- **Extensive Filter Library**: Covering hundreds of financial metrics, grouped for easy exploration.  
+- **User-Friendly Score Building**: Letting investors combine and weight multiple rules into personalized scoring models.
+
+**Key Architecture Considerations**:
+
+1. **Public Landing Page** (pre-login marketing, CTAs).  
+2. **Authentication & Onboarding** (capture user style, preferences).  
+3. **Main Dashboard** (user-specific quick picks, market overview).  
+4. **Screener** (advanced filters, integrated scoring models, watchlist actions).  
+5. **Watchlist** (monitor selected stocks, receive alerts).  
+6. **Stock Detail View** (deep dives, AI score breakdown, news sentiment).  
+7. **Advanced Features** (clustering, scenario analysis, personalized scoring model builder).  
+8. **UI Polishing & Extended Tools** (responsive design, richer visualizations, mobile support).
 
 ## Goals
 
-### 1. Simplified Setup
-
-Provide a ready-to-use boilerplate tailored for SPA development, combining the power of:
-
-- ~~Nx for monorepo management.~~
-- ~~Tailwind CSS for utility-first styling.~~
-- ~~Shadcn UI for a cohesive component library.~~
-
-### 2. Seamless Integration
-
-Ensure a pre-configured stack that works harmoniously, reducing setup complexity and enabling developers to start building immediately.
-
-### 3. Modularity and Scalability
-
-Deliver a modular architecture to support:
-
-- Easy addition or removal of features.
-- Scalability for evolving project needs.
-
-### 4. Enhanced Developer Experience
-
-Boost productivity with:
-
-- An intuitive, maintainable codebase.
-- Comprehensive documentation.
-- Minimal setup time and maximum efficiency.
-- **Storybook Integration**: Interactive environment for developing and testing UI components.
-- **Component Examples**: Pre-built examples of re-usable components to accelerate development.
-
-### 5. Community Collaboration
-
-Encourage open-source contributions to:
-
-- Share insights.
-- Shape the project through collaboration.
-- Build a vibrant developer community.
-
-### 6. Comprehensive Pages and Layouts
-
-Include essential pages to create a complete user experience:
-
-- Landing, About, Features, Pricing, FAQ, Contact.
-- Blog, Individual Blog Post.
-- Terms and Conditions, 404 Error page.
-
-### 7. Re-usable Component Architecture
-
-Build pages from **re-usable components** to:
-
-- Provide developers with modular building blocks.
-- Enable easy customization for creating unique SPAs.
-- Accelerate time-to-market for applications.
-
-### 8. Responsive Design
-
-Ensure all components and pages are mobile-friendly, adapting to various screen sizes.
-
-### 9. SEO Optimization
-
-Incorporate best practices like:
-
-- Meta tags and alt attributes.
-- Structured data for improved search engine visibility.
-
-### 10. Accessibility
-
-Adhere to accessibility standards, making the project usable for everyone.
-
-### 11. Performance Optimization
-
-Optimize performance through:
-
-- Asset minimization.
-- Lazy loading for faster page loads.
-
-### 12. Analytics Integration
-
-Include tools like Google Analytics to monitor:
-
-- User behavior.
-- Site performance and engagement.
-
-### 13. Refactor Layout Component and Related Components to `shell` Library
-
-Refactor the `Layout` component and all related components to the `shell` library to improve project structure and maintainability.
-
----
-
-## Planned Deliverables
-
-### Core Features
-
-- **Comprehensive Documentation**: Step-by-step guides covering installation, configuration, and customization.
-- **Pre-configured Nx Workspace**: Monorepo setup for managing applications and libraries efficiently.
-- **Tailwind CSS Integration**: Fully configured for rapid UI development.
-- **Shadcn UI Components**: A curated, customizable component library.
-- **Re-usable Components**: Modular and customizable components that developers can use to:
-  - Create their own SPAs effortlessly.
-  - Rapidly deliver applications to market.
-
-### Development and Deployment
-
-- **CI/CD Pipelines**: Predefined configurations for automated testing and deployment.
-- **Performance Tools**: Minification and lazy loading for optimal performance.
-
-### Community Support
-
-- **Support Channels**: Platforms for discussions, issue tracking, and feature requests.
-- **Collaboration Opportunities**: Open-source contributions encouraged.
-
----
-
-## Page Structure and Features
-
-### Landing Page
-
-- **Hero Section**: Clear value proposition with a compelling headline and CTA.
-- **Feature Highlights**: Showcase benefits with concise descriptions and icons.
-- **Testimonials**: Build credibility with user feedback.
-- **Call-to-Action**: Encourage engagement through signup or "Get Started" links.
-
-### About Page
-
-- **Mission and Vision**: Share the purpose and values of the project.
-- **Team Introduction**: Brief bios and photos of contributors.
-- **Timeline**: Highlight milestones and project evolution.
-
-### Features Page
-
-- **Detailed Descriptions**: Explain each feature with visuals.
-- **Use Cases**: Real-world applications of the boilerplate features.
-
-### Pricing Page
-
-- **Pricing Tiers**: Outline plans with corresponding features.
-- **Comparison Table**: Enable users to compare options easily.
-
-### FAQ Page
-
-- **Common Questions**: Address frequent inquiries.
-- **Search Functionality**: Allow users to find answers quickly.
-
-### Contact Page
-
-- **Contact Form**: Facilitate inquiries and feedback.
-- **Information**: Provide relevant contact details.
-- **Map Integration**: Optional map to show your location.
-
-### Blog Page
-
-- **Article Listings**: Summaries and publication dates for posts.
-- **Categories and Tags**: Organize content for navigation.
-- **Search Functionality**: Enable topic-specific searches.
-
-### Individual Blog Post Page
-
-- **Content Area**: Full article with headings, images, and media.
-- **Author Information**: Include author bio and photo.
-- **Related Posts**: Suggest similar articles to retain engagement.
-
-### Terms and Conditions Page
-
-- **Legal Information**: Terms of service, privacy policies, and disclaimers.
-
-### 404 Error Page
-
-- **Error Message**: Notify users of a missing page.
-- **Navigation Options**: Redirect to relevant sections or homepage.
-
-### Effective CTA Guide
-
-- **Crafting Effective Call-to-Action (CTA) Button Text**: A guide outlining best practices for creating compelling CTA button text.
-- **Sections**: Action-oriented language, urgency, value proposition, clarity, personalization, visual prominence, user intent alignment, and testing.
-- **Additional Resources**: Links to external resources for further reading.
-
----
-
-By focusing on these goals and deliverables, **Erisfy** empowers developers to efficiently build high-quality SPAs, leveraging a re-usable component architecture along with the strengths of Nx, Tailwind CSS, and Shadcn UI. This approach ensures developers have the building blocks they need to customize and launch their applications rapidly.
+1. **Shadcn-Driven UI**  
+   - Leverage Shadcn’s React component library for a clean, modern interface.  
+   - Ensure a cohesive design system that promotes consistency and easy theming.
+
+2. **Comprehensive & Customizable Stock Screener**  
+   - Offer an extensive library of metrics with category-based organization.  
+   - Implement **custom scoring models**:  
+     - **Static Range** (e.g., P/E < 15).  
+     - **Historical Range** (compare current value to past 3-year average).  
+     - **Metrics Comparison** (ROE vs. Debt/Equity).  
+     - **Change Over Time** (EPS growth over 5 years).  
+     - **Max Decline** (largest drop in revenue or EPS).
+
+3. **Personalized Filter & Recommendation Engine**  
+   - Use onboarding inputs (risk tolerance, style, sectors) to **auto-suggest** relevant filters.  
+   - Allow iterative refinement based on user interactions (previous filters, watchlist behavior).
+
+4. **AI & Advanced Insights**  
+   - **Sentiment Analysis**: Integrate headlines and social data to surface qualitative factors.  
+   - **Cluster & Compare**: Group similar stocks by fundamentals, highlight outliers.  
+   - **Scenario Modeling**: Prompt “what-if” analyses (interest rates, macro changes).
+
+5. **Usability & Clarity**  
+   - Provide **tooltips** and **explanatory hints** for advanced features.  
+   - Maintain **intuitive workflows**: easy switching between screener, watchlist, scoring models.  
+   - Ensure **responsive design** for desktop, tablet, and mobile.
+
+6. **Iterative Growth**  
+   - Build **minimum viable** versions of each feature for feedback.  
+   - Gradually refine & expand, incorporating user testing results and performance data.
+
+## Expected Outcomes
+
+By weaving **customizable scoring** and **comprehensive filters** into a **Shadcn-based React SPA**, we aim to deliver a **powerful** yet **intuitive** stock screening solution that:
+
+- Empowers users to craft **personalized** fundamental analysis rules.  
+- Adapts quickly to changing market conditions through **AI-driven insights**.  
+- Reduces **analysis paralysis** with clear scoring, filtering, and summarization tools.  
+- Provides a **visually appealing**, **smooth** user experience aligned with modern best practices.
