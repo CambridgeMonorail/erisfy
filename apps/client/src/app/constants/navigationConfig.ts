@@ -46,6 +46,7 @@ const paths = {
     results: '/screener/results',
     stockDetail: '/screener/stock-detail/:ticker',
     filterSelection: '/screener/filter-selection',
+    homepage: '/screener/homepage', // Pfe0f
   },
   notFound: '*',
 };
@@ -107,6 +108,7 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Screener Results', url: paths.screener.results },
         { title: 'Stock Detail', url: paths.screener.stockDetail },
         { title: 'Filter Selection', url: paths.screener.filterSelection },
+        { title: 'Homepage', url: paths.screener.homepage }, // Pe204
       ],
     },
   ],
@@ -139,6 +141,7 @@ export const navigationConfig = {
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
         { label: 'Filter Selection', path: paths.screener.filterSelection },
+        { label: 'Homepage', path: paths.screener.homepage }, // Pe204
       ],
     },
     {
@@ -229,6 +232,7 @@ navigationConfig.routes = [
   createRoute(paths.screener.results, ScreenerResultsPage),
   createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.screener.filterSelection, FilterSelectionScreen),
+  createRoute(paths.screener.homepage, DashboardPage), // Pfe0f
   createRoute(paths.notFound, NotFound, false),
 ] as Array<{ path: string; element: React.ReactElement }>;
 

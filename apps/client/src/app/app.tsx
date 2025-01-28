@@ -57,6 +57,14 @@ const App: FC = () => {
             </ErrorBoundary>
           }
         />
+        <Route
+          path="/screener/homepage"
+          element={
+            <ErrorBoundary>
+              <DashboardPage />
+            </ErrorBoundary>
+          }
+        />
       </Routes>
       <Toaster data-testid="toaster" />
     </div>
