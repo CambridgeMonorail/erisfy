@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { Button } from '@erisfy/shadcnui'; // Import shadcn Button component
 
 /**
@@ -20,8 +20,8 @@ interface HeroSectionProps {
   description?: string;
   /** An optional list of highlights to display in the hero section. */
   highlights?: string[];
-  /** The URL of the image to display in the hero section. */
-  image: string;
+  /** The image to display in the hero section. Can be a URL or a React node. */
+  image: string | ReactNode;
   /** The alt text for the image. */
   imageAlt: string;
   /** Optional primary call-to-action button configuration. */
@@ -56,14 +56,16 @@ export const HeroSection: FC<HeroSectionProps> = ({
   const isReversed = layout === 'right';
 
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = image;
-    document.head.appendChild(link);
-    return () => {
-      document.head.removeChild(link);
-    };
+    if (typeof image === 'string') {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = image;
+      document.head.appendChild(link);
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
   }, [image]);
 
   // Default styles for the 'light' variant
@@ -169,14 +171,18 @@ export const HeroSection: FC<HeroSectionProps> = ({
           className="flex-1 flex justify-center items-center"
           data-testid="hero-media"
         >
-          <img
-            src={image}
-            alt={imageAlt}
-            className="w-3/4 sm:w-2/3 lg:w-full max-w-md rounded-lg object-cover"
-            width="448" 
-            height="448"
-            data-testid="hero-image"
-          />
+          {typeof image === 'string' ? (
+            <img
+              src={image}
+              alt={imageAlt}
+              className="w-3/4 sm:w-2/3 lg:w-full max-w-md rounded-lg object-cover"
+              width="448" 
+              height="448"
+              data-testid="hero-image"
+            />
+          ) : (
+            image
+          )}
         </div>
       </div>
     </section>

@@ -11,8 +11,6 @@ import {
   Video,
 } from 'lucide-react';
 
-import logoSrc from '../../../assets/images/app-logo.webp';
-
 import {
   AboutSection,
   CTASection,
@@ -44,11 +42,17 @@ export const LandingPage: FC = () => {
     >
       <div className="bg-primary" data-testid="hero-section-container">
         <HeroSection
-          title="Erisfy: The Fintech Solution So Good It Doesn’t Even Exist
-"
+          title="Erisfy: The Fintech Solution So Good It Doesn’t Even Exist"
           subtitle="Order in chaos, profit in trading."
           description="Built to showcase the future of fintech—Erisfy is powered by cutting-edge ShadCN/UI components, the chaos of Eris, and a healthy dose of your imagination. AI-driven trading never looked this unreal"
-          image={logoSrc}
+          image={
+            <Logo
+              fill="currentColor"
+              height="448px"
+              name="erisfy"
+              width="448px"
+            />
+          }
           imageAlt="Logo for the boilerplate"
           ctaPrimary={{
             text: 'Start Pretending for Free',
