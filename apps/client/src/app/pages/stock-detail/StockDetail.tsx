@@ -1,6 +1,11 @@
 import { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@erisfy/shadcnui';
+import { MetricsPanel } from '@erisfy/shadcnui-blocks';
+import { NewsEvents } from '@erisfy/shadcnui-blocks';
+import { InteractiveChart } from '@erisfy/shadcnui-blocks';
+import { PeerComparison } from '@erisfy/shadcnui-blocks';
+import { SaveAddPortfolio } from '@erisfy/shadcnui-blocks';
 
 interface StockDetailProps {
   ticker: string;
@@ -17,6 +22,14 @@ interface StockDetailProps {
   week52Low: number;
   dividendYield: number;
   peRatio: number;
+  epsGrowth: number;
+  roe: number;
+  roa: number;
+  profitabilityRatios: number[];
+  news: { headline: string; date: string }[];
+  events: { event: string; date: string }[];
+  historicalPerformance: { date: string; price: number }[];
+  peers: { ticker: string; companyName: string; metric: number }[];
 }
 
 const StockDetail: FC<StockDetailProps> = ({
@@ -34,6 +47,14 @@ const StockDetail: FC<StockDetailProps> = ({
   week52Low,
   dividendYield,
   peRatio,
+  epsGrowth,
+  roe,
+  roa,
+  profitabilityRatios,
+  news,
+  events,
+  historicalPerformance,
+  peers,
 }) => {
   return (
     <Card>
@@ -81,6 +102,16 @@ const StockDetail: FC<StockDetailProps> = ({
             <strong>P/E Ratio:</strong> {peRatio.toFixed(2)}
           </div>
         </div>
+        <MetricsPanel
+          epsGrowth={epsGrowth}
+          roe={roe}
+          roa={roa}
+          profitabilityRatios={profitabilityRatios}
+        />
+        <NewsEvents news={news} events={events} />
+        <InteractiveChart data={historicalPerformance} />
+        <PeerComparison peers={peers} />
+        <SaveAddPortfolio ticker={ticker} />
       </CardContent>
     </Card>
   );
@@ -105,6 +136,27 @@ const StockDetailPage: FC = () => {
     week52Low: 120,
     dividendYield: 0.65,
     peRatio: 30,
+    epsGrowth: 10,
+    roe: 20,
+    roa: 15,
+    profitabilityRatios: [25, 30, 35],
+    news: [
+      { headline: 'Apple releases new iPhone', date: '2024-01-01' },
+      { headline: 'Apple reports record earnings', date: '2024-02-01' },
+    ],
+    events: [
+      { event: 'Earnings Report', date: '2024-03-01' },
+      { event: 'Product Launch', date: '2024-04-01' },
+    ],
+    historicalPerformance: [
+      { date: '2024-01-01', price: 140 },
+      { date: '2024-02-01', price: 145 },
+      { date: '2024-03-01', price: 150 },
+    ],
+    peers: [
+      { ticker: 'MSFT', companyName: 'Microsoft', metric: 200 },
+      { ticker: 'GOOGL', companyName: 'Alphabet', metric: 180 },
+    ],
   };
 
   return <StockDetail {...stockData} />;

@@ -15,6 +15,14 @@ export interface StockData {
   week52Low: number;
   dividendYield: number;
   peRatio: number;
+  epsGrowth: number;
+  roe: number;
+  roa: number;
+  profitabilityRatios: number[];
+  news: { headline: string; date: string }[];
+  events: { event: string; date: string }[];
+  historicalPerformance: { date: string; price: number }[];
+  peers: { ticker: string; companyName: string; metric: number }[];
 }
 
 export const generateMockData = (count: number): StockData[] => {
@@ -40,9 +48,29 @@ export const generateMockData = (count: number): StockData[] => {
       week52Low: parseFloat(faker.finance.amount()),
       dividendYield: parseFloat(faker.finance.amount()),
       peRatio: parseFloat(faker.finance.amount()),
+      epsGrowth: parseFloat(faker.finance.amount()),
+      roe: parseFloat(faker.finance.amount()),
+      roa: parseFloat(faker.finance.amount()),
+      profitabilityRatios: [parseFloat(faker.finance.amount()), parseFloat(faker.finance.amount()), parseFloat(faker.finance.amount())],
+      news: [
+        { headline: faker.lorem.sentence(), date: faker.date.recent().toISOString() },
+        { headline: faker.lorem.sentence(), date: faker.date.recent().toISOString() },
+      ],
+      events: [
+        { event: faker.lorem.words(), date: faker.date.future().toISOString() },
+        { event: faker.lorem.words(), date: faker.date.future().toISOString() },
+      ],
+      historicalPerformance: [
+        { date: faker.date.past().toISOString(), price: parseFloat(faker.finance.amount()) },
+        { date: faker.date.past().toISOString(), price: parseFloat(faker.finance.amount()) },
+        { date: faker.date.past().toISOString(), price: parseFloat(faker.finance.amount()) },
+      ],
+      peers: [
+        { ticker: faker.finance.currencyCode(), companyName: faker.company.name(), metric: parseFloat(faker.finance.amount()) },
+        { ticker: faker.finance.currencyCode(), companyName: faker.company.name(), metric: parseFloat(faker.finance.amount()) },
+      ],
     });
   }
 
   return data;
 };
-
