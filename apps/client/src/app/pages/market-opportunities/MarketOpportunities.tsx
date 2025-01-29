@@ -128,7 +128,9 @@ export const MarketOpportunitiesPage: FC = () => {
                 </div>
                 <div>
                   <strong>Quick Chart Toggle:</strong>
-                  <InteractiveChart data={filteredStocks[0].historicalPerformance} />
+                  {filteredStocks[0] && (
+                    <InteractiveChart data={filteredStocks[0].historicalPerformance} />
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -352,4 +354,3 @@ export const MarketOpportunitiesPage: FC = () => {
       </div>
     );
   };
-  
