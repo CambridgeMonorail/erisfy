@@ -6,6 +6,7 @@ import { NewsEvents } from '@erisfy/shadcnui-blocks';
 import { InteractiveChart } from '@erisfy/shadcnui-blocks';
 import { PeerComparison } from '@erisfy/shadcnui-blocks';
 import { SaveAddPortfolio } from '@erisfy/shadcnui-blocks';
+import { StockQuote } from '../../components/stock-card';
 
 interface StockDetailProps {
   ticker: string;
@@ -63,45 +64,81 @@ const StockDetail: FC<StockDetailProps> = ({
           {companyName} ({ticker})
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div>
-            <strong>Sector:</strong> {sector}
-          </div>
-          <div>
-            <strong>Industry:</strong> {industry}
-          </div>
-          <div>
-            <strong>Country:</strong> {country}
-          </div>
-          <div>
-            <strong>Market Cap:</strong> ${marketCap.toLocaleString()}
-          </div>
-          <div>
-            <strong>Current Price:</strong> ${currentPrice.toFixed(2)}
-          </div>
-          <div className={priceChange > 0 ? 'text-green-500' : 'text-red-500'}>
-            <strong>Price Change:</strong> {priceChange.toFixed(2)}
-          </div>
-          <div className={priceChangePercentage > 0 ? 'text-green-500' : 'text-red-500'}>
-            <strong>Price Change Percentage:</strong> {priceChangePercentage.toFixed(2)}%
-          </div>
-          <div>
-            <strong>Volume:</strong> {volume.toLocaleString()}
-          </div>
-          <div>
-            <strong>52-Week High:</strong> ${week52High.toFixed(2)}
-          </div>
-          <div>
-            <strong>52-Week Low:</strong> ${week52Low.toFixed(2)}
-          </div>
-          <div>
-            <strong>Dividend Yield:</strong> {dividendYield.toFixed(2)}%
-          </div>
-          <div>
-            <strong>P/E Ratio:</strong> {peRatio.toFixed(2)}
-          </div>
-        </div>
+      <CardContent className="flex flex-col gap-4">
+        <StockQuote
+          symbol="ACN"
+          name="Accenture PLC"
+          price={80.32}
+          change={1.4}
+          metrics={{
+            dayChange: 1.77,
+            monthChange: -1.23,
+            yearChange: 12.98,
+            bollingerBands: 20.2,
+            psar: 0.26,
+            slowStochastic: 5,
+            fastStochastic: 15,
+            volume: 2.58,
+            askBidSpread: 6.72,
+            marketCap: 50.76,
+            pe: 19.2,
+            divYield: 2.44,
+            beta: 1.45,
+          }}
+        />
+
+        <Card className="w-full p-4">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold">
+              Stock Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <strong>Sector:</strong> {sector}
+            </div>
+            <div>
+              <strong>Industry:</strong> {industry}
+            </div>
+            <div>
+              <strong>Country:</strong> {country}
+            </div>
+            <div>
+              <strong>Market Cap:</strong> ${marketCap.toLocaleString()}
+            </div>
+            <div>
+              <strong>Current Price:</strong> ${currentPrice.toFixed(2)}
+            </div>
+            <div
+              className={priceChange > 0 ? 'text-green-500' : 'text-red-500'}
+            >
+              <strong>Price Change:</strong> {priceChange.toFixed(2)}
+            </div>
+            <div
+              className={
+                priceChangePercentage > 0 ? 'text-green-500' : 'text-red-500'
+              }
+            >
+              <strong>Price Change Percentage:</strong>{' '}
+              {priceChangePercentage.toFixed(2)}%
+            </div>
+            <div>
+              <strong>Volume:</strong> {volume.toLocaleString()}
+            </div>
+            <div>
+              <strong>52-Week High:</strong> ${week52High.toFixed(2)}
+            </div>
+            <div>
+              <strong>52-Week Low:</strong> ${week52Low.toFixed(2)}
+            </div>
+            <div>
+              <strong>Dividend Yield:</strong> {dividendYield.toFixed(2)}%
+            </div>
+            <div>
+              <strong>P/E Ratio:</strong> {peRatio.toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
         <MetricsPanel
           epsGrowth={epsGrowth}
           roe={roe}
