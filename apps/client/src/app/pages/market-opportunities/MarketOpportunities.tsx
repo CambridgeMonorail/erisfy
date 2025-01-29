@@ -4,13 +4,8 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Select,
   SelectTrigger,
   SelectValue,
@@ -22,22 +17,13 @@ import {
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-  Input,
 } from '@erisfy/shadcnui';
 
-import { TrendingUp, Download, BarChart, Filter, Search, Bell, HelpCircle, AlertCircle } from 'lucide-react';
+import { Download, Filter, Search, Bell, HelpCircle, AlertCircle } from 'lucide-react';
 import {
   CalendarDateRangePicker,
-  Overview,
-  RecentSales,
-  NumberAndSecondaryStat,
-  MetricsPanel,
-  NewsEvents,
   InteractiveChart,
-  PeerComparison,
-  SaveAddPortfolio,
 } from '@erisfy/shadcnui-blocks';
-import { salesData } from '../../data/salesData';
 import { generateMockData, StockData } from '../../utils/mockData';
 
 export const MarketOpportunitiesPage: FC = () => {
