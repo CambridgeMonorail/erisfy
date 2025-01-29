@@ -3,9 +3,6 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { Toaster } from '@erisfy/shadcnui';
 import { navigationConfig } from './constants/navigationConfig';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { ScreenerResultsPage } from './pages/screener-results/ScreenerResults';
-import { StockDetailPage } from './pages/stock-detail/StockDetail';
-import { FilterSelectionScreen } from './pages/filter-selection/FilterSelectionScreen';
 
 const App: FC = () => {
   const location = useLocation();
@@ -19,53 +16,21 @@ const App: FC = () => {
       className="bg-background text-foreground min-h-screen min-w-screen"
       data-testid="app-container"
     >
-      <Routes>
-        {navigationConfig.routes.map((route) => (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={
-              <ErrorBoundary>
+      <ErrorBoundary>
+        <Routes>
+          {navigationConfig.routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
                 <div data-testid={`route-${route.path.replace('/', '-')}`}>
                   {route.element}
                 </div>
-              </ErrorBoundary>
-            }
-          />
-        ))}
-        <Route
-          path="/screener/results"
-          element={
-            <ErrorBoundary>
-              <ScreenerResultsPage />
-            </ErrorBoundary>
-          }
-        />
-        <Route
-          path="/screener/stock-detail/:ticker"
-          element={
-            <ErrorBoundary>
-              <StockDetailPage />
-            </ErrorBoundary>
-          }
-        />
-        <Route
-          path="/screener/filter-selection"
-          element={
-            <ErrorBoundary>
-              <FilterSelectionScreen />
-            </ErrorBoundary>
-          }
-        />
-        <Route
-          path="/screener/homepage"
-          element={
-            <ErrorBoundary>
-              <DashboardPage />
-            </ErrorBoundary>
-          }
-        />
-      </Routes>
+              }
+            />
+          ))}
+        </Routes>
+      </ErrorBoundary>
       <Toaster data-testid="toaster" />
     </div>
   );

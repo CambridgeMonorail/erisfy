@@ -20,6 +20,7 @@ import { TermsAndConditionsPage } from '../pages/terms-and-conditions/TermsAndCo
 import { ScreenerResultsPage } from '../pages/screener-results/ScreenerResults';
 import { StockDetailPage } from '../pages/stock-detail/StockDetail';
 import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelectionScreen';
+import { MarketOpportunitiesPage } from '../pages/market-opportunities/MarketOpportunities';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -43,10 +44,10 @@ const paths = {
     library: '/library',
   },
   screener: {
+    marketOpportunities: '/screener/market-opportunities', // Pfe0f
+    filterSelection: '/screener/filter-selection',
     results: '/screener/results',
     stockDetail: '/screener/stock-detail/:ticker',
-    filterSelection: '/screener/filter-selection',
-    homepage: '/screener/homepage', // Pfe0f
   },
   notFound: '*',
 };
@@ -108,7 +109,7 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Screener Results', url: paths.screener.results },
         { title: 'Stock Detail', url: paths.screener.stockDetail },
         { title: 'Filter Selection', url: paths.screener.filterSelection },
-        { title: 'Homepage', url: paths.screener.homepage }, // Pe204
+        { title: 'Market Opportunities', url: paths.screener.marketOpportunities }, // Pe204
       ],
     },
   ],
@@ -138,10 +139,10 @@ export const navigationConfig = {
       label: 'Screener',
       path: paths.screener.results,
       children: [
+        { label: 'Market Opportunities', path: paths.screener.marketOpportunities}, // Pe204
+        { label: 'Filter Selection', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
-        { label: 'Filter Selection', path: paths.screener.filterSelection },
-        { label: 'Homepage', path: paths.screener.homepage }, // Pe204
       ],
     },
     {
@@ -222,17 +223,17 @@ navigationConfig.routes = [
   createRoute(paths.components.colorPalette, ColorPalettePage),
   createRoute(paths.components.library, LibraryPage),
   createRoute(paths.contact, ContactPage),
-  createRoute(paths.dashboard, DashboardPage),
+  createRoute(paths.dashboard, MarketOpportunitiesPage), // Updated to MarketOpportunitiesPage
   createRoute(paths.faq, FAQPage),
   createRoute(paths.features, FeaturesPage),
-  createRoute(paths.home, DashboardPage),
+  createRoute(paths.home, MarketOpportunitiesPage), // Updated to MarketOpportunitiesPage
   createRoute(paths.pricing, PricingPage),
   createRoute(paths.statusBoard, StatusBoardPage),
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
   createRoute(paths.screener.results, ScreenerResultsPage),
   createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.screener.filterSelection, FilterSelectionScreen),
-  createRoute(paths.screener.homepage, DashboardPage), // Pfe0f
+  createRoute(paths.screener.marketOpportunities, MarketOpportunitiesPage), // Updated to MarketOpportunitiesPage
   createRoute(paths.notFound, NotFound, false),
 ] as Array<{ path: string; element: React.ReactElement }>;
 
