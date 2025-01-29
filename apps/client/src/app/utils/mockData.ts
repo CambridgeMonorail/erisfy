@@ -74,3 +74,13 @@ export const generateMockData = (count: number): StockData[] => {
 
   return data;
 };
+
+/**
+ * Filters the historical performance data from the first entry of the provided StockData array.
+ * @param stocks - The array of StockData.
+ * @returns The historical performance data of the first stock.
+ */
+export const getHistoricalPerformance = (stocks: StockData[]): { date: string; price: number }[] => {
+  if (stocks.length === 0) return [];
+  return stocks[0].historicalPerformance;
+};
