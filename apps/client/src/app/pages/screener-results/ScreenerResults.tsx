@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@erisfy/shadcnui';
+import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, Input } from '@erisfy/shadcnui';
 import { Pagination } from '../../components/Pagination'; // Ensure correct import
 import { StockTable } from '../../components/StockTable';
 import { StockFilters } from '../../components/StockFilters';
@@ -54,11 +54,18 @@ const ScreenerResultsPage: FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-semibold mb-2 text-primary">
-            Screener Results Page
+            Market Opportunities
           </CardTitle>
+          <div className="flex items-center space-x-4">
+            <SearchBar onSearch={handleSearch} />
+            <Input
+              type="text"
+              placeholder="Use AI to quickly build your filter!"
+              className="w-full"
+            />
+          </div>
         </CardHeader>
         <CardContent>
-          <SearchBar onSearch={handleSearch} />
           <StockFilters onChange={handleFilterChange} />
           <div className="mt-4">
             <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
