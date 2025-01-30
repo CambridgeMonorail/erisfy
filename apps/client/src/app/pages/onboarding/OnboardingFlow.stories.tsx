@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { OnboardingFlow } from './OnboardingFlow';
+import { ErisfyProBanner } from '../../components/ErisfyProBanner'; // P74ff
 
 const meta: Meta<typeof OnboardingFlow> = {
   title: 'Onboarding/OnboardingFlow',
@@ -112,3 +113,12 @@ export const RedirectToStockScreenerResults: Story = {
     progress: 100,
   },
 };
+
+/**
+ * ErisfyProBanner story for the OnboardingFlow component.
+ * This example shows the ErisfyProBanner component.
+ */
+export const ErisfyProBannerStory: Story = {
+  name: 'Erisfy Pro Banner',
+  render: () => <ErisfyProBanner />,
+}; // Pdbdf
