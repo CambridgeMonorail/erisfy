@@ -21,6 +21,7 @@ import { ScreenerResultsPage } from '../pages/screener-results/ScreenerResults';
 import { StockDetailPage } from '../pages/stock-detail/StockDetail';
 import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelectionScreen';
 import { MarketOpportunitiesPage } from '../pages/market-opportunities/MarketOpportunities';
+import { OnboardingFlow } from '../pages/onboarding/OnboardingFlow';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -44,10 +45,11 @@ const paths = {
     library: '/library',
   },
   screener: {
-    marketOpportunities: '/screener/market-opportunities', // Pfe0f
+    marketOpportunities: '/screener/market-opportunities',
     filterSelection: '/screener/filter-selection',
     results: '/screener/results',
     stockDetail: '/screener/stock-detail/:ticker',
+    onboardingFlow: '/screener/onboarding-flow', // P701d
   },
   notFound: '*',
 };
@@ -109,7 +111,8 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Screener Results', url: paths.screener.results },
         { title: 'Stock Detail', url: paths.screener.stockDetail },
         { title: 'Filter Selection', url: paths.screener.filterSelection },
-        { title: 'Market Opportunities', url: paths.screener.marketOpportunities }, // Pe204
+        { title: 'Market Opportunities', url: paths.screener.marketOpportunities },
+        { title: 'Onboarding Flow', url: paths.screener.onboardingFlow }, // P58c2
       ],
     },
   ],
@@ -139,10 +142,11 @@ export const navigationConfig = {
       label: 'Screener',
       path: paths.screener.results,
       children: [
-        { label: 'Market Opportunities', path: paths.screener.marketOpportunities}, // Pe204
+        { label: 'Market Opportunities', path: paths.screener.marketOpportunities},
         { label: 'Filter Selection', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
+        { label: 'Onboarding Flow', path: paths.screener.onboardingFlow }, // P58c2
       ],
     },
     {
@@ -234,6 +238,7 @@ navigationConfig.routes = [
   createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.screener.filterSelection, FilterSelectionScreen),
   createRoute(paths.screener.marketOpportunities, MarketOpportunitiesPage), // Updated to MarketOpportunitiesPage
+  createRoute(paths.screener.onboardingFlow, OnboardingFlow), // Pca97
   createRoute(paths.notFound, NotFound, false),
 ] as Array<{ path: string; element: React.ReactElement }>;
 

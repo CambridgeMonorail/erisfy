@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { Toaster } from '@erisfy/shadcnui';
 import { navigationConfig } from './constants/navigationConfig';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { OnboardingFlow } from './pages/onboarding/OnboardingFlow';
 
 const App: FC = () => {
   const location = useLocation();
@@ -29,6 +30,7 @@ const App: FC = () => {
               }
             />
           ))}
+          <Route path="/screener/onboarding-flow" element={<OnboardingFlow />} />
         </Routes>
       </ErrorBoundary>
       <Toaster data-testid="toaster" />
