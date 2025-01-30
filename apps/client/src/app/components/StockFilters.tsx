@@ -35,17 +35,17 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold mb-2 text-primary">
+        <CardTitle className="text-xl font-medium mb-2 text-primary">
           Filters
         </CardTitle>
-        <Button onClick={() => setIsCollapsed(!isCollapsed)}>
+        <Button className="text-sm text-muted-foreground" onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? 'Expand Filters' : 'Collapse Filters'}
         </Button>
       </CardHeader>
       {!isCollapsed && (
         <CardContent>
-          <div className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">Sector</label>
+          <div className="space-y-6">
+            <label className="block text-sm font-bold text-gray-700">Sector</label>
             <Select onValueChange={(value) => {
               setSector(value as string);
               handleFilterChange();
@@ -63,7 +63,7 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <label className="block text-sm font-medium text-gray-700">Industry</label>
+            <label className="block text-sm font-bold text-gray-700">Industry</label>
             <Select onValueChange={(value) => {
               setIndustry(value as string);
               handleFilterChange();
@@ -81,7 +81,7 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <label className="block text-sm font-medium text-gray-700">Country</label>
+            <label className="block text-sm font-bold text-gray-700">Country</label>
             <Select onValueChange={(value) => {
               setCountry(value as string);
               handleFilterChange();
@@ -137,7 +137,7 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
+              <h3 className="text-lg font-medium mb-2">Selected Filters</h3>
               <ul className="list-disc list-inside">
                 {selectedFilters.map((filter) => (
                   <li key={filter}>
