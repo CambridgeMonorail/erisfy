@@ -130,7 +130,7 @@ This panel should be accessible from an option in the top-level "Stock Screener"
 
 ---
 
-### **5. Onboarding Flow** (Stock Screener Section)
+### **5. Smart Start** (Stock Screener Section)
 
 This flow should be initiated from the top-level "Stock Screener" drop-down menu.
 

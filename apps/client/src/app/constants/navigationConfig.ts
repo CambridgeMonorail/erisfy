@@ -1,6 +1,12 @@
 import { createElement } from 'react';
 import { SidebarConfiguration } from '../types/sidebarTypes';
-import { Swords, AudioWaveform, SquareTerminal, Bot, Landmark } from 'lucide-react';
+import {
+  Swords,
+  AudioWaveform,
+  SquareTerminal,
+  Bot,
+  Landmark,
+} from 'lucide-react';
 import { Logo } from '@erisfy/shadcnui-blocks';
 
 import { LandingPage } from '../pages/landing/Landing';
@@ -111,8 +117,11 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Screener Results', url: paths.screener.results },
         { title: 'Stock Detail', url: paths.screener.stockDetail },
         { title: 'Filter Selection', url: paths.screener.filterSelection },
-        { title: 'Market Opportunities', url: paths.screener.marketOpportunities },
-        { title: 'Onboarding Flow', url: paths.screener.onboardingFlow }, // P58c2
+        {
+          title: 'Market Opportunities',
+          url: paths.screener.marketOpportunities,
+        },
+        { title: 'Smart Start', url: paths.screener.onboardingFlow }, // P58c2
       ],
     },
   ],
@@ -142,11 +151,14 @@ export const navigationConfig = {
       label: 'Screener',
       path: paths.screener.results,
       children: [
-        { label: 'Market Opportunities', path: paths.screener.marketOpportunities},
+        { label: 'Smart Start', path: paths.screener.onboardingFlow }, // P58c2
+        {
+          label: 'Market Opportunities',
+          path: paths.screener.marketOpportunities,
+        },
         { label: 'Filter Selection', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
-        { label: 'Onboarding Flow', path: paths.screener.onboardingFlow }, // P58c2
       ],
     },
     {
@@ -195,24 +207,24 @@ const createRoute = (
   menuItems: MenuItem[] = navigationConfig.menuItems,
   mode = navigationConfig.mode,
   title = 'ERISFY',
-  LogoIcon: React.ComponentType = Landmark
+  LogoIcon: React.ComponentType = Landmark,
 ) => {
   return useLayout
     ? {
-      path,
-      element: createElement(MenubarLayout, {
-        menuItems,
-        mode,
-        title,
-        logoIcon: createElement(Logo, {
-          fill: 'currentColor',
-          height: '24px',
-          name: 'erisfy',
-          width: '24px',
+        path,
+        element: createElement(MenubarLayout, {
+          menuItems,
+          mode,
+          title,
+          logoIcon: createElement(Logo, {
+            fill: 'currentColor',
+            height: '24px',
+            name: 'erisfy',
+            width: '24px',
+          }),
+          children: createElement(component),
         }),
-        children: createElement(component),
-      }),
-    }
+      }
     : { path, element: createElement(component) };
 };
 
