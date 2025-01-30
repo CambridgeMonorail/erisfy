@@ -1,8 +1,7 @@
-import { TrailIndicator } from './trail-indicator';
-
+import { ValueTrail } from './ValueTrail';
 import { MetricDisplay } from './metric-display';
 import { Card, CardContent, cn } from '@erisfy/shadcnui';
-import {PerformanceChangeMarker} from './PerformanceChangeMarker';
+import { PerformanceChangeMarker } from './PerformanceChangeMarker';
 
 interface StockQuoteProps {
   symbol: string;
@@ -33,6 +32,9 @@ export function StockQuote({
   change,
   metrics,
 }: StockQuoteProps) {
+  // Clamp values between 0 and 100
+  const clampValue = (value: number) => Math.max(0, Math.min(value, 100));
+
   return (
     <Card className="w-full ">
       <CardContent className="p-6">
@@ -64,41 +66,24 @@ export function StockQuote({
           <div className="px-6">
             <h3 className="text-sm font-medium mb-4">Changes over time</h3>
             <div className="flex justify-between gap-4">
-              <PerformanceChangeMarker
-                oldValue={30}
-                newValue={70}
-                minValue={0}
-                maxValue={100}
-                orientation="vertical"
-              />
-
-              <TrailIndicator
-                currentValue={metrics.dayChange}
-                previousValue={0}
-                max={5}
-                min={-5}
-                color="bg-sky-400"
-                label="Day Change"
-                value={`${metrics.dayChange}%`}
-              />
-              <TrailIndicator
-                currentValue={metrics.monthChange}
-                previousValue={0}
-                max={10}
-                min={-10}
-                color="bg-sky-400"
-                label="Month Change"
-                value={`${metrics.monthChange}%`}
-              />
-              <TrailIndicator
-                currentValue={metrics.yearChange}
-                previousValue={0}
-                max={20}
-                min={-20}
-                color="bg-sky-400"
-                label="52 W Change"
-                value={`${metrics.yearChange}%`}
-              />
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={10}
+                  newValue={clampValue(metrics.dayChange)}
+                />
+              </div>
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={20}
+                  newValue={clampValue(metrics.monthChange)}
+                />
+              </div>
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={30}
+                  newValue={clampValue(metrics.yearChange)}
+                />
+              </div>
             </div>
           </div>
 
@@ -106,42 +91,30 @@ export function StockQuote({
           <div className="px-6">
             <h3 className="text-sm font-medium mb-4">Technical Indicators</h3>
             <div className="flex justify-between gap-2">
-              <TrailIndicator
-                currentValue={metrics.bollingerBands}
-                previousValue={metrics.bollingerBands - 1}
-                max={30}
-                min={0}
-                color="bg-sky-400"
-                label="Bollinger Bands"
-                value={metrics.bollingerBands.toString()}
-              />
-              <TrailIndicator
-                currentValue={metrics.psar}
-                previousValue={metrics.psar - 0.5}
-                max={2}
-                min={0}
-                color="bg-sky-400"
-                label="PSAR"
-                value={metrics.psar.toString()}
-              />
-              <TrailIndicator
-                currentValue={metrics.slowStochastic}
-                previousValue={metrics.slowStochastic - 2}
-                max={10}
-                min={0}
-                color="bg-sky-400"
-                label="Slow Stochastic"
-                value={metrics.slowStochastic.toString()}
-              />
-              <TrailIndicator
-                currentValue={metrics.fastStochastic}
-                previousValue={metrics.fastStochastic - 1}
-                max={20}
-                min={0}
-                color="bg-sky-400"
-                label="Fast Stochastic"
-                value={metrics.fastStochastic.toString()}
-              />
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={clampValue(metrics.bollingerBands - 1)}
+                  newValue={clampValue(metrics.bollingerBands)}
+                />
+              </div>
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={clampValue(metrics.psar - 0.5)}
+                  newValue={clampValue(metrics.psar)}
+                />
+              </div>
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={clampValue(metrics.slowStochastic - 2)}
+                  newValue={clampValue(metrics.slowStochastic)}
+                />
+              </div>
+              <div className="flex flex-col">
+                <ValueTrail
+                  oldValue={clampValue(metrics.fastStochastic - 1)}
+                  newValue={clampValue(metrics.fastStochastic)}
+                />
+              </div>
             </div>
           </div>
 

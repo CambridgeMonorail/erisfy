@@ -40,6 +40,7 @@ export const ValueTrail: FC<ValueTrailProps> = ({
 
   // Depending on direction, use a top->bottom or bottom->top gradient
   const gradientDirection = goingUp ? 'bg-gradient-to-b' : 'bg-gradient-to-t';
+  const gradientColors = goingUp ? 'from-primary to-transparent' : 'from-destructive to-transparent';
 
   // Container classes: pill shape, vertical orientation
   const containerClasses = clsx(
@@ -61,7 +62,7 @@ export const ValueTrail: FC<ValueTrailProps> = ({
         className={clsx(
           'absolute left-0 right-0 rounded-full overflow-hidden', 
           gradientDirection,
-          'from-primary to-transparent'
+          gradientColors
         )}
         style={{
           // Position the trail from "minVal%" down to "maxVal%"
