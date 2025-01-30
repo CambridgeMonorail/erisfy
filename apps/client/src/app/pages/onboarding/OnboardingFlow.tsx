@@ -2,18 +2,34 @@ import { FC, useState, useEffect } from 'react';
 import { Button, Card, CardContent, CardHeader, CardTitle, Progress, Carousel } from '@erisfy/shadcnui';
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
-import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@erisfy/shadcnui';
+import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from '@erisfy/shadcnui';
 
 const OnboardingFlow: FC = () => {
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (step === 4) {
       navigate('/screener/results');
     }
   }, [step, navigate]);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
 
   const handleNextStep = () => {
     setStep(step + 1);
@@ -67,8 +83,8 @@ const OnboardingFlow: FC = () => {
                   {welcomeContent.cta}
                 </Button>
               </div>
-              <div className="carousel-section mt-8">
-                <Carousel>
+              <div className="carousel-section mt-8 flex flex-col items-center">
+                <Carousel setApi={setApi} className="w-full max-w-xs">
                   <CarouselContent>
                     <CarouselItem>Benefit 1: Filtering stocks</CarouselItem>
                     <CarouselItem>Benefit 2: AI-powered insights</CarouselItem>
@@ -77,6 +93,9 @@ const OnboardingFlow: FC = () => {
                   <CarouselPrevious />
                   <CarouselNext />
                 </Carousel>
+                <div className="py-2 text-center text-sm text-muted-foreground">
+                  {current} of {count}
+                </div>
               </div>
             </div>
           )}
