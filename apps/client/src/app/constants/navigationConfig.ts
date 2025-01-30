@@ -112,7 +112,7 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Stock Detail', url: paths.screener.stockDetail },
         { title: 'Filter Selection', url: paths.screener.filterSelection },
         { title: 'Market Opportunities', url: paths.screener.marketOpportunities },
-        { title: 'Onboarding Flow', url: paths.screener.onboardingFlow }, // P58c2
+        { title: 'Smart Start', url: paths.screener.onboardingFlow }, // P58c2
       ],
     },
   ],
@@ -146,7 +146,7 @@ export const navigationConfig = {
         { label: 'Filter Selection', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
-        { label: 'Onboarding Flow', path: paths.screener.onboardingFlow }, // P58c2
+        { label: 'Smart Start', path: paths.screener.onboardingFlow }, // P58c2
       ],
     },
     {

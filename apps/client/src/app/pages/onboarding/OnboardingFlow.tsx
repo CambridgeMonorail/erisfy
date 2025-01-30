@@ -43,7 +43,7 @@ const OnboardingFlow: FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-semibold mb-2 text-primary">
-            Onboarding Flow
+            Smart Start
           </CardTitle>
         </CardHeader>
         <CardContent>

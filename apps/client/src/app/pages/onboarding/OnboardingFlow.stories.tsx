@@ -9,12 +9,12 @@ const meta: Meta<typeof OnboardingFlow> = {
     step: {
       name: 'Step',
       control: 'number',
-      description: 'The current step in the onboarding flow',
+      description: 'The current step in the Smart Start',
     },
     progress: {
       name: 'Progress',
       control: 'number',
-      description: 'The progress of the onboarding flow',
+      description: 'The progress of the Smart Start',
     },
   },
 };
@@ -24,7 +24,7 @@ type Story = StoryObj<typeof OnboardingFlow>;
 
 /**
  * Default story for the OnboardingFlow component.
- * This example shows the onboarding flow starting from the welcome screen.
+ * This example shows the Smart Start starting from the welcome screen.
  */
 export const Default: Story = {
   name: 'Default',
@@ -37,7 +37,7 @@ export const Default: Story = {
 
 /**
  * WelcomeScreen story for the OnboardingFlow component.
- * This example shows the onboarding flow at the welcome screen stage.
+ * This example shows the Smart Start at the welcome screen stage.
  */
 export const WelcomeScreen: Story = {
   name: 'Welcome Screen',
@@ -50,7 +50,7 @@ export const WelcomeScreen: Story = {
 
 /**
  * SelectInvestmentStyle story for the OnboardingFlow component.
- * This example shows the onboarding flow at the select investment style stage.
+ * This example shows the Smart Start at the select investment style stage.
  */
 export const SelectInvestmentStyle: Story = {
   name: 'Select Investment Style',
@@ -63,7 +63,7 @@ export const SelectInvestmentStyle: Story = {
 
 /**
  * SetRiskTolerance story for the OnboardingFlow component.
- * This example shows the onboarding flow at the set risk tolerance stage.
+ * This example shows the Smart Start at the set risk tolerance stage.
  */
 export const SetRiskTolerance: Story = {
   name: 'Set Risk Tolerance',
@@ -76,7 +76,7 @@ export const SetRiskTolerance: Story = {
 
 /**
  * SetPreferences story for the OnboardingFlow component.
- * This example shows the onboarding flow at the set preferences stage.
+ * This example shows the Smart Start at the set preferences stage.
  */
 export const SetPreferences: Story = {
   name: 'Set Preferences',
@@ -89,7 +89,7 @@ export const SetPreferences: Story = {
 
 /**
  * ReviewAndConfirm story for the OnboardingFlow component.
- * This example shows the onboarding flow at the review and confirm stage.
+ * This example shows the Smart Start at the review and confirm stage.
  */
 export const ReviewAndConfirm: Story = {
   name: 'Review & Confirm',
@@ -102,7 +102,7 @@ export const ReviewAndConfirm: Story = {
 
 /**
  * RedirectToStockScreenerResults story for the OnboardingFlow component.
- * This example shows the onboarding flow at the redirect to stock screener results stage.
+ * This example shows the Smart Start at the redirect to stock screener results stage.
  */
 export const RedirectToStockScreenerResults: Story = {
   name: 'Redirect to Stock Screener Results',
