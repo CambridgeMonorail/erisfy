@@ -4,7 +4,6 @@ import React, { FC, Fragment } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@erisfy/shadcnui";
 
-
 type Step = {
   title: string;
   description: string;
@@ -15,15 +14,18 @@ type StepperProps = {
   currentStep?: number;
   className?: string;
   steps: Step[];
+  onStepClick?: (stepIndex: number) => void;
 };
 
-const StepIcon: FC<{ step: Step; isActive: boolean; isCompleted: boolean }> = ({ step, isActive, isCompleted }) => (
+const StepIcon: FC<{ step: Step; isActive: boolean; isCompleted: boolean; onClick: () => void; className?: string }> = ({ step, isActive, isCompleted, onClick, className }) => (
   <div
     className={cn(
       "relative flex h-10 w-10 items-center justify-center rounded-full border-2 bg-background",
-      isCompleted ? "border-primary" : isActive ? "border-primary" : "border-muted-foreground/20"
+      isCompleted ? "border-primary" : isActive ? "border-primary" : "border-muted-foreground/20",
+      className
     )}
     aria-current={isActive ? "step" : undefined}
+    onClick={onClick}
   >
     {isCompleted ? (
       <Check className="h-5 w-5 text-primary" />
@@ -42,7 +44,7 @@ const StepLabel: FC<{ step: Step; isActive: boolean }> = ({ step, isActive }) =>
   </div>
 );
 
-export const Stepper: FC<StepperProps> = ({ currentStep = 1, className, steps }) => {
+export const Stepper: FC<StepperProps> = ({ currentStep = 1, className, steps, onStepClick }) => {
   return (
     <div className={cn("w-full", className)}>
       <div className="flex w-full items-center justify-between">
@@ -53,7 +55,7 @@ export const Stepper: FC<StepperProps> = ({ currentStep = 1, className, steps })
           return (
             <Fragment key={step.title}>
               <div className="flex flex-col items-center gap-2">
-                <StepIcon step={step} isActive={isActive} isCompleted={isCompleted} />
+                <StepIcon step={step} isActive={isActive} isCompleted={isCompleted} onClick={() => onStepClick?.(index + 1)} />
                 <StepLabel step={step} isActive={isActive} />
               </div>
               {index < steps.length - 1 && (

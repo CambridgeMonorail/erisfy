@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Button, Card, CardContent, CardHeader, CardTitle, Tooltip, TooltipTrigger, TooltipContent, Progress, Carousel } from '@erisfy/shadcnui';
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
@@ -8,23 +8,27 @@ const OnboardingFlow: FC = () => {
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (step === 4) {
+      navigate('/screener/results');
+    }
+  }, [step, navigate]);
+
   const handleNextStep = () => {
     setStep(step + 1);
-    setProgress((step + 1) * 20);
+    setProgress((step + 1) * 25);
   };
 
   const handlePreviousStep = () => {
     setStep(step - 1);
-    setProgress((step - 1) * 20);
+    setProgress((step - 1) * 25);
   };
 
   const steps = [
     { title: 'Welcome Screen', description: 'Introduction to Erisfy', icon: () => <span>1</span> },
     { title: 'Select Investment Style', description: 'Choose your style', icon: () => <span>2</span> },
     { title: 'Set Risk Tolerance', description: 'Select your risk level', icon: () => <span>3</span> },
-    { title: 'Set Preferences', description: 'Toggle key settings', icon: () => <span>4</span> },
-    { title: 'Review & Confirm', description: 'Summary of choices', icon: () => <span>5</span> },
-    { title: 'Redirect to Stock Screener Results', description: 'Go to results', icon: () => <span>6</span> },
+    { title: 'Redirect to Stock Screener Results', description: 'Go to results', icon: () => <span>4</span> },
   ];
 
   const welcomeContent = {
@@ -46,8 +50,8 @@ const OnboardingFlow: FC = () => {
             Smart Start
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Stepper currentStep={step} steps={steps} />
+        <CardContent >
+          <Stepper className='pt-8 mt-8' currentStep={step} steps={steps} onStepClick={setStep} />
           {step === 1 && (
             <div>
               <div className="hero-section">
@@ -89,25 +93,8 @@ const OnboardingFlow: FC = () => {
           )}
           {step === 4 && (
             <div>
-              <h2 className="text-2xl font-bold mb-4">Set Preferences</h2>
-              <p className="mb-4">Toggle key settings.</p>
-              <Button onClick={handlePreviousStep}>Previous</Button>
-              <Button onClick={handleNextStep}>Next</Button>
-            </div>
-          )}
-          {step === 5 && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Review & Confirm</h2>
-              <p className="mb-4">Summary of your choices.</p>
-              <Button onClick={handlePreviousStep}>Previous</Button>
-              <Button onClick={handleNextStep}>Go to Screener</Button>
-            </div>
-          )}
-          {step === 6 && (
-            <div>
               <h2 className="text-2xl font-bold mb-4">Redirecting to Stock Screener Results</h2>
               <p className="mb-4">You will be redirected shortly.</p>
-              {navigate('/screener/results')}
             </div>
           )}
           <Progress value={progress} className="mt-4" />
