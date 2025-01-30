@@ -88,7 +88,7 @@ jobs:
       # Upload artifact for deployment
       - name: Upload to GitHub Pages artifact
         if: env.AUTHOR_NAME != 'Monorail Updater'
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist/apps/client # Path to your build output
 
@@ -103,4 +103,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         if: env.AUTHOR_NAME != 'Monorail Updater'
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
