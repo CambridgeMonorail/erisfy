@@ -57,7 +57,7 @@ export const SelectInvestmentStyle: Story = {
   render: (args) => <OnboardingFlow {...args} />,
   args: {
     step: 2,
-    progress: 20,
+    progress: 25,
   },
 };
 
@@ -70,7 +70,7 @@ export const SetRiskTolerance: Story = {
   render: (args) => <OnboardingFlow {...args} />,
   args: {
     step: 3,
-    progress: 40,
+    progress: 50,
   },
 };
 
@@ -83,7 +83,7 @@ export const SetPreferences: Story = {
   render: (args) => <OnboardingFlow {...args} />,
   args: {
     step: 4,
-    progress: 60,
+    progress: 75,
   },
 };
 
@@ -96,7 +96,7 @@ export const ReviewAndConfirm: Story = {
   render: (args) => <OnboardingFlow {...args} />,
   args: {
     step: 5,
-    progress: 80,
+    progress: 100,
   },
 };
 

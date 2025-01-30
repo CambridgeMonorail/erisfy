@@ -3,7 +3,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Progress, Carousel } 
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
 import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from '@erisfy/shadcnui';
-import { Filter, BrainCircuit, SlidersHorizontal, Activity, BarChart } from 'lucide-react';
+import { Filter, BrainCircuit, SlidersHorizontal, Activity, BarChart, TrendingUp, Tag, DollarSign, Rocket, Scale, User } from 'lucide-react';
 
 const OnboardingFlow: FC = () => {
   const [step, setStep] = useState(1);
@@ -59,6 +59,66 @@ const OnboardingFlow: FC = () => {
     ],
     cta: "Get Started →"
   };
+
+  const investmentStyles = [
+    {
+      title: 'Growth Investor',
+      description: 'For those seeking high-growth stocks with strong future potential.',
+      criteria: [
+        'High revenue and earnings growth',
+        'Strong price momentum',
+        'High P/E ratios'
+      ],
+      icon: <TrendingUp className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'Value Investor',
+      description: 'For those who prefer to invest in undervalued stocks with strong fundamentals.',
+      criteria: [
+        'Low P/E and P/B ratios',
+        'Solid balance sheet',
+        'High dividend yield'
+      ],
+      icon: <Tag className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'Dividend Investor',
+      description: 'For those looking for steady income through high-dividend-paying stocks.',
+      criteria: [
+        'High dividend yield',
+        'Stable earnings',
+        'Strong payout ratio'
+      ],
+      icon: <DollarSign className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'Momentum Trader',
+      description: 'For those who trade based on stock price trends and technical indicators.',
+      criteria: [
+        'High RSI',
+        'Moving average breakouts',
+        'Recent strong price performance'
+      ],
+      icon: <Rocket className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'Balanced Portfolio',
+      description: 'For those who want a diversified approach combining value, growth, and income.',
+      criteria: [
+        'Mix of growth, value, and dividend stocks',
+        'Risk-adjusted returns'
+      ],
+      icon: <Scale className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'I Know What I’m Doing (Experienced Investor)',
+      description: 'Skip guidance and go straight to the full feature set.',
+      criteria: [
+        'Direct access to all filters and customization tools'
+      ],
+      icon: <User className="w-12 h-12 mb-4 text-primary" />
+    }
+  ];
 
   return (
     <div className="p-6 m-4 space-y-6 container mx-auto bg-background text-foreground">
@@ -135,9 +195,28 @@ const OnboardingFlow: FC = () => {
           {step === 2 && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Select Investment Style</h2>
-              <p className="mb-4">Choose your investment style.</p>
-              <Button onClick={handlePreviousStep}>Previous</Button>
-              <Button onClick={handleNextStep}>Next</Button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {investmentStyles.map((style, index) => (
+                  <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader className="flex flex-col items-center">
+                      {style.icon}
+                      <CardTitle className="text-xl font-semibold mb-2">{style.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-center mb-4">{style.description}</p>
+                      <ul className="list-disc list-inside">
+                        {style.criteria.map((criterion, idx) => (
+                          <li key={idx}>{criterion}</li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <div className="flex justify-between mt-8">
+                <Button onClick={handlePreviousStep}>Previous</Button>
+                <Button onClick={handleNextStep}>Next</Button>
+              </div>
             </div>
           )}
           {step === 3 && (
