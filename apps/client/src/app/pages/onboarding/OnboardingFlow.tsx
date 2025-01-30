@@ -51,7 +51,7 @@ const OnboardingFlow: FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent >
-          <Stepper className='pt-8 mt-8' currentStep={step} steps={steps} onStepClick={setStep} />
+          <Stepper className='mb-8' currentStep={step} steps={steps} onStepClick={setStep} />
           {step === 1 && (
             <div>
               <div className="hero-section">
