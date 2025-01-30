@@ -3,6 +3,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Progress, Carousel } 
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
 import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from '@erisfy/shadcnui';
+import { Filter, BrainCircuit, SlidersHorizontal, Activity, BarChart } from 'lucide-react';
 
 const OnboardingFlow: FC = () => {
   const [step, setStep] = useState(1);
@@ -86,9 +87,41 @@ const OnboardingFlow: FC = () => {
               <div className="carousel-section mt-8 flex flex-col items-center">
                 <Carousel setApi={setApi} className="w-full max-w-xs">
                   <CarouselContent>
-                    <CarouselItem>Benefit 1: Filtering stocks</CarouselItem>
-                    <CarouselItem>Benefit 2: AI-powered insights</CarouselItem>
-                    <CarouselItem>Benefit 3: Personalized experience</CarouselItem>
+                    <CarouselItem>
+                      <div className="flex flex-col items-center">
+                        <Filter className="w-12 h-12 mb-4 text-primary" />
+                        <h3 className="text-xl font-semibold mb-2">Smarter Stock Filtering</h3>
+                        <p className="text-center">Find the right stocks—faster. Tired of sifting through endless tickers? Erisfy’s advanced filtering system helps you discover stocks that match your strategy in seconds. Whether you're a growth investor, a value seeker, or a momentum trader, our powerful filters make stock discovery effortless.</p>
+                      </div>
+                    </CarouselItem>
+                    <CarouselItem>
+                      <div className="flex flex-col items-center">
+                        <BrainCircuit className="w-12 h-12 mb-4 text-primary" />
+                        <h3 className="text-xl font-semibold mb-2">AI-Powered Insights</h3>
+                        <p className="text-center">Let AI do the heavy lifting. Stop guessing—Erisfy’s AI-driven analytics scan the market in real time, delivering trend analysis, risk signals, and strategic insights tailored to your investment style. Stay ahead of market movements with cutting-edge AI recommendations.</p>
+                      </div>
+                    </CarouselItem>
+                    <CarouselItem>
+                      <div className="flex flex-col items-center">
+                        <SlidersHorizontal className="w-12 h-12 mb-4 text-primary" />
+                        <h3 className="text-xl font-semibold mb-2">A Personalized Investing Experience</h3>
+                        <p className="text-center">Your strategy, your way. Investing isn’t one-size-fits-all. Erisfy adapts to your goals, whether you’re optimizing for long-term growth, dividends, or short-term trading opportunities. Save custom filters, track watchlists, and receive tailored updates—all in a beautifully intuitive interface.</p>
+                      </div>
+                    </CarouselItem>
+                    <CarouselItem>
+                      <div className="flex flex-col items-center">
+                        <Activity className="w-12 h-12 mb-4 text-primary" />
+                        <h3 className="text-xl font-semibold mb-2">Real-time Market Data</h3>
+                        <p className="text-center">Stay updated with real-time market data. Erisfy provides you with the latest market information, ensuring you make informed decisions based on the most current data available.</p>
+                      </div>
+                    </CarouselItem>
+                    <CarouselItem>
+                      <div className="flex flex-col items-center">
+                        <BarChart className="w-12 h-12 mb-4 text-primary" />
+                        <h3 className="text-xl font-semibold mb-2">Comprehensive Stock Analysis</h3>
+                        <p className="text-center">Get a complete view of your stocks. Erisfy’s comprehensive stock analysis tools provide you with detailed insights into each stock’s performance, helping you make well-informed investment decisions.</p>
+                      </div>
+                    </CarouselItem>
                   </CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
