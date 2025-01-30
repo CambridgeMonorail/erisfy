@@ -3,7 +3,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Progress, Carousel } 
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
 import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from '@erisfy/shadcnui';
-import { Filter, BrainCircuit, SlidersHorizontal, Activity, BarChart, TrendingUp, Tag, DollarSign, Rocket, Scale, User } from 'lucide-react';
+import { Filter, BrainCircuit, SlidersHorizontal, Activity, BarChart, TrendingUp, Tag, DollarSign, Rocket, Scale, User, Shield } from 'lucide-react';
 
 const OnboardingFlow: FC = () => {
   const [step, setStep] = useState(1);
@@ -14,7 +14,7 @@ const OnboardingFlow: FC = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (step === 4) {
+    if (step === 5) {
       navigate('/screener/results');
     }
   }, [step, navigate]);
@@ -34,19 +34,20 @@ const OnboardingFlow: FC = () => {
 
   const handleNextStep = () => {
     setStep(step + 1);
-    setProgress((step + 1) * 25);
+    setProgress((step + 1) * 20);
   };
 
   const handlePreviousStep = () => {
     setStep(step - 1);
-    setProgress((step - 1) * 25);
+    setProgress((step - 1) * 20);
   };
 
   const steps = [
     { title: 'Welcome', description: 'Introduction to Erisfy', icon: () => <span>1</span> },
     { title: 'Investment Style', description: 'Choose your style', icon: () => <span>2</span> },
     { title: 'Risk Tolerance', description: 'Select your risk level', icon: () => <span>3</span> },
-    { title: 'Start Screening', description: 'Go to results', icon: () => <span>4</span> },
+    { title: 'Preferences', description: 'Set your preferences', icon: () => <span>4</span> },
+    { title: 'Start Screening', description: 'Go to results', icon: () => <span>5</span> },
   ];
 
   const welcomeContent = {
@@ -117,6 +118,48 @@ const OnboardingFlow: FC = () => {
         'Direct access to all filters and customization tools'
       ],
       icon: <User className="w-12 h-12 mb-4 text-primary" />
+    }
+  ];
+
+  const riskTolerances = [
+    {
+      title: 'Conservative Investor (Low Risk)',
+      description: 'Prioritizing stability over high returns.',
+      criteria: [
+        'Focus on low-volatility stocks',
+        'Preference for dividend-paying & blue-chip companies',
+        'Avoids highly speculative investments'
+      ],
+      icon: <Shield className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'Moderate Investor (Medium Risk)',
+      description: 'Balancing growth potential with risk management.',
+      criteria: [
+        'Invests in a mix of stable and growth-oriented stocks',
+        'Accepts some volatility for better returns',
+        'Diversified portfolio with moderate risk exposure'
+      ],
+      icon: <Scale className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'Aggressive Investor (High Risk)',
+      description: 'Seeking high returns with higher market exposure.',
+      criteria: [
+        'Comfortable with market fluctuations & volatility',
+        'Invests in growth stocks, emerging markets, and high-risk sectors',
+        'Willing to accept short-term losses for long-term gains'
+      ],
+      icon: <Rocket className="w-12 h-12 mb-4 text-primary" />
+    },
+    {
+      title: 'I Know What I’m Doing (Custom Risk Level)',
+      description: 'Skip guidance and manually configure risk settings.',
+      criteria: [
+        'Direct access to full customization of risk parameters',
+        'Ability to fine-tune portfolio strategy without pre-set options'
+      ],
+      icon: <SlidersHorizontal className="w-12 h-12 mb-4 text-primary" />
     }
   ];
 
@@ -222,12 +265,39 @@ const OnboardingFlow: FC = () => {
           {step === 3 && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Set Risk Tolerance</h2>
-              <p className="mb-4">Select your risk preference.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {riskTolerances.map((tolerance, index) => (
+                  <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader className="flex flex-col items-center">
+                      {tolerance.icon}
+                      <CardTitle className="text-xl font-semibold mb-2">{tolerance.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-center mb-4">{tolerance.description}</p>
+                      <ul className="list-disc list-inside">
+                        {tolerance.criteria.map((criterion, idx) => (
+                          <li key={idx}>{criterion}</li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <div className="flex justify-between mt-8">
+                <Button onClick={handlePreviousStep}>Previous</Button>
+                <Button onClick={handleNextStep}>Next</Button>
+              </div>
+            </div>
+          )}
+          {step === 4 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Set Preferences</h2>
+              <p className="mb-4">Customize your investment preferences.</p>
               <Button onClick={handlePreviousStep}>Previous</Button>
               <Button onClick={handleNextStep}>Next</Button>
             </div>
           )}
-          {step === 4 && (
+          {step === 5 && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Redirecting to Stock Screener Results</h2>
               <p className="mb-4">You will be redirected shortly.</p>
