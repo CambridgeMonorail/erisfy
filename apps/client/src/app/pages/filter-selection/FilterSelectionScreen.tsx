@@ -36,14 +36,14 @@ const FilterSelectionScreen: FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-semibold mb-2 text-primary">
-              Filter Selection
+              Smart Stock Screener
             </CardTitle>
           </CardHeader>
           <CardContent>
             <SearchBar onSearch={handleSearch} />
             <Tabs defaultValue="fundamentals">
               <TabsList>
-                <TabsTrigger value="fundamentals">Fundamentals</TabsTrigger>
+                <TabsTrigger value="fundamentals" className="active-tab">Fundamentals</TabsTrigger>
                 <TabsTrigger value="technicals">Technicals</TabsTrigger>
                 <TabsTrigger value="ownership">Ownership</TabsTrigger>
                 <TabsTrigger value="performance">Performance</TabsTrigger>
