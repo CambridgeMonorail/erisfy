@@ -66,19 +66,22 @@ export function StockQuote({
           <div className="px-6">
             <h3 className="text-sm font-medium mb-4">Changes over time</h3>
             <div className="flex justify-between gap-4">
-              <div className="flex flex-col">
+              <div className="flex flex-col w-[60px]">
+                <div className="text-xs text-muted-foreground">Day Change</div>
                 <ValueTrail
                   oldValue={10}
                   newValue={clampValue(metrics.dayChange)}
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col w-[60px]">
+              <div className="text-xs text-muted-foreground">Day Change</div>
                 <ValueTrail
                   oldValue={20}
                   newValue={clampValue(metrics.monthChange)}
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col w-[60px]">
+              <div className="text-xs text-muted-foreground">Day Change</div>
                 <ValueTrail
                   oldValue={30}
                   newValue={clampValue(metrics.yearChange)}
