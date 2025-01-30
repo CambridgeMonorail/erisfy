@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Slider, Card, CardHeader, CardTitle, CardContent, Button, Tooltip, TooltipTrigger, TooltipContent } from '@erisfy/shadcnui';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Slider, Card, CardHeader, CardTitle, CardContent, Button, Tooltip, TooltipTrigger, TooltipContent, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@erisfy/shadcnui';
 
 interface StockFiltersProps {
   onChange: (filters: any) => void;
@@ -99,32 +99,43 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <div>
-              <label>Market Cap</label>
-              <Slider
-                value={marketCap}
-                onValueChange={(value) => {
-                  setMarketCap(value as [number, number]);
-                  handleFilterChange();
-                }}
-                min={0}
-                max={1000000}
-                step={10000}
-              />
-            </div>
-            <div>
-              <label>Price Range</label>
-              <Slider
-                value={priceRange}
-                onValueChange={(value) => {
-                  setPriceRange(value as [number, number]);
-                  handleFilterChange();
-                }}
-                min={0}
-                max={1000}
-                step={10}
-              />
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>More Filters</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <div>
+                    <label>Market Cap</label>
+                    <Slider
+                      value={marketCap}
+                      onValueChange={(value) => {
+                        setMarketCap(value as [number, number]);
+                        handleFilterChange();
+                      }}
+                      min={0}
+                      max={1000000}
+                      step={10000}
+                    />
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <div>
+                    <label>Price Range</label>
+                    <Slider
+                      value={priceRange}
+                      onValueChange={(value) => {
+                        setPriceRange(value as [number, number]);
+                        handleFilterChange();
+                      }}
+                      min={0}
+                      max={1000}
+                      step={10}
+                    />
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="mt-4">
               <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
               <ul className="list-disc list-inside">
