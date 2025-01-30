@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import { Button, Card, CardContent, CardHeader, CardTitle, Tooltip, TooltipTrigger, TooltipContent, Progress, Carousel } from '@erisfy/shadcnui';
+import { Button, Card, CardContent, CardHeader, CardTitle, Progress, Carousel } from '@erisfy/shadcnui';
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
 
