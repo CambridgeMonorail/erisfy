@@ -1,33 +1,38 @@
+import { TrailIndicator } from './trail-indicator';
 
-
-import { TrailIndicator } from "./trail-indicator"
-
-import { MetricDisplay } from "./metric-display"
-import { Card, CardContent, cn } from "@erisfy/shadcnui"
+import { MetricDisplay } from './metric-display';
+import { Card, CardContent, cn } from '@erisfy/shadcnui';
+import {PerformanceChangeMarker} from './PerformanceChangeMarker';
 
 interface StockQuoteProps {
-  symbol: string
-  name: string
-  price: number
-  change: number
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
   metrics: {
-    dayChange: number
-    monthChange: number
-    yearChange: number
-    bollingerBands: number
-    psar: number
-    slowStochastic: number
-    fastStochastic: number
-    volume: number
-    askBidSpread: number
-    marketCap: number
-    pe: number
-    divYield: number
-    beta: number
-  }
+    dayChange: number;
+    monthChange: number;
+    yearChange: number;
+    bollingerBands: number;
+    psar: number;
+    slowStochastic: number;
+    fastStochastic: number;
+    volume: number;
+    askBidSpread: number;
+    marketCap: number;
+    pe: number;
+    divYield: number;
+    beta: number;
+  };
 }
 
-export function StockQuote({ symbol, name, price, change, metrics }: StockQuoteProps) {
+export function StockQuote({
+  symbol,
+  name,
+  price,
+  change,
+  metrics,
+}: StockQuoteProps) {
   return (
     <Card className="w-full ">
       <CardContent className="p-6">
@@ -42,8 +47,13 @@ export function StockQuote({ symbol, name, price, change, metrics }: StockQuoteP
               </div>
               <div className="bg-[#f5f0e8] rounded-lg p-4">
                 <div className="text-2xl font-bold">${price.toFixed(2)}</div>
-                <div className={cn("text-lg", change >= 0 ? "text-green-600" : "text-red-600")}>
-                  ${change >= 0 ? "+" : ""}
+                <div
+                  className={cn(
+                    'text-lg',
+                    change >= 0 ? 'text-green-600' : 'text-red-600',
+                  )}
+                >
+                  ${change >= 0 ? '+' : ''}
                   {change.toFixed(2)}
                 </div>
               </div>
@@ -54,6 +64,14 @@ export function StockQuote({ symbol, name, price, change, metrics }: StockQuoteP
           <div className="px-6">
             <h3 className="text-sm font-medium mb-4">Changes over time</h3>
             <div className="flex justify-between gap-4">
+              <PerformanceChangeMarker
+                oldValue={30}
+                newValue={70}
+                minValue={0}
+                maxValue={100}
+                orientation="vertical"
+              />
+
               <TrailIndicator
                 currentValue={metrics.dayChange}
                 previousValue={0}
@@ -131,8 +149,14 @@ export function StockQuote({ symbol, name, price, change, metrics }: StockQuoteP
           <div className="px-6">
             <h3 className="text-sm font-medium mb-4">Liquidity</h3>
             <div className="grid grid-cols-2 gap-4">
-              <MetricDisplay label="Volume" value={`${metrics.volume.toFixed(2)}B`} />
-              <MetricDisplay label="Ask/Bid Spread" value={`${metrics.askBidSpread.toFixed(2)}%`} />
+              <MetricDisplay
+                label="Volume"
+                value={`${metrics.volume.toFixed(2)}B`}
+              />
+              <MetricDisplay
+                label="Ask/Bid Spread"
+                value={`${metrics.askBidSpread.toFixed(2)}%`}
+              />
             </div>
           </div>
 
@@ -140,15 +164,20 @@ export function StockQuote({ symbol, name, price, change, metrics }: StockQuoteP
           <div className="pl-6">
             <h3 className="text-sm font-medium mb-4">Value</h3>
             <div className="grid grid-cols-2 gap-4">
-              <MetricDisplay label="Market Cap" value={metrics.marketCap.toFixed(2)} />
+              <MetricDisplay
+                label="Market Cap"
+                value={metrics.marketCap.toFixed(2)}
+              />
               <MetricDisplay label="P/E" value={metrics.pe.toFixed(1)} />
-              <MetricDisplay label="Div & Yield" value={`${metrics.divYield.toFixed(2)}%`} />
+              <MetricDisplay
+                label="Div & Yield"
+                value={`${metrics.divYield.toFixed(2)}%`}
+              />
               <MetricDisplay label="Beta" value={metrics.beta.toFixed(2)} />
             </div>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-
