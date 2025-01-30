@@ -57,7 +57,7 @@ const OnboardingFlow: FC = () => {
               <div className="hero-section">
                 <h2 className="text-4xl font-bold mb-4">{welcomeContent.header}</h2>
                 <p className="mb-4">{welcomeContent.description}</p>
-                <ul className="list-disc list-inside mb-4">
+                <ul className="list-disc list-inside mr -4 mb-4 p-4">
                   {welcomeContent.bulletPoints.map((point, index) => (
                     <li key={index}>{point}</li>
                   ))}
