@@ -25,10 +25,10 @@ const OnboardingFlow: FC = () => {
   };
 
   const steps = [
-    { title: 'Welcome Screen', description: 'Introduction to Erisfy', icon: () => <span>1</span> },
+    { title: 'Welcome', description: 'Introduction to Erisfy', icon: () => <span>1</span> },
     { title: 'Select Investment Style', description: 'Choose your style', icon: () => <span>2</span> },
     { title: 'Set Risk Tolerance', description: 'Select your risk level', icon: () => <span>3</span> },
-    { title: 'Redirect to Stock Screener Results', description: 'Go to results', icon: () => <span>4</span> },
+    { title: 'Start Screening', description: 'Go to results', icon: () => <span>4</span> },
   ];
 
   const welcomeContent = {
