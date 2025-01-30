@@ -44,7 +44,7 @@ export const ValueTrail: FC<ValueTrailProps> = ({
   // Container classes: pill shape, vertical orientation
   const containerClasses = clsx(
     'relative overflow-hidden rounded-full bg-muted', 
-    'w-4 h-40',
+    'w-4 h-32',
     className
   );
 
