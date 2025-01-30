@@ -2,6 +2,7 @@ import { FC, useState, useEffect } from 'react';
 import { Button, Card, CardContent, CardHeader, CardTitle, Progress, Carousel } from '@erisfy/shadcnui';
 import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
+import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@erisfy/shadcnui';
 
 const OnboardingFlow: FC = () => {
   const [step, setStep] = useState(1);
@@ -68,9 +69,13 @@ const OnboardingFlow: FC = () => {
               </div>
               <div className="carousel-section mt-8">
                 <Carousel>
-                  <div className="carousel-item">Benefit 1: Filtering stocks</div>
-                  <div className="carousel-item">Benefit 2: AI-powered insights</div>
-                  <div className="carousel-item">Benefit 3: Personalized experience</div>
+                  <CarouselContent>
+                    <CarouselItem>Benefit 1: Filtering stocks</CarouselItem>
+                    <CarouselItem>Benefit 2: AI-powered insights</CarouselItem>
+                    <CarouselItem>Benefit 3: Personalized experience</CarouselItem>
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
                 </Carousel>
               </div>
             </div>
