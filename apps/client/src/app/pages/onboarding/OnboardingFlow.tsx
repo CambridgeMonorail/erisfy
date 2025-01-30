@@ -4,6 +4,7 @@ import { Stepper } from '@erisfy/shadcnui-blocks';
 import { useNavigate } from 'react-router-dom';
 import { CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from '@erisfy/shadcnui';
 import { Filter, BrainCircuit, SlidersHorizontal, Activity, BarChart, TrendingUp, Tag, DollarSign, Rocket, Scale, User, Shield } from 'lucide-react';
+import { ErisfyProBanner } from '../../components/ErisfyProBanner'; // Pf758
 
 const OnboardingFlow: FC = () => {
   const [step, setStep] = useState(1);
@@ -306,6 +307,7 @@ const OnboardingFlow: FC = () => {
           <Progress value={progress} className="mt-4" />
         </CardContent>
       </Card>
+      <ErisfyProBanner /> {/* P1cb8 */}
     </div>
   );
 };
