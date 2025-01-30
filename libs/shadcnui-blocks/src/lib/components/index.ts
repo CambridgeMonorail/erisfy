@@ -16,6 +16,7 @@ export * from './save-add-portfolio/index';
 export * from './state-performance/index';
 export * from './stats-block/StatItem';
 export * from './stats-block/StatsBlock';
+export * from './stepper/index';
 export * from './steps/index';
 export * from './tag/index';
 export * from './tag-group/index';
