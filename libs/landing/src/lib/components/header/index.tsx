@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react';
 import { ActionButtons, ActionButtonProps } from '@erisfy/shadcnui-blocks';
 import { cn } from '@erisfy/shadcnui';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { Link } from 'react-router-dom';
 
 // Define header variants using cva
 const headerVariants = cva('flex justify-between p-4 items-center', {
@@ -29,6 +30,7 @@ export type HeaderProps = {
   centerContent?: ReactNode;
   variant?: VariantProps<typeof headerVariants>['variant'];
   onButtonClick?: (index: number) => void;
+  linkToRoot?: boolean; // P42bd
 };
 
 /**
@@ -42,12 +44,22 @@ export const Header: FC<HeaderProps> = ({
   centerContent,
   variant,
   onButtonClick,
+  linkToRoot, // P42bd
 }) => {
   return (
     <header className={cn(headerVariants({ variant }), className)} data-testid="header">
       <div className="flex items-center space-x-2 flex-none" data-testid="logo">
-        {logoIcon}
-        {title && <div className='text-3xl font-semibold'>{title}</div>}
+        {linkToRoot ? ( // Pb819
+          <Link to="/" aria-label="Home">
+            {logoIcon}
+            {title && <div className='text-3xl font-semibold'>{title}</div>}
+          </Link>
+        ) : (
+          <>
+            {logoIcon}
+            {title && <div className='text-3xl font-semibold'>{title}</div>}
+          </>
+        )}
       </div>
       <div className="grow flex justify-start" data-testid="center-content">
         {centerContent}
