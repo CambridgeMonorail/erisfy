@@ -20,6 +20,7 @@ import {
   HeroSection,
 } from '@erisfy/landing';
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
+import preReleaseImage from '../../../assets/images/pre-release.png';
 
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
@@ -40,7 +41,12 @@ export const LandingPage: FC = () => {
       className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-primary text-foreground"
       data-testid="landing-page"
     >
-      <div className="bg-primary" data-testid="hero-section-container">
+      <div className="relative bg-primary" data-testid="hero-section-container">
+        <img
+          src={preReleaseImage}
+          alt="Pre-release"
+          className="absolute top-0 right-0 w-40 h-40 mt-12 transform rotate-45"
+        />
         <HeroSection
           title="Erisfy: The Fintech Solution So Good It Doesn’t Even Exist"
           subtitle="Order in chaos, profit in trading."

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <!-- Outer circle badge -->
+  <circle cx="150" cy="150" r="140" fill="#FFFFFF" stroke="#FF5722" stroke-width="10" />
+  
+  <!-- Caution triangle -->
+  <polygon points="150,70 110,150 190,150" fill="#FFC107" stroke="#FF5722" stroke-width="5"/>
+  
+  <!-- Exclamation mark inside the triangle -->
+  <line x1="150" y1="90" x2="150" y2="130" stroke="#FF5722" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="150" cy="145" r="3" fill="#FF5722"/>
+  
+  <!-- Text below the triangle -->
+  <text x="150" y="200" text-anchor="middle" fill="#FF5722" font-family="sans-serif" font-size="16">
+    Pre-Release Chaos
+  </text>
+  <text x="150" y="220" text-anchor="middle" fill="#FF5722" font-family="sans-serif" font-size="16">
+    Handle with Caution
+  </text>
+</svg>
