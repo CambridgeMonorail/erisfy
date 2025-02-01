@@ -210,19 +210,19 @@ export const LandingPage: FC = () => {
         aria-label="Community section"
       />
       <StepsSection
-        title="Get Started in No Time (Hypothetically)"
+        title="Quick Start with Erisfy"
         steps={[
           {
-            title: 'Clone the repository.',
-            description: 'Download the tools of the trade—if they existed.',
+            title: 'Clone the Repository.',
+            description: 'Access our codebase directly from GitHub.',
           },
           {
-            title: 'Install dependencies.',
-            description: 'Use pnpm, because it sounds cool and works fast.',
+            title: 'Install Dependencies.',
+            description: 'Use your preferred package manager to set up the necessary components.',
           },
           {
-            title: 'Start the server.',
-            description: 'Witness the power of imagination brought to life (in your dev environment).',
+            title: 'Run the Application.',
+            description: 'Launch Erisfy locally and explore its features.',
           },
         ]}
         buttonText="Read the Documentation"
