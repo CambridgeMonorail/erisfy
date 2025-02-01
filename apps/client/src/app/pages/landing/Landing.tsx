@@ -60,8 +60,8 @@ export const LandingPage: FC = () => {
           className="absolute top-0 right-0 w-40 h-40 mt-12 transform rotate-45"
         />
         <HeroSection
-          title="Erisfy: Find the Right Stocks, Faster."
-          subtitle="Smarter investing starts with the right insights."
+          title="Erisfy: Find the Right Stocks, Faster. Invest Smarter with AI."
+          subtitle="AI-powered stock screening that gives you clear, data-backed insights—so you can invest with confidence."
           description="Erisfy’s AI-powered stock screener helps you find high-quality investment opportunities in seconds—without the complexity. Get personalized insights and invest with confidence."
           image={
             <Logo
@@ -73,11 +73,11 @@ export const LandingPage: FC = () => {
           }
           imageAlt="Logo for the boilerplate"
           ctaPrimary={{
-            text: 'Explore Erisfy on GitHub',
+            text: 'Try AI-Powered Stock Screening',
             link: 'https://github.com/CambridgeMonorail/erisfy',
           }}
           ctaSecondary={{
-            text: 'Find Out More',
+            text: 'Explore Erisfy on GitHub',
             onClick: handleScrollToFeatures,
           }}
           layout="left"
@@ -87,7 +87,7 @@ export const LandingPage: FC = () => {
       </div>
       <AboutSection
         title="The Smartest Stock Screener for Everyday Investors"
-        description="Most stock screeners flood you with complex data. Erisfy makes investing simple. Our AI-powered system helps you filter, analyze, and find high-potential stocks in just a few clicks—so you can focus on making informed decisions, not interpreting spreadsheets."
+        description="Finding the right stocks shouldn’t be complicated. Erisfy’s AI-powered screener simplifies investing by filtering through thousands of stocks to find the best opportunities—so you don’t have to. No jargon. No endless spreadsheets. Just clear, actionable insights."
         logos={[
           <Logo
             name="nx"
@@ -141,7 +141,7 @@ export const LandingPage: FC = () => {
         title="What You’ll Get (if Erisfy Were Real)"
         features={[
           {
-            title: 'AI-Powered Stock Discovery',
+            title: 'AI-Powered Stock Screening',
             description:
               'Get personalized stock recommendations tailored to your goals.',
             icon: <Rocket className="text-red-500" />,
@@ -149,7 +149,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Effortless Smart Filtering',
+            title: 'Smarter, Simpler Filtering',
             description:
               'Set filters or just type what you’re looking for—Erisfy handles the rest.',
             icon: <Palette className="text-blue-500" />,
@@ -157,7 +157,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Clear, Actionable Insights',
+            title: 'AI-Generated Insights, Explained',
             description:
               'AI explains stock movements in plain language, not just numbers.',
             icon: <Paintbrush className="text-green-500" />,
@@ -194,9 +194,8 @@ export const LandingPage: FC = () => {
       <CTASection
         variant="light"
         title="Experience It Yourself"
-        description="Click below to enter a world where Erisfy exists—and where every trade you make is smarter, faster, and powered by AI-fueled chaos.
-Just kidding. But do check out the demo."
-        buttonText="Try the Demo"
+        description="See Erisfy in action—where AI helps you find, analyze, and track stocks faster than ever. Try the demo and discover how smart investing starts with the right insights."
+        buttonText="Try AI-Powered Stock Screening"
         buttonAction={() => navigate('/home')}
         data-testid="demo-section"
         aria-label="Try demo section"
@@ -204,7 +203,7 @@ Just kidding. But do check out the demo."
       <CTASection
         variant="dark"
         title="Join the Community"
-        description="Join a growing community of investors using AI to simplify stock research. Learn from experts, share insights, and take control of your financial future."
+        description="Join thousands of investors using AI to find smarter opportunities. Learn, share insights, and take control of your investments with confidence."
         buttonText="Explore Erisfy on GitHub"
         buttonAction={handleGitHubRedirect}
         data-testid="community-section"
