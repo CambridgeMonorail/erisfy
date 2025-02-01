@@ -17,8 +17,17 @@ describe('Header', () => {
         <Header logoIcon={<Home />} actionButtonsProps={actionButtonsProps} />
       </BrowserRouter>
     );
-    expect(screen.getByTestId('logo')).toBeInTheDocument();
+    // Check for the header element itself
+    const header = screen.getByRole('banner');
+    expect(header).toBeInTheDocument();
+    
+    // Check for action buttons
     expect(screen.getAllByRole('button')).toHaveLength(3);
+    
+    // Verify button labels are present
+    expect(screen.getByRole('button', { name: /home/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /user/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /settings/i })).toBeInTheDocument();
   });
 
   it('applies additional class names', () => {
@@ -27,7 +36,8 @@ describe('Header', () => {
         <Header logoIcon={<Home />} actionButtonsProps={actionButtonsProps} className="custom-class" />
       </BrowserRouter>
     );
-    expect(screen.getByTestId('header')).toHaveClass('custom-class');
+    const header = screen.getByRole('banner');
+    expect(header).toHaveClass('custom-class');
   });
 
   it('is responsive', () => {
@@ -36,7 +46,7 @@ describe('Header', () => {
         <Header logoIcon={<Home />} actionButtonsProps={actionButtonsProps} />
       </BrowserRouter>
     );
-    const header = screen.getByTestId('header');
+    const header = screen.getByRole('banner');
     expect(header).toHaveClass('bg-primary', 'text-primary-foreground');
     expect(header).toHaveClass('flex', 'justify-between', 'p-4', 'items-center');
   });
@@ -47,7 +57,7 @@ describe('Header', () => {
         <Header logoIcon={<Home />} actionButtonsProps={actionButtonsProps} title="MY APPLICATION" linkToRoot />
       </BrowserRouter>
     );
-    const linkElement = screen.getByRole('link', { name: /home/i });
+    const linkElement = screen.getByRole('link', { name: /my application/i });
     expect(linkElement).toBeInTheDocument();
     expect(linkElement).toHaveAttribute('href', '/');
   });
