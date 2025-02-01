@@ -138,52 +138,52 @@ export const LandingPage: FC = () => {
       />
       <FeaturesSection
         id="features"
-        title="What You’ll Get (if Erisfy Were Real)"
+        title="Smarter Investing, Powered by AI"
         features={[
           {
-            title: 'AI-Powered Stock Screening',
+            title: 'Find High-Quality Stocks with AI',
             description:
-              'Get personalized stock recommendations tailored to your goals.',
+              'Find high-quality stock opportunities with AI-powered screening, tailored to your investment strategy.',
             icon: <Rocket className="text-red-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Smarter, Simpler Filtering',
+            title: 'Smart Filters & Natural Language Search',
             description:
-              'Set filters or just type what you’re looking for—Erisfy handles the rest.',
+              'Screen thousands of stocks instantly using smart filters or simple natural language search.',
             icon: <Palette className="text-blue-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'AI-Generated Insights, Explained',
+            title: 'Understand Market Moves with AI',
             description:
-              'AI explains stock movements in plain language, not just numbers.',
+              'Get AI-driven insights that break down stock trends, risks, and opportunities in plain language—so you always know why a stock is moving.',
             icon: <Paintbrush className="text-green-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Scalability Without Bounds',
+            title: 'AI That Adapts to You',
             description:
-              'Scale your pretend portfolios and fictional assets to infinity (and beyond).',
+              'Erisfy grows with your portfolio—customizable AI tools that adapt as your investment strategies evolve.',
             icon: <BarChart className="text-yellow-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Documentation Worth Reading',
+            title: 'Learn & Invest with Confidence',
             description:
-              'Enjoy non-existent but perfectly written guides that make your journey into chaos seamless.',
+              'Step-by-step guides and AI-explained insights help you navigate Erisfy like a pro—whether you’re new to investing or an expert.',
             icon: <ChartLine className="text-purple-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Performance Beyond Reality',
+            title: 'Real-Time AI Market Insights',
             description:
-              'Optimized for trading at the speed of thought (or maybe faster).',
+              'AI-powered analysis delivers real-time stock insights—so you’re always ahead of the market.',
             icon: <Video className="text-orange-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
