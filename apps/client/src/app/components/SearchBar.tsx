@@ -1,6 +1,6 @@
 import { FC, useState, useCallback } from 'react';
 import { Input } from '@erisfy/shadcnui';
-import { Tag, TagGroup } from '@erisfy/shadcnui-blocks';
+import { Tag as TagComponent, TagGroup } from '@erisfy/shadcnui-blocks';
 import { useDebounce } from '../../hooks/useDebounce';
 
 type Tag = {
@@ -76,13 +76,13 @@ export const SearchBar: FC<SearchBarProps> = ({
         aria-label="Selected search filters"
       >
         {tags.map((tag) => (
-          <Tag 
+          <TagComponent 
             key={tag.id}
             onRemove={() => handleTagRemove(tag.id)}
             aria-label={`Remove ${tag.value} filter`}
           >
             {tag.value}
-          </Tag>
+          </TagComponent>
         ))}
       </TagGroup>
     </div>

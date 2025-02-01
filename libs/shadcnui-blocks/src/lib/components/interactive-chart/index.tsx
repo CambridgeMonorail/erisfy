@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@erisfy/shadcnui';
 
 interface InteractiveChartProps {
-  data: { date: string; price: number }[];
+  data: { date: string; value: number }[];
 }
 
 const InteractiveChart: FC<InteractiveChartProps> = ({ data }) => {
