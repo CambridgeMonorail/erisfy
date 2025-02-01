@@ -1,78 +1,34 @@
 import { faker } from '@faker-js/faker';
 
-export interface StockData {
+export type StockData = {
   ticker: string;
   companyName: string;
   sector: string;
   industry: string;
   country: string;
+  currentPrice: number; // Changed from 'price' to 'currentPrice'
   marketCap: number;
-  currentPrice: number;
-  priceChange: number;
-  priceChangePercentage: number;
-  volume: number;
-  week52High: number;
-  week52Low: number;
-  dividendYield: number;
-  peRatio: number;
-  epsGrowth: number;
-  roe: number;
-  roa: number;
-  profitabilityRatios: number[];
-  news: { headline: string; date: string }[];
-  events: { event: string; date: string }[];
-  historicalPerformance: { date: string; price: number }[];
-  peers: { ticker: string; companyName: string; metric: number }[];
-}
+  historicalPerformance: Array<{
+    date: string;
+    value: number;
+  }>;
+};
 
+// Update the mock data generation to include all properties
 export const generateMockData = (count: number): StockData[] => {
-  const data: StockData[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const currentPrice = parseFloat(faker.finance.amount());
-    const priceChange = parseFloat(faker.finance.amount());
-    const priceChangePercentage = parseFloat(((priceChange / currentPrice) * 100).toFixed(2));
-
-    data.push({
-      ticker: faker.finance.currencyCode(),
-      companyName: faker.company.name(),
-      sector: faker.commerce.department(),
-      industry: faker.commerce.product(),
-      country: faker.address.country(),
-      marketCap: parseFloat(faker.finance.amount()),
-      currentPrice,
-      priceChange,
-      priceChangePercentage,
-      volume: parseInt(faker.finance.amount(), 10),
-      week52High: parseFloat(faker.finance.amount()),
-      week52Low: parseFloat(faker.finance.amount()),
-      dividendYield: parseFloat(faker.finance.amount()),
-      peRatio: parseFloat(faker.finance.amount()),
-      epsGrowth: parseFloat(faker.finance.amount()),
-      roe: parseFloat(faker.finance.amount()),
-      roa: parseFloat(faker.finance.amount()),
-      profitabilityRatios: [parseFloat(faker.finance.amount()), parseFloat(faker.finance.amount()), parseFloat(faker.finance.amount())],
-      news: [
-        { headline: faker.lorem.sentence(), date: faker.date.recent().toISOString() },
-        { headline: faker.lorem.sentence(), date: faker.date.recent().toISOString() },
-      ],
-      events: [
-        { event: faker.lorem.words(), date: faker.date.future().toISOString() },
-        { event: faker.lorem.words(), date: faker.date.future().toISOString() },
-      ],
-      historicalPerformance: [
-        { date: faker.date.past().toISOString(), price: parseFloat(faker.finance.amount()) },
-        { date: faker.date.past().toISOString(), price: parseFloat(faker.finance.amount()) },
-        { date: faker.date.past().toISOString(), price: parseFloat(faker.finance.amount()) },
-      ],
-      peers: [
-        { ticker: faker.finance.currencyCode(), companyName: faker.company.name(), metric: parseFloat(faker.finance.amount()) },
-        { ticker: faker.finance.currencyCode(), companyName: faker.company.name(), metric: parseFloat(faker.finance.amount()) },
-      ],
-    });
-  }
-
-  return data;
+  return Array.from({ length: count }, (_, i) => ({
+    ticker: `TICK${i}`,
+    companyName: `Company ${i}`,
+    sector: ['Technology', 'Finance', 'Healthcare', 'Energy'][Math.floor(Math.random() * 4)],
+    industry: ['Software', 'Banking', 'Pharmaceuticals', 'Oil & Gas'][Math.floor(Math.random() * 4)],
+    country: ['USA', 'Canada', 'UK', 'Germany'][Math.floor(Math.random() * 4)],
+    currentPrice: Math.random() * 1000,
+    marketCap: Math.random() * 1000000,
+    historicalPerformance: Array.from({ length: 30 }, (_, j) => ({
+      date: new Date(Date.now() - j * 24 * 60 * 60 * 1000).toISOString(),
+      value: Math.random() * 1000
+    }))
+  }));
 };
 
 /**

@@ -1,29 +1,44 @@
 import { ValueTrail } from './ValueTrail';
 import { MetricDisplay } from './metric-display';
 import { Card, CardContent, cn } from '@erisfy/shadcnui';
-import { PerformanceChangeMarker } from './PerformanceChangeMarker';
 
-interface StockQuoteProps {
+type StockMetrics = {
+  dayChange: number;
+  monthChange: number;
+  yearChange: number;
+  bollingerBands: number;
+  psar: number;
+  slowStochastic: number;
+  fastStochastic: number;
+  volume: number;
+  askBidSpread: number;
+  marketCap: number;
+  pe: number;
+  divYield: number;
+  beta: number;
+};
+
+type StockQuoteProps = {
   symbol: string;
   name: string;
   price: number;
   change: number;
-  metrics: {
-    dayChange: number;
-    monthChange: number;
-    yearChange: number;
-    bollingerBands: number;
-    psar: number;
-    slowStochastic: number;
-    fastStochastic: number;
-    volume: number;
-    askBidSpread: number;
-    marketCap: number;
-    pe: number;
-    divYield: number;
-    beta: number;
-  };
-}
+  metrics: StockMetrics;
+  className?: string;
+};
+
+type TimeChangeProps = {
+  label: string;
+  value: number;
+  oldValue: number;
+};
+
+const TimeChange = ({ label, value, oldValue }: TimeChangeProps) => (
+  <div className="flex flex-col w-[60px]">
+    <div className="text-xs text-muted-foreground">{label}</div>
+    <ValueTrail oldValue={oldValue} newValue={value} />
+  </div>
+);
 
 export function StockQuote({
   symbol,
@@ -31,67 +46,65 @@ export function StockQuote({
   price,
   change,
   metrics,
+  className,
 }: StockQuoteProps) {
-  // Clamp values between 0 and 100
   const clampValue = (value: number) => Math.max(0, Math.min(value, 100));
 
   return (
-    <Card className="w-full ">
+    <Card className={cn("w-full", className)} role="article" aria-label={`Stock quote for ${name} (${symbol})`}>
       <CardContent className="p-6">
         <div className="grid grid-cols-5 divide-x divide-border">
-          {/* Basic */}
-          <div className="pr-6">
+          {/* Basic Info Section */}
+          <section className="pr-6" aria-label="Basic Information">
             <h3 className="text-sm font-medium mb-4">Basic</h3>
             <div className="space-y-4">
-              <div className="bg-[#f5f0e8] rounded-lg p-4">
+              <div className="bg-muted rounded-lg p-4">
                 <h2 className="text-xl font-bold">{name}</h2>
                 <p className="text-lg text-muted-foreground">{symbol}</p>
               </div>
-              <div className="bg-[#f5f0e8] rounded-lg p-4">
-                <div className="text-2xl font-bold">${price.toFixed(2)}</div>
+              <div className="bg-muted rounded-lg p-4">
+                <div className="text-2xl font-bold" role="text" aria-label="Current price">
+                  ${price.toFixed(2)}
+                </div>
                 <div
                   className={cn(
                     'text-lg',
-                    change >= 0 ? 'text-green-600' : 'text-red-600',
+                    change >= 0 ? 'text-success' : 'text-destructive'
                   )}
+                  role="text"
+                  aria-label="Price change"
                 >
                   ${change >= 0 ? '+' : ''}
                   {change.toFixed(2)}
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Changes over time */}
-          <div className="px-6">
+          {/* Changes Section */}
+          <section className="px-6" aria-label="Changes over time">
             <h3 className="text-sm font-medium mb-4">Changes over time</h3>
             <div className="flex justify-between gap-4">
-              <div className="flex flex-col w-[60px]">
-                <div className="text-xs text-muted-foreground">Day Change</div>
-                <ValueTrail
-                  oldValue={10}
-                  newValue={clampValue(metrics.dayChange)}
-                />
-              </div>
-              <div className="flex flex-col w-[60px]">
-              <div className="text-xs text-muted-foreground">Day Change</div>
-                <ValueTrail
-                  oldValue={20}
-                  newValue={clampValue(metrics.monthChange)}
-                />
-              </div>
-              <div className="flex flex-col w-[60px]">
-              <div className="text-xs text-muted-foreground">Day Change</div>
-                <ValueTrail
-                  oldValue={30}
-                  newValue={clampValue(metrics.yearChange)}
-                />
-              </div>
+              <TimeChange 
+                label="Day"
+                value={clampValue(metrics.dayChange)}
+                oldValue={metrics.dayChange - 1}
+              />
+              <TimeChange 
+                label="Month"
+                value={clampValue(metrics.monthChange)}
+                oldValue={metrics.monthChange - 1}
+              />
+              <TimeChange 
+                label="Year"
+                value={clampValue(metrics.yearChange)}
+                oldValue={metrics.yearChange - 1}
+              />
             </div>
-          </div>
+          </section>
 
-          {/* Technical Indicators */}
-          <div className="px-6">
+          {/* Technical Indicators Section */}
+          <section className="px-6" aria-label="Technical indicators">
             <h3 className="text-sm font-medium mb-4">Technical Indicators</h3>
             <div className="flex justify-between gap-2">
               <div className="flex flex-col">
@@ -119,10 +132,10 @@ export function StockQuote({
                 />
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Liquidity */}
-          <div className="px-6">
+          {/* Liquidity Section */}
+          <section className="px-6" aria-label="Liquidity metrics">
             <h3 className="text-sm font-medium mb-4">Liquidity</h3>
             <div className="grid grid-cols-2 gap-4">
               <MetricDisplay
@@ -134,10 +147,10 @@ export function StockQuote({
                 value={`${metrics.askBidSpread.toFixed(2)}%`}
               />
             </div>
-          </div>
+          </section>
 
-          {/* Value */}
-          <div className="pl-6">
+          {/* Value Section */}
+          <section className="pl-6" aria-label="Value metrics">
             <h3 className="text-sm font-medium mb-4">Value</h3>
             <div className="grid grid-cols-2 gap-4">
               <MetricDisplay
@@ -151,7 +164,7 @@ export function StockQuote({
               />
               <MetricDisplay label="Beta" value={metrics.beta.toFixed(2)} />
             </div>
-          </div>
+          </section>
         </div>
       </CardContent>
     </Card>

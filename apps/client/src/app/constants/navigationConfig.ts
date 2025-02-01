@@ -156,7 +156,7 @@ export const navigationConfig = {
           label: 'Market Opportunities',
           path: paths.screener.marketOpportunities,
         },
-        { label: 'Filter Selection', path: paths.screener.filterSelection },
+        { label: 'Screening  Rules', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
       ],

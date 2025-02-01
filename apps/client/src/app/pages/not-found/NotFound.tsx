@@ -1,26 +1,31 @@
-import { FC, useEffect, useState } from 'react';
+import { type ComponentPropsWithoutRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { Button } from '@erisfy/shadcnui';
+import { AlertCircle } from 'lucide-react';
 
-const NotFound: FC = () => {
+type NotFoundProps = ComponentPropsWithoutRef<'div'>;
+
+export const NotFound = ({ className, ...props }: NotFoundProps) => {
   const location = useLocation();
-  const [currentPath, setCurrentPath] = useState<string>('');
-
-  useEffect(() => {
-    setCurrentPath(location.pathname);
-  }, [location]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
-      <h1 className="text-4xl font-bold mb-4 text-primary">404</h1>
+    <main
+      className="flex flex-col items-center justify-center min-h-screen bg-background p-4"
+      role="main"
+      aria-labelledby="error-title"
+      {...props}
+    >
+      <AlertCircle className="h-12 w-12 text-primary mb-4" aria-hidden="true" />
+      <h1 id="error-title" className="text-4xl font-bold mb-2 text-primary">
+        404
+      </h1>
       <p className="text-lg mb-4 text-foreground">Page Not Found</p>
-      <p className="text-sm mb-4 text-muted">
-        Attempted to access: {currentPath}
+      <p className="text-sm mb-6 text-muted-foreground text-center">
+        The page "{location.pathname}" could not be found.
       </p>
-      <Link to="/" className="text-primary hover:underline">
-        Go back to Home
-      </Link>
-    </div>
+      <Button asChild variant="default">
+        <Link to="/">Return to Home</Link>
+      </Button>
+    </main>
   );
 };
-
-export { NotFound };

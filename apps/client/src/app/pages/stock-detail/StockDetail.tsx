@@ -157,9 +157,20 @@ const StockDetail: FC<StockDetailProps> = ({
 const StockDetailPage: FC = () => {
   const { ticker } = useParams<{ ticker: string }>();
 
+  // Return early if no ticker is provided
+  if (!ticker) {
+    return (
+      <Card>
+        <CardContent>
+          <p className="text-muted-foreground">No stock ticker specified</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Placeholder for fetching stock data based on the ticker
   const stockData: StockDetailProps = {
-    ticker: 'AAPL',
+    ticker, // Use the actual ticker from params
     companyName: 'Apple Inc.',
     sector: 'Technology',
     industry: 'Consumer Electronics',

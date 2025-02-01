@@ -9,13 +9,13 @@ interface FooterProps {
    * Array of navigation links to be displayed in the footer.
    * Each link should have a text and a URL.
    */
-  navigationLinks: { text: string; url: string }[];
+  navigationLinks: { text: string; url: string; 'aria-label'?: string }[];
 
   /**
    * Array of social media icons to be displayed in the footer.
    * Each icon should be a React component and a URL.
    */
-  socialMediaIcons: { icon: FC<LucideProps>; url: string; target?: string; rel?: string }[];
+  socialMediaIcons: { icon: FC<LucideProps>; url: string; 'aria-label'?: string; target?: string; rel?: string }[];
 
   /**
    * Text to be displayed as the copyright information.
@@ -59,6 +59,7 @@ export const Footer: FC<FooterProps> = ({
             className="hover:underline"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={link['aria-label']}
           >
             {link.text}
           </a>
@@ -70,7 +71,7 @@ export const Footer: FC<FooterProps> = ({
             key={index}
             href={iconData.url}
             className="hover:underline"
-            aria-label={`Link to ${iconData.url}`}
+            aria-label={iconData['aria-label']}
             target={iconData.target}
             rel={iconData.rel}
           >
