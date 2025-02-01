@@ -1,7 +1,6 @@
 import { ValueTrail } from './ValueTrail';
 import { MetricDisplay } from './metric-display';
 import { Card, CardContent, cn } from '@erisfy/shadcnui';
-import { PerformanceChangeMarker } from './PerformanceChangeMarker';
 
 type StockMetrics = {
   dayChange: number;
