@@ -73,11 +73,11 @@ export const LandingPage: FC = () => {
           }
           imageAlt="Logo for the boilerplate"
           ctaPrimary={{
-            text: 'Try AI-Powered Stock Screening',
+            text: 'Explore Erisfy on GitHub',
             link: 'https://github.com/CambridgeMonorail/erisfy',
           }}
           ctaSecondary={{
-            text: 'Explore Erisfy on GitHub',
+            text: 'Try AI-Powered Stock Screening',
             onClick: handleScrollToFeatures,
           }}
           layout="left"
@@ -132,8 +132,8 @@ export const LandingPage: FC = () => {
             ariaLabel="Vite"
           />,
         ]}
-        header="Our Divine panoply"
-        subheader="Built on a foundation of chaotic brilliance"
+        header="Built To Industry Best Practices"
+        subheader="Built on foundations you can trust"
         data-testid="about-section"
       />
       <FeaturesSection
@@ -210,19 +210,19 @@ export const LandingPage: FC = () => {
         aria-label="Community section"
       />
       <StepsSection
-        title="Get Started in No Time (Hypothetically)"
+        title="Quick Start with Erisfy"
         steps={[
           {
-            title: 'Clone the repository.',
-            description: 'Download the tools of the trade—if they existed.',
+            title: 'Clone the Repository.',
+            description: 'Access our codebase directly from GitHub.',
           },
           {
-            title: 'Install dependencies.',
-            description: 'Use pnpm, because it sounds cool and works fast.',
+            title: 'Install Dependencies.',
+            description: 'Use your preferred package manager to set up the necessary components.',
           },
           {
-            title: 'Start the server.',
-            description: 'Witness the power of imagination brought to life (in your dev environment).',
+            title: 'Run the Application.',
+            description: 'Launch Erisfy locally and explore its features.',
           },
         ]}
         buttonText="Read the Documentation"
@@ -258,7 +258,7 @@ export const LandingPage: FC = () => {
             rel: 'noopener noreferrer',
           },
         ]}
-        copyrightText="&copy; 2024 Erisfy. All rights reserved."
+        copyrightText="&copy; 2025 Erisfy. All rights reserved."
         data-testid="footer"
       />
     </div>

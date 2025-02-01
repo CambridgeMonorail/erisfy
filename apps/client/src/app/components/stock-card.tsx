@@ -63,7 +63,7 @@ export function StockQuote({
                 <p className="text-lg text-muted-foreground">{symbol}</p>
               </div>
               <div className="bg-muted rounded-lg p-4">
-                <div className="text-2xl font-bold" role="text" aria-label="Current price">
+                <div className="text-2xl font-bold" aria-label="Current price">
                   ${price.toFixed(2)}
                 </div>
                 <div
@@ -71,7 +71,6 @@ export function StockQuote({
                     'text-lg',
                     change >= 0 ? 'text-success' : 'text-destructive'
                   )}
-                  role="text"
                   aria-label="Price change"
                 >
                   ${change >= 0 ? '+' : ''}

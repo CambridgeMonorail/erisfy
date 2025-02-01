@@ -1,72 +1,82 @@
-import { FC } from 'react';
+import { ButtonHTMLAttributes } from 'react';
 import { Button } from '@erisfy/shadcnui';
 
-/**
- * Possible color variants for the CTA section.
- * - 'light' gives a lighter background and primary text
- * - 'dark' gives a darker background and foreground text
- */
 type CTASectionVariant = 'light' | 'dark';
 
-interface CTASectionProps {
-  /** The title to display in the section. */
-  title: string;
-  /** The description text to display in the section. */
-  description: string;
-  /** The text to display on the button. */
-  buttonText: string;
-  /** The action to perform when the button is clicked. */
-  buttonAction: () => void;
-  /**
-   * The visual variant for the section's background and text.
-   * Defaults to 'light'.
-   */
-  variant?: CTASectionVariant;
-}
+// Define base styles outside component
+const STYLES = {
+  base: {
+    section: 'text-center py-12 md:py-20 w-full',
+    heading: 'text-3xl md:text-4xl font-bold mb-4 md:mb-6',
+    paragraph: 'text-lg md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto',
+  },
+  variants: {
+    light: {
+      section: 'bg-background text-foreground',
+      heading: 'text-primary',
+      paragraph: 'text-muted-foreground',
+      button: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    },
+    dark: {
+      section: 'bg-primary text-primary-foreground',
+      heading: 'text-primary-foreground',
+      paragraph: 'text-primary-foreground/90',
+      button: 'bg-background text-foreground hover:bg-background/90',
+    },
+  },
+} as const;
 
-/**
- * A reusable CTA (Call-To-Action) section component with two variants:
- * 'light' and 'dark'. This helps break up a single-color landing page
- * into distinct sections.
- */
-export const CTASection: FC<CTASectionProps> = ({
+type CTASectionProps = {
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonAction: () => void;
+  variant?: CTASectionVariant;
+} & Omit<ButtonHTMLAttributes<HTMLElement>, 'onClick'>;
+
+export const CTASection = ({
   title,
   description,
   buttonText,
   buttonAction,
   variant = 'light',
-}) => {
-  // Shared base classes
-  const baseSectionClasses = 'text-center py-20 w-full';
-  const baseHeadingClasses = 'text-4xl font-bold mb-6';
-  const baseParagraphClasses = 'text-xl mb-8 max-w-2xl mx-auto';
+  className,
+  ...props
+}: CTASectionProps) => {
+  const styles = STYLES.variants[variant];
+  const sectionId = `cta-section-${variant}`;
   
-  // Default styles for the 'light' variant
-  let sectionClasses = 'bg-background text-primary';
-  let headingClasses = `${baseHeadingClasses} text-primary`;
-  let paragraphClasses = `${baseParagraphClasses} text-primary`;
-  let buttonClasses = 'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground';
-
-  // Override styles if using the 'dark' variant
-  if (variant === 'dark') {
-    sectionClasses = 'bg-primary text-primary-foreground';
-    headingClasses = `${baseHeadingClasses} text-primary-foreground`;
-    paragraphClasses = `${baseParagraphClasses} text-primary-foreground`;
-    buttonClasses = 'bg-primary-foreground text-primary hover:bg-primary-foreground/90 hover:text-primary';
-  }
-
   return (
-    <section className={`${baseSectionClasses} ${sectionClasses}`}>
-      <h2 className={headingClasses}>{title}</h2>
-      <p className={paragraphClasses}>{description}</p>
-      <Button
-        size="lg"
-        onClick={buttonAction}
-        className={buttonClasses}
-        aria-label={buttonText}
-      >
-        {buttonText}
-      </Button>
-    </section>
+    <article
+      {...props}
+      className={`${STYLES.base.section} ${styles.section} ${className ?? ''}`}
+      data-testid="cta-section"
+    >
+      <div className="container px-4 mx-auto">
+        <h2 
+          id={`${sectionId}-title`}
+          className={`${STYLES.base.heading} ${styles.heading}`}
+        >
+          {title}
+        </h2>
+        <p 
+          id={`${sectionId}-description`}
+          className={`${STYLES.base.paragraph} ${styles.paragraph}`}
+        >
+          {description}
+        </p>
+        <Button
+          size="lg"
+          onClick={buttonAction}
+          className={styles.button}
+          aria-labelledby={`${sectionId}-title`}
+          aria-describedby={`${sectionId}-description`}
+          data-testid="cta-button"
+        >
+          {buttonText}
+        </Button>
+      </div>
+    </article>
   );
 };
+

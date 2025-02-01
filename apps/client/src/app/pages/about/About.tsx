@@ -179,7 +179,7 @@ const AboutPage: FC = () => {
               url: 'https://x.com/TimDMorris',
             },
           ]}
-          copyrightText="&copy; 2024 Erisfy. All rights reserved."
+          copyrightText="&copy; 2025 Erisfy. All rights reserved."
         />
       </div>
     </div>

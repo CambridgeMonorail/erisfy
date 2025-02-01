@@ -1,46 +1,26 @@
 import { FC } from 'react';
 import { LucideProps } from 'lucide-react';
+import { cn } from '@erisfy/shadcnui';
 
-/**
- * Props for the Footer component.
- */
-interface FooterProps {
-  /**
-   * Array of navigation links to be displayed in the footer.
-   * Each link should have a text and a URL.
-   */
-  navigationLinks: { text: string; url: string; 'aria-label'?: string }[];
-
-  /**
-   * Array of social media icons to be displayed in the footer.
-   * Each icon should be a React component and a URL.
-   */
-  socialMediaIcons: { icon: FC<LucideProps>; url: string; 'aria-label'?: string; target?: string; rel?: string }[];
-
-  /**
-   * Text to be displayed as the copyright information.
-   */
+type FooterProps = {
+  navigationLinks: Array<{
+    text: string;
+    url: string;
+    'aria-label'?: string;
+    external?: boolean;
+  }>;
+  socialMediaIcons: Array<{
+    icon: FC<LucideProps>;
+    url: string;
+    'aria-label': string;
+    external?: boolean;
+  }>;
   copyrightText: string;
-
-  /**
-   * Additional class names to apply to the footer element.
-   */
   className?: string;
-
-  /**
-   * Background color for the footer.
-   */
   backgroundColor?: string;
-
-  /**
-   * Text color for the footer.
-   */
   textColor?: string;
-}
+};
 
-/**
- * Footer component for displaying navigation links, social media icons, and copyright information.
- */
 export const Footer: FC<FooterProps> = ({
   navigationLinks,
   socialMediaIcons,
@@ -50,15 +30,22 @@ export const Footer: FC<FooterProps> = ({
   textColor = 'text-primary-foreground'
 }) => {
   return (
-    <footer className={`${backgroundColor} ${textColor} text-center py-8 w-full px-4 sm:px-6 lg:px-8 ${className}`}>
+    <footer 
+      className={cn(
+        backgroundColor,
+        textColor,
+        'text-center py-8 w-full px-4 sm:px-6 lg:px-8',
+        className
+      )}
+    >
       <nav className="flex flex-wrap justify-center space-x-4 mb-4" aria-label="Footer navigation">
         {navigationLinks.map((link, index) => (
           <a
             key={index}
             href={link.url}
-            className="hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
+            className="hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
             aria-label={link['aria-label']}
           >
             {link.text}
@@ -70,12 +57,12 @@ export const Footer: FC<FooterProps> = ({
           <a
             key={index}
             href={iconData.url}
-            className="hover:underline"
+            className="hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             aria-label={iconData['aria-label']}
-            target={iconData.target}
-            rel={iconData.rel}
+            target={iconData.external ? '_blank' : undefined}
+            rel={iconData.external ? 'noopener noreferrer' : undefined}
           >
-            <iconData.icon className="w-8 h-8" />
+            <iconData.icon className="w-8 h-8 transition-transform duration-200 ease-in-out transform hover:scale-110" />
           </a>
         ))}
       </div>

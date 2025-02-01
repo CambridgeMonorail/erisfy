@@ -1,64 +1,67 @@
 import { LogoCarousel } from '@erisfy/shadcnui-blocks';
-import { ReactElement } from 'react';
+import { ReactElement, ComponentPropsWithoutRef } from 'react';
 
-/**
- * Props for the AboutSection component.
- */
-interface AboutSectionProps {
-  /** 
-   * The title to display in the about section. 
-   * This should be a short, descriptive heading that summarizes the content of the section.
-   */
+type AboutSectionProps = {
   title: string;
-  
-  /** 
-   * The description to display in the about section. 
-   * This should provide more detailed information about the organization, product, or service.
-   */
   description: string;
-  
-  /** 
-   * An array of React elements representing logos to display in the about section. 
-   * These logos can represent partners, technologies, or other relevant entities.
-   */
   logos: ReactElement[];
-
-  /**
-   * Optional header for the logo carousel.
-   */
   header?: string;
-
-  /**
-   * Optional subheader for the logo carousel.
-   */
   subheader?: string;
-}
+} & ComponentPropsWithoutRef<'section'>;
 
-/**
- * A component that renders an about section with a title, description, and logos.
- * 
- * This component is typically used in landing pages to provide visitors with information
- * about the organization, product, or service. It helps to build credibility and trust
- * by showcasing key details and visual elements such as logos of partners or technologies.
- */
-export const AboutSection = ({ title, description, logos, header, subheader }: AboutSectionProps): ReactElement => {
+export const AboutSection = ({
+  title,
+  description,
+  logos,
+  header,
+  subheader,
+  className,
+  ...props
+}: AboutSectionProps): ReactElement => {
   return (
-    <section data-testid="about-section" className="text-center py-20 px-5 bg-background text-primary w-full">
-      <h2 data-testid="about-title" className="text-4xl font-bold mb-6">{title}</h2>
-      <p data-testid="about-description" className="text-xl mb-8 max-w-2xl mx-auto text-center">{description}</p>
-      {logos.length > 0 ? (
-        <LogoCarousel
-          logos={logos}
-          header={header}
-          subheader={subheader}
-        />
-      ) : (
-        <div data-testid="about-logos" className="flex flex-wrap justify-center space-x-4 sm:space-x-2">
-          {logos.map((logo, index) => (
-            <div key={index} data-testid={`about-logo-${index}`} className="mb-4 sm:mb-2">{logo}</div>
-          ))}
-        </div>
-      )}
+    <section
+      aria-labelledby="about-title"
+      className={`text-center py-12 md:py-20 px-4 md:px-5 bg-background text-foreground w-full text-primary ${className ?? ''}`}
+      {...props}
+    >
+      <div className="container mx-auto">
+        <h2 
+          id="about-title"
+          className="text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-primary"
+        >
+          {title}
+        </h2>
+        <p 
+          className="text-lg md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto text-center text-muted-foreground"
+        >
+          {description}
+        </p>
+        {logos.length > 0 && (
+          <div className="mt-8">
+            {logos.length > 3 ? (
+              <LogoCarousel
+                logos={logos}
+                header={header}
+                subheader={subheader}
+              />
+            ) : (
+              <div 
+                className="flex flex-wrap justify-center gap-4 md:gap-6"
+                aria-label="Partner logos"
+              >
+                {logos.map((logo, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center justify-center p-2"
+                  >
+                    {logo}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </section>
   );
 };

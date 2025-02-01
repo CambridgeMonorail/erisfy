@@ -189,17 +189,17 @@ const StockDetailPage: FC = () => {
     roa: 15,
     profitabilityRatios: [25, 30, 35],
     news: [
-      { headline: 'Apple releases new iPhone', date: '2024-01-01' },
-      { headline: 'Apple reports record earnings', date: '2024-02-01' },
+      { headline: 'Apple releases new iPhone', date: '2025-01-01' },
+      { headline: 'Apple reports record earnings', date: '2025-02-01' },
     ],
     events: [
-      { event: 'Earnings Report', date: '2024-03-01' },
-      { event: 'Product Launch', date: '2024-04-01' },
+      { event: 'Earnings Report', date: '2025-03-01' },
+      { event: 'Product Launch', date: '2025-04-01' },
     ],
     historicalPerformance: [
-      { date: '2024-01-01', price: 140 },
-      { date: '2024-02-01', price: 145 },
-      { date: '2024-03-01', price: 150 },
+      { date: '2025-01-01', price: 140 },
+      { date: '2025-02-01', price: 145 },
+      { date: '2025-03-01', price: 150 },
     ],
     peers: [
       { ticker: 'MSFT', companyName: 'Microsoft', metric: 200 },

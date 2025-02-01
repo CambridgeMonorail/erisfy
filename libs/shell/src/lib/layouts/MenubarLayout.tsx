@@ -48,6 +48,7 @@ const MenubarLayout: FC<MenubarLayoutProps> = ({ children, menuItems, mode, titl
         title={title}
         variant="primary"
         data-testid="header"
+        linkToRoot={true}
       />
       {mode === 'below-header' && renderResponsiveNavBar()}
       <main className="flex-grow" data-testid="main-content">{children}</main>
