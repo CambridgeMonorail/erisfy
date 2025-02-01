@@ -48,7 +48,7 @@ export const LandingPage: FC = () => {
           className="absolute top-0 right-0 w-40 h-40 mt-12 transform rotate-45"
         />
         <HeroSection
-          title="Erisfy—Find the Right Stocks, Faster."
+          title="Erisfy: Find the Right Stocks, Faster."
           subtitle="Smarter investing starts with the right insights."
           description="Erisfy’s AI-powered stock screener helps you find high-quality investment opportunities in seconds—without the complexity. Get personalized insights and invest with confidence."
           image={
@@ -61,11 +61,11 @@ export const LandingPage: FC = () => {
           }
           imageAlt="Logo for the boilerplate"
           ctaPrimary={{
-            text: 'Start Screening Smarter Today',
+            text: 'Explore Erisfy on GitHub',
             link: 'https://github.com/CambridgeMonorail/erisfy',
           }}
           ctaSecondary={{
-            text: 'Explore the Illusion',
+            text: 'Find Out More',
             onClick: handleScrollToFeatures,
           }}
           layout="left"
