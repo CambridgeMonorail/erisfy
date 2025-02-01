@@ -1,3 +1,5 @@
+[Back to Documentation Overview](./readme.md)
+
 # Technical Requirements Document
 
 ## 1. Introduction & High-Level Overview
@@ -183,3 +185,5 @@ This document outlines the technical foundation for Erisfy. Outstanding question
 - Long-term scalability choices (serverless vs containers)
 
 Next, we should conduct internal discussions and feasibility tests on these areas before finalizing implementation strategies.
+
+**Next Document: [06 - Modular Agent Architecture](./06%20-%20Modular%20Agent%20Architecture.md)**

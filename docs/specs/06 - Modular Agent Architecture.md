@@ -1,3 +1,5 @@
+[Back to Documentation Overview](./readme.md)
+
 # Modular Agent Architecture with Weighted Filters & Rule Sets
 
 ## 1. Overview
@@ -161,3 +163,5 @@ This self-improving architecture ensures a scalable, adaptable, and intelligent 
 - Prototype development to validate rule evaluation and weight adjustments.
 - Iterate on performance feedback models for improved accuracy.
 - Deploy a test environment to measure real-world effectiveness.
+
+**Next Document: [Back to Documentation Overview](./readme.md)**
