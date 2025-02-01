@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { type FC, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Github,
@@ -22,29 +22,41 @@ import {
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
 import preReleaseImage from '../../../assets/images/pre-release.png';
 
+const GITHUB_URL = 'https://github.com/CambridgeMonorail/erisfy';
+const DISCORD_URL = 'https://discord.com/invite/your-discord-invite';
+const TWITTER_URL = 'https://x.com/TimDMorris';
+
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
 
-  const handleScrollToFeatures = () => {
-    const featuresElement = document.getElementById('features') as HTMLElement;
-    if (featuresElement) {
-      featuresElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const handleScrollToFeatures = useCallback(() => {
+    const featuresElement = document.getElementById('features');
+    featuresElement?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  const handleGitHubRedirect = useCallback(() => {
+    window.open(GITHUB_URL, '_blank', 'noopener,noreferrer');
+  }, []);
 
   useEffect(() => {
-    // Any other side effects can be added here
+    document.title = 'Erisfy - Find the Right Stocks, Faster';
   }, []);
 
   return (
     <div
       className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-primary text-foreground"
       data-testid="landing-page"
+      role="main"
     >
-      <div className="relative bg-primary" data-testid="hero-section-container">
+      <div 
+        className="relative bg-primary" 
+        data-testid="hero-section-container"
+        id="hero-title"
+        aria-labelledby="hero-title"
+      >
         <img
           src={preReleaseImage}
-          alt="Pre-release"
+          alt="Pre-release banner"
           className="absolute top-0 right-0 w-40 h-40 mt-12 transform rotate-45"
         />
         <HeroSection
@@ -180,23 +192,23 @@ export const LandingPage: FC = () => {
         data-testid="features-section"
       />
       <CTASection
-        variant="light" //
+        variant="light"
         title="Experience It Yourself"
         description="Click below to enter a world where Erisfy exists—and where every trade you make is smarter, faster, and powered by AI-fueled chaos.
 Just kidding. But do check out the demo."
         buttonText="Try the Demo"
         buttonAction={() => navigate('/home')}
         data-testid="demo-section"
+        aria-label="Try demo section"
       />
       <CTASection
         variant="dark"
         title="Join the Community"
         description="Join a growing community of investors using AI to simplify stock research. Learn from experts, share insights, and take control of your financial future."
         buttonText="Explore Erisfy on GitHub"
-        buttonAction={() =>
-          window.open('https://github.com/CambridgeMonorail/erisfy', '_blank')
-        }
+        buttonAction={handleGitHubRedirect}
         data-testid="community-section"
+        aria-label="Community section"
       />
       <StepsSection
         title="Get Started in No Time (Hypothetically)"
@@ -229,27 +241,22 @@ Just kidding. But do check out the demo."
         navigationLinks={[
           { text: 'Home', url: '#' },
           { text: 'Features', url: '#features' },
-          {
-            text: 'Documentation',
-            url: 'https://github.com/CambridgeMonorail/erisfy',
-          },
-          {
-            text: 'Community',
-            url: 'https://discord.com/invite/your-discord-invite',
-          },
-          {
-            text: 'GitHub',
-            url: 'https://github.com/CambridgeMonorail/erisfy',
-          },
+          { text: 'Documentation', url: GITHUB_URL },
+          { text: 'Community', url: DISCORD_URL },
+          { text: 'GitHub', url: GITHUB_URL },
         ]}
         socialMediaIcons={[
           {
             icon: (props) => <Github {...props} />,
-            url: 'https://github.com/CambridgeMonorail/erisfy',
+            url: GITHUB_URL,
+            target: '_blank',
+            rel: 'noopener noreferrer',
           },
           {
             icon: (props) => <Twitter {...props} />,
-            url: 'https://x.com/TimDMorris',
+            url: TWITTER_URL,
+            target: '_blank',
+            rel: 'noopener noreferrer',
           },
         ]}
         copyrightText="&copy; 2024 Erisfy. All rights reserved."

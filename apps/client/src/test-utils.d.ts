@@ -1,7 +1,7 @@
-
 import '@testing-library/jest-dom';
 
 declare module 'vitest' {
-  interface Assertion<T = any> extends jest.Matchers<void, T> {}
-  interface AsymmetricMatchersContaining extends jest.Matchers<void, any> {}
+  // Use unknown as a safer alternative to any
+  type Assertion<T = unknown> = jest.Matchers<void, T>;
+  type AsymmetricMatchersContaining = jest.Matchers<void, unknown>;
 }

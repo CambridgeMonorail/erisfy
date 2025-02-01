@@ -1,7 +1,7 @@
 import { FC, useState, useCallback } from 'react';
 import { Input } from '@erisfy/shadcnui';
 import { Tag, TagGroup } from '@erisfy/shadcnui-blocks';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useDebounce } from '../../hooks/useDebounce';
 
 type Tag = {
   id: string;
