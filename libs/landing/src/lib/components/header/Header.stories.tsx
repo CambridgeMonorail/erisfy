@@ -38,6 +38,11 @@ const meta: Meta<typeof Header> = {
       control: 'none',
       description: 'Icon to display as the logo',
     },
+    linkToRoot: {
+      name: 'Link to Root',
+      control: 'boolean',
+      description: 'Wrap the logo and title in a link to the root of the site',
+    },
   },
 };
 
@@ -56,6 +61,7 @@ export const Basic: Story = {
     centerContent: <div className="text-center">Center Content</div>,
     variant: 'primary',
     logoIcon: <Home />,
+    linkToRoot: false,
   },
 };
 
@@ -72,6 +78,7 @@ export const MultipleActionButtons: Story = {
       { icon: <Settings />, label: 'Settings' },
     ],
     variant: 'secondary',
+    linkToRoot: false,
   },
 };
 
@@ -89,6 +96,7 @@ export const CustomClassNames: Story = {
     ],
     className: 'bg-gray-800 text-white',
     variant: 'muted',
+    linkToRoot: false,
   },
 };
 
@@ -105,6 +113,7 @@ export const ResponsiveLayout: Story = {
       { icon: <Settings />, label: 'Settings' },
     ],
     variant: 'accent',
+    linkToRoot: false,
   },
 };
 
@@ -122,6 +131,7 @@ export const WithTitle: Story = {
     ],
     title: 'MY APPLICATION',
     variant: 'card',
+    linkToRoot: false,
   },
 };
 
@@ -139,6 +149,7 @@ export const WithCenterContent: Story = {
     ],
     centerContent: <div className="text-center">Center Content</div>,
     variant: 'destructive',
+    linkToRoot: false,
   },
 };
 
@@ -151,6 +162,7 @@ export const NoActionButtons: Story = {
   args: {
     actionButtonsProps: [],
     variant: 'sidebar',
+    linkToRoot: false,
   },
 };
 
@@ -168,5 +180,25 @@ export const DifferentLogo: Story = {
     ],
     logoIcon: <Home />,
     variant: 'primary',
+    linkToRoot: false,
+  },
+};
+
+/**
+ * Demonstrates the Header component with the logo and title wrapped in a link to the root of the site.
+ */
+export const WithLinkToRoot: Story = {
+  name: 'With Link to Root',
+  render: (args) => <Header {...args} />,
+  args: {
+    actionButtonsProps: [
+      { icon: <Home />, label: 'Home' },
+      { icon: <User />, label: 'User' },
+      { icon: <Settings />, label: 'Settings' },
+    ],
+    title: 'MY APPLICATION',
+    variant: 'primary',
+    logoIcon: <Home />,
+    linkToRoot: true,
   },
 };
