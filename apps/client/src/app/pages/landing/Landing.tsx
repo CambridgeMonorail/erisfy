@@ -133,7 +133,7 @@ export const LandingPage: FC = () => {
           />,
         ]}
         header="Built To Industry Best Practices"
-        subheader="Built on a foundation of chaotic brilliance"
+        subheader="Built on foundations you can trust"
         data-testid="about-section"
       />
       <FeaturesSection

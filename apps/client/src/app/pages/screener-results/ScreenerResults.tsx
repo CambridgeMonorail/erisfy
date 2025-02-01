@@ -1,26 +1,40 @@
 import { FC, useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Select, Checkbox, Slider, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, Input } from '@erisfy/shadcnui';
-import { Pagination } from '../../components/Pagination'; // Ensure correct import
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  Input,
+} from '@erisfy/shadcnui';
+import { Pagination } from '../../components/Pagination';
 import { StockTable } from '../../components/StockTable';
-import { StockFilters } from '../../components/StockFilters';
+
 import { SearchBar } from '../../components/SearchBar';
 import { generateMockData, StockData } from '../../utils/mockData';
+import { Filters, createDefaultFilters } from '../../types/filters';
+import { StockFilters } from '../../components/StockFilters';
 
 const ScreenerResultsPage: FC = () => {
   const [stocks, setStocks] = useState<StockData[]>([]);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<Filters>(createDefaultFilters());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [selectedFilters] = useState<string[]>([]);
 
   useEffect(() => {
     const data = generateMockData(100);
     setStocks(data);
   }, []);
 
-  const handleFilterChange = (newFilters: any) => {
+  const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
+    // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -29,24 +43,43 @@ const ScreenerResultsPage: FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-  };
-
-  const handleFilterSelect = (filter: string) => {
-    setSelectedFilters((prevFilters) =>
-      prevFilters.includes(filter)
-        ? prevFilters.filter((f) => f !== filter)
-        : [...prevFilters, filter]
-    );
+    setCurrentPage(1);
   };
 
   const filteredStocks = stocks.filter((stock) => {
-    // Apply filters to the stock data
-    return stock.ticker.includes(searchQuery) || stock.companyName.includes(searchQuery);
+    const matchesSearch =
+      stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      stock.companyName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesFilters =
+      Object.keys(filters).length === 0 ||
+      Object.entries(filters).every(([key, value]) => {
+        if (!value) return true;
+
+        switch (key) {
+          case 'priceRange': {
+            const [min, max] = value as [number, number];
+            return stock.currentPrice >= min && stock.currentPrice <= max;
+          }
+          case 'marketCap': {
+            const [min, max] = value as [number, number];
+            return stock.marketCap >= min && stock.marketCap <= max;
+          }
+          case 'sector': {
+            const sectorVal = value as string;
+            return !sectorVal || sectorVal === stock.sector;
+          }
+          default:
+            return true;
+        }
+      });
+
+    return matchesSearch && matchesFilters;
   });
 
   const paginatedStocks = filteredStocks.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   return (

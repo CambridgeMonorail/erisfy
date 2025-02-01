@@ -8,7 +8,6 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-  Input,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
@@ -18,11 +17,10 @@ import { StockFilters } from '../../components/StockFilters';
 import { SearchBar } from '../../components/SearchBar';
 
 const FilterSelectionScreen: FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
+    // Removed: setSearchQuery(query);
   };
 
   const handleFilterSelect = (filters: { sector: string; industry: string; country: string; marketCap: [number, number]; priceRange: [number, number] }) => {

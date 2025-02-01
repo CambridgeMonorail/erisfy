@@ -67,16 +67,6 @@ export const MarketOpportunitiesPage: FC = () => {
     });
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    // Apply search filter to stocks
-    const filtered = stocks.filter((stock) => 
-      stock.ticker.toLowerCase().includes(query.toLowerCase()) || 
-      stock.companyName.toLowerCase().includes(query.toLowerCase())
-    );
-    setStocks(filtered);
-  };
-
   const handleFilterSelect = (filter: string) => {
     setSelectedFilters((prevFilters) =>
       prevFilters.includes(filter)
@@ -281,6 +271,16 @@ export const MarketOpportunitiesPage: FC = () => {
                 />
               </div>
               <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700">Search</label>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="border border-gray-300 rounded p-2 w-full"
+                  placeholder="Search by ticker or company name"
+                />
+              </div>
+              <div className="mt-4">
                 <h3 className="text-xl font-semibold mb-2">Selected Filters</h3>
                 <TooltipProvider>
                   <ul className="list-disc list-inside">
@@ -374,7 +374,11 @@ export const MarketOpportunitiesPage: FC = () => {
               </div>
               <div>
                 <strong>Sentiment-Based Categorization:</strong>
-                <p>Tags stories as Bullish 🟢, Bearish 🔴, or Neutral ⚪ based on AI analysis.</p>
+                <p>
+                  Tags stories as Bullish <span role="img" aria-label="Bullish">🟢</span>, 
+                  Bearish <span role="img" aria-label="Bearish">🔴</span>, 
+                  or Neutral <span role="img" aria-label="Neutral">⚪</span> based on AI analysis.
+                </p>
               </div>
               <div>
                 <strong>Custom Watchlist News Feed:</strong>
