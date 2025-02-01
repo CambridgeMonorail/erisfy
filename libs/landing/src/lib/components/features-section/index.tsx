@@ -9,6 +9,7 @@ interface Feature {
 }
 
 interface FeaturesSectionProps {
+  id?: string;
   title: string;
   features: Feature[];
   className?: string;
@@ -18,9 +19,19 @@ interface FeaturesSectionProps {
 /**
  * FeaturesSection component displays a section with a title and a list of features.
  */
-const FeaturesSection: FC<FeaturesSectionProps> = ({ title, features, className, 'data-testid': dataTestId }) => {
+const FeaturesSection: FC<FeaturesSectionProps> = ({ 
+  id,
+  title, 
+  features, 
+  className, 
+  'data-testid': dataTestId 
+}) => {
   return (
-    <section id="features" className={`text-center py-20 w-full px-4 md:px-8 lg:px-16 ${className}`} data-testid={dataTestId}>
+    <section 
+      id={id} 
+      className={`text-center py-20 w-full px-4 md:px-8 lg:px-16 ${className}`} 
+      data-testid={dataTestId}
+    >
       <h2 className="text-4xl font-bold mb-6 text-primary-foreground">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {features.map((feature, index) => (

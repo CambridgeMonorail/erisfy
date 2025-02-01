@@ -26,7 +26,7 @@ export const LandingPage: FC = () => {
   const navigate = useNavigate();
 
   const handleScrollToFeatures = () => {
-    const featuresElement = document.getElementById('features');
+    const featuresElement = document.getElementById('features') as HTMLElement;
     if (featuresElement) {
       featuresElement.scrollIntoView({ behavior: 'smooth' });
     }
@@ -125,6 +125,7 @@ export const LandingPage: FC = () => {
         data-testid="about-section"
       />
       <FeaturesSection
+        id="features"
         title="What You’ll Get (if Erisfy Were Real)"
         features={[
           {

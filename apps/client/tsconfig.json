@@ -5,10 +5,19 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client", "vitest"]
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom",
+      "node"
+    ]
   },
   "files": [],
-  "include": [],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"

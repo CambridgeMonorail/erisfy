@@ -1,36 +1,55 @@
-import { FC, useState } from 'react';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Slider, Card, CardHeader, CardTitle, CardContent, Button, Tooltip, TooltipTrigger, TooltipContent, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@erisfy/shadcnui';
+import { FC, useCallback, useMemo, useState } from 'react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem, Slider, Card, CardHeader, CardTitle, CardContent, Button, Tooltip, TooltipTrigger, TooltipContent, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@erisfy/shadcnui';
 
-interface StockFiltersProps {
-  onChange: (filters: any) => void;
-}
+type FilterValue = string | [number, number];
 
-const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
-  const [sector, setSector] = useState<string>('');
-  const [industry, setIndustry] = useState<string>('');
-  const [country, setCountry] = useState<string>('');
-  const [marketCap, setMarketCap] = useState<[number, number]>([0, 1000000]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+type Filters = {
+  sector: string;
+  industry: string;
+  country: string;
+  marketCap: [number, number];
+  priceRange: [number, number];
+};
+
+type StockFiltersProps = {
+  onChange: (filters: Filters) => void;
+  isLoading?: boolean;
+  error?: string;
+  initialFilters?: Partial<Filters>;
+};
+
+export const StockFilters: FC<StockFiltersProps> = ({ 
+  onChange, 
+  isLoading = false, 
+  error,
+  initialFilters 
+}) => {
+  const [filters, setFilters] = useState<Filters>({
+    sector: initialFilters?.sector ?? '',
+    industry: initialFilters?.industry ?? '',
+    country: initialFilters?.country ?? '',
+    marketCap: initialFilters?.marketCap ?? [0, 1000000],
+    priceRange: initialFilters?.priceRange ?? [0, 1000],
+  });
+
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
-  const handleFilterChange = () => {
-    onChange({
-      sector,
-      industry,
-      country,
-      marketCap,
-      priceRange,
+  const handleFilterChange = useCallback((key: keyof Filters, value: FilterValue) => {
+    setFilters(prev => {
+      const newFilters = { ...prev, [key]: value };
+      onChange(newFilters);
+      return newFilters;
     });
-  };
+  }, [onChange]);
 
-  const handleFilterSelect = (filter: string) => {
-    setSelectedFilters((prevFilters) =>
-      prevFilters.includes(filter)
-        ? prevFilters.filter((f) => f !== filter)
-        : [...prevFilters, filter]
-    );
-  };
+  const activeFilters = useMemo(() => 
+    Object.entries(filters).filter(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value[0] !== 0 || value[1] !== (key === 'marketCap' ? 1000000 : 1000);
+      }
+      return value !== '';
+    }).map(([key]) => key),
+  [filters]);
 
   return (
     <Card>
@@ -38,18 +57,31 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
         <CardTitle className="text-xl font-medium mb-2 text-primary">
           Filters
         </CardTitle>
-        <Button className="text-sm text-muted-foreground" onClick={() => setIsCollapsed(!isCollapsed)}>
+        <Button 
+          className="text-sm text-muted-foreground" 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          aria-expanded={!isCollapsed}
+          aria-controls="filters-content"
+        >
           {isCollapsed ? 'Expand Filters' : 'Collapse Filters'}
         </Button>
       </CardHeader>
-      {!isCollapsed && (
-        <CardContent>
-          <div className="space-y-6">
-            <label className="block text-sm font-bold text-gray-700">Sector</label>
-            <Select onValueChange={(value) => {
-              setSector(value as string);
-              handleFilterChange();
-            }}>
+      {error && (
+        <div className="px-6 py-2 text-red-500" role="alert">
+          {error}
+        </div>
+      )}
+      <CardContent 
+        id="filters-content" 
+        className={isCollapsed ? 'hidden' : undefined}
+      >
+        <div className="space-y-6">
+          <fieldset disabled={isLoading}>
+            <Select
+              value={filters.sector}
+              onValueChange={(value) => handleFilterChange('sector', value)}
+              aria-label="Select sector"
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Sectors" />
               </SelectTrigger>
@@ -63,11 +95,12 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <label className="block text-sm font-bold text-gray-700">Industry</label>
-            <Select onValueChange={(value) => {
-              setIndustry(value as string);
-              handleFilterChange();
-            }}>
+
+            <Select
+              value={filters.industry}
+              onValueChange={(value) => handleFilterChange('industry', value)}
+              aria-label="Select industry"
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Industries" />
               </SelectTrigger>
@@ -81,11 +114,12 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <label className="block text-sm font-bold text-gray-700">Country</label>
-            <Select onValueChange={(value) => {
-              setCountry(value as string);
-              handleFilterChange();
-            }}>
+
+            <Select
+              value={filters.country}
+              onValueChange={(value) => handleFilterChange('country', value)}
+              aria-label="Select country"
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Countries" />
               </SelectTrigger>
@@ -99,63 +133,75 @@ const StockFilters: FC<StockFiltersProps> = ({ onChange }) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button>More Filters</Button>
+                <Button aria-label="Additional filters">More Filters</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>
-                  <div>
-                    <label>Market Cap</label>
+                  <div className="w-full">
+                    <label htmlFor="market-cap" className="block mb-2">
+                      Market Cap
+                    </label>
                     <Slider
-                      value={marketCap}
-                      onValueChange={(value) => {
-                        setMarketCap(value as [number, number]);
-                        handleFilterChange();
-                      }}
+                      id="market-cap"
+                      value={filters.marketCap}
+                      onValueChange={(value) => handleFilterChange('marketCap', value as [number, number])}
                       min={0}
                       max={1000000}
                       step={10000}
+                      aria-label="Market cap range"
                     />
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <div>
-                    <label>Price Range</label>
+                  <div className="w-full">
+                    <label htmlFor="price-range" className="block mb-2">
+                      Price Range
+                    </label>
                     <Slider
-                      value={priceRange}
-                      onValueChange={(value) => {
-                        setPriceRange(value as [number, number]);
-                        handleFilterChange();
-                      }}
+                      id="price-range"
+                      value={filters.priceRange}
+                      onValueChange={(value) => handleFilterChange('priceRange', value as [number, number])}
                       min={0}
                       max={1000}
                       step={10}
+                      aria-label="Price range"
                     />
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <div className="mt-4">
-              <h3 className="text-lg font-medium mb-2">Selected Filters</h3>
-              <ul className="list-disc list-inside">
-                {selectedFilters.map((filter) => (
-                  <li key={filter}>
-                    <Tooltip>
-                      <TooltipTrigger>{filter}</TooltipTrigger>
-                      <TooltipContent>
-                        <p>Definition and example of {filter}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      )}
+
+            {activeFilters.length > 0 && (
+              <div className="mt-4" aria-live="polite">
+                <h3 className="text-lg font-medium mb-2">Active Filters</h3>
+                <ul className="list-disc list-inside">
+                  {activeFilters.map((filter) => (
+                    <li key={filter}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="link" 
+                            onClick={() => handleFilterChange(filter as keyof Filters, '')}
+                            aria-label={`Remove ${filter} filter`}
+                          >
+                            {filter}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Click to remove {filter} filter</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </fieldset>
+        </div>
+      </CardContent>
     </Card>
   );
 };
-
-export { StockFilters };
