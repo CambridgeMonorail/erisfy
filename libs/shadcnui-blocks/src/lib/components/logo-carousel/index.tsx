@@ -51,7 +51,7 @@ const LogoCarousel: FC<LogoCarouselProps> = ({ logos, header, subheader }) => {
       {/* Logo Carousel */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden mt-4"
+        className="relative w-full overflow-hidden mt-4 pt-6"
         style={{ height: '100px', whiteSpace: 'nowrap' }}
       >
         <div className="flex">

@@ -132,7 +132,7 @@ export const LandingPage: FC = () => {
             ariaLabel="Vite"
           />,
         ]}
-        header="Our Divine panoply"
+        header="Built To Industry Best Practices"
         subheader="Built on a foundation of chaotic brilliance"
         data-testid="about-section"
       />
