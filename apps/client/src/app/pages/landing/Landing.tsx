@@ -73,11 +73,11 @@ export const LandingPage: FC = () => {
           }
           imageAlt="Logo for the boilerplate"
           ctaPrimary={{
-            text: 'Try AI-Powered Stock Screening',
+            text: 'Explore Erisfy on GitHub',
             link: 'https://github.com/CambridgeMonorail/erisfy',
           }}
           ctaSecondary={{
-            text: 'Explore Erisfy on GitHub',
+            text: 'Try AI-Powered Stock Screening',
             onClick: handleScrollToFeatures,
           }}
           layout="left"
@@ -258,7 +258,7 @@ export const LandingPage: FC = () => {
             rel: 'noopener noreferrer',
           },
         ]}
-        copyrightText="&copy; 2024 Erisfy. All rights reserved."
+        copyrightText="&copy; 2025 Erisfy. All rights reserved."
         data-testid="footer"
       />
     </div>
