@@ -48,9 +48,9 @@ export const LandingPage: FC = () => {
           className="absolute top-0 right-0 w-40 h-40 mt-12 transform rotate-45"
         />
         <HeroSection
-          title="Erisfy: The Fintech Solution So Good It Doesn’t Even Exist"
-          subtitle="Order in chaos, profit in trading."
-          description="Built to showcase the future of fintech—Erisfy is powered by cutting-edge ShadCN/UI components, the chaos of Eris, and a healthy dose of your imagination. AI-driven trading never looked this unreal"
+          title="Erisfy—Find the Right Stocks, Faster."
+          subtitle="Smarter investing starts with the right insights."
+          description="Erisfy’s AI-powered stock screener helps you find high-quality investment opportunities in seconds—without the complexity. Get personalized insights and invest with confidence."
           image={
             <Logo
               fill="currentColor"
@@ -61,7 +61,7 @@ export const LandingPage: FC = () => {
           }
           imageAlt="Logo for the boilerplate"
           ctaPrimary={{
-            text: 'Start Pretending for Free',
+            text: 'Start Screening Smarter Today',
             link: 'https://github.com/CambridgeMonorail/erisfy',
           }}
           ctaSecondary={{
@@ -74,14 +74,8 @@ export const LandingPage: FC = () => {
         />
       </div>
       <AboutSection
-        title="Why Erisfy?"
-        description="Erisfy isn’t just a product—it’s a state of mind. Designed to make you 
-        question reality, this completely fictional fintech showcase combines cutting-edge UI 
-        components with the unparalleled power of… your imagination.
-        
-        Whether you're managing 
-        nonexistent portfolios or trading hypothetical stocks, Erisfy ensures you’re always ahead 
-        of the curve—by not actually having any kind of backend."
+        title="The Smartest Stock Screener for Everyday Investors"
+        description="Most stock screeners flood you with complex data. Erisfy makes investing simple. Our AI-powered system helps you filter, analyze, and find high-potential stocks in just a few clicks—so you can focus on making informed decisions, not interpreting spreadsheets."
         logos={[
           <Logo
             name="nx"
@@ -134,25 +128,25 @@ export const LandingPage: FC = () => {
         title="What You’ll Get (if Erisfy Were Real)"
         features={[
           {
-            title: 'Instant Chaos Management',
+            title: 'AI-Powered Stock Discovery',
             description:
-              'Tame the wildest data with a trading dashboard that practically doesn’t exist.',
+              'Get personalized stock recommendations tailored to your goals.',
             icon: <Rocket className="text-red-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Effortless UI Magic',
+            title: 'Effortless Smart Filtering',
             description:
-              'ShadCN/UI ensures your hypothetical fintech app is so beautiful, it might even bring Zeus to tears.',
+              'Set filters or just type what you’re looking for—Erisfy handles the rest.',
             icon: <Palette className="text-blue-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
-            title: 'Data, Gloriously Imagined',
+            title: 'Clear, Actionable Insights',
             description:
-              'Real-time updates on the markets that matter—if you believe in them enough.',
+              'AI explains stock movements in plain language, not just numbers.',
             icon: <Paintbrush className="text-green-500" />,
             className:
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
@@ -196,8 +190,8 @@ Just kidding. But do check out the demo."
       <CTASection
         variant="dark"
         title="Join the Community"
-        description="Become part of the Erisfy family, where ideas flow freely, trading is smarter, and we all agree this product doesn’t actually exist."
-        buttonText="Contribute on GitHub"
+        description="Join a growing community of investors using AI to simplify stock research. Learn from experts, share insights, and take control of your financial future."
+        buttonText="Explore Erisfy on GitHub"
         buttonAction={() =>
           window.open('https://github.com/CambridgeMonorail/erisfy', '_blank')
         }

@@ -19,7 +19,40 @@ describe('LandingPage', () => {
       </BrowserRouter>
     );
     expect(
-      getByText(/Erisfy: The Fintech Solution So Good It Doesn’t Even Exist/gi)
+      getByText(/Erisfy—Find the Right Stocks, Faster./gi)
+    ).toBeTruthy();
+  });
+
+  it('should have a subtitle', () => {
+    const { getByText } = render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+    expect(
+      getByText(/Smarter investing starts with the right insights./gi)
+    ).toBeTruthy();
+  });
+
+  it('should have a CTA', () => {
+    const { getByText } = render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+    expect(
+      getByText(/Start Screening Smarter Today/gi)
+    ).toBeTruthy();
+  });
+
+  it('should have a "Why Erisfy?" section title', () => {
+    const { getByText } = render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+    expect(
+      getByText(/The Smartest Stock Screener for Everyday Investors/gi)
     ).toBeTruthy();
   });
 
@@ -38,8 +71,8 @@ describe('LandingPage', () => {
         <LandingPage />
       </BrowserRouter>
     );
-    expect(getByText(/Instant Chaos Management/gi)).toBeTruthy();
-    expect(getByText(/Effortless UI Magic/gi)).toBeTruthy();
-    expect(getByText(/Scalability Without Bounds/gi)).toBeTruthy();
+    expect(getByText(/AI-Powered Stock Discovery/gi)).toBeTruthy();
+    expect(getByText(/Effortless Smart Filtering/gi)).toBeTruthy();
+    expect(getByText(/Clear, Actionable Insights/gi)).toBeTruthy();
   });
 });
