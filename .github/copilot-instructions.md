@@ -49,7 +49,13 @@ Enforce strict type safety and best practices.
 Follow Tailwind CSS and shadcn/ui guidelines for consistent design.
 
 - Apply Tailwind classes for styling.
-- Import shadcn components from '@erisfy/shadcnui'.
+- Import shadcn components directly from @erisfy/shadcnui:
+
+  ```tsx
+  import { Button } from '@erisfy/shadcnui';
+  import { Alert } from '@erisfy/shadcnui';
+  ```
+
 - Utilize shadcn theme variables (bg-background, text-foreground, etc.).
 
 ## State Management
