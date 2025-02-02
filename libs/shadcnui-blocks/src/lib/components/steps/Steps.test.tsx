@@ -14,13 +14,6 @@ describe('Steps', () => {
     { title: 'Step 3', description: 'Description 3' },
   ];
 
-  // Helper function to get element by text with exact match
-  const getExactText = (text: string) => 
-    screen.getByText((content, element) => {
-      const hasText = (element: Element | null) => element?.textContent === text;
-      return hasText(element);
-    });
-
   it('renders nothing when steps array is empty', () => {
     render(<Steps steps={[]} />);
     expect(screen.queryByTestId('steps-section')).not.toBeInTheDocument();

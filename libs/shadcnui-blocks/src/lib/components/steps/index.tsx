@@ -98,7 +98,6 @@ export const Steps: FC<StepsProps> = ({
       <div className="mt-10 md:mt-20">
         <ul 
           className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-10"
-          role="list"
           aria-label="Process steps"
         >
           {steps.map((step, index) => (

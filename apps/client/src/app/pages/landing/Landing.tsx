@@ -238,7 +238,7 @@ export const LandingPage: FC = () => {
         data-testid="steps-section"
       />
       <Tagline
-        text="Harness Chaos. Trade Smarter."
+        text="AI-Powered Insights. Confident Decisions."
         dataTestId="tagline"
       />
       <Footer
@@ -254,12 +254,14 @@ export const LandingPage: FC = () => {
           {
             icon: (props) => <Github {...props} />,
             url: GITHUB_URL,
+            'aria-label': 'Visit Erisfy on GitHub',
             target: '_blank',
             rel: 'noopener noreferrer',
           },
           {
             icon: (props) => <Twitter {...props} />,
             url: TWITTER_URL,
+            'aria-label': 'Follow Erisfy on Twitter',
             target: '_blank',
             rel: 'noopener noreferrer',
           },
