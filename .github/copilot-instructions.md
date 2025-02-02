@@ -1,16 +1,201 @@
-- Project Structure: This is a React Single Page Application (SPA) written in TypeScript, utilizing client-side routing within a Nrwl Nx Monorepo.
-- Package Management: Use pnpm exclusively for installing packages.
-- Code Quality: Write clean, modern, type-safe React functional components that adhere to best practices, emphasizing security, robustness, maintainability, readability, separation of concerns, and the DRY principle.
-- State Management: Utilize React hooks such as useState and useEffect for state management and handling side effects.
-- Styling: Apply Tailwind CSS classes for component styling and prefer shadcn/ui components for consistent UI elements. Import shadcn components from '@erisfy/shadcnui'.
-- Monorepo Organization: Follow the Nx monorepo structure for organizing applications and libraries.
-- TypeScript Practices: Adhere to TypeScript best practices, including strict typing and the use of interfaces.
-- Testing: Implement Vitest for unit testing and Playwright for end-to-end testing.
-- Accessibility and Responsiveness: Ensure all components are accessible and responsive.
-- Component Exports: Prefer named (explicit) exports over default exports for clarity and better tooling support.
-- Type Definitions: Prefer types for defining object shapes, unions, intersections, and lightweight aliases. Use interfaces only when absolutely necessary, such as when extending or merging object definitions.
-- Imports: Prefer direct named imports, such as importing FC from React, instead of using React.FC. Use relative imports for files within the same project.
-- Styling Consistency: Utilize shadcn theme variables for styling to ensure consistency and ease of customization. Common theme variables include bg-background, text-foreground, primary, primary-foreground, secondary, muted, and accent.
-- Component Design: Prioritize flexibility and maintainability by extending native HTML element props. Use composition to break down complex components into smaller, reusable parts, allowing customization through props, slots, or the children prop. Keep components as stateless as possible, delegating state management to parent components or using React Context when necessary. Follow accessibility best practices and ensure styles are modular and reusable. Write concise, modular, and DRY components, using named exports to promote clarity and reusability.
-- When creating Storybook stories be sure to use the latest syntax, use StoryObj, tags: ['autodocs'], cover the possible component use caseses and make sure the stories have JSDoc comments that explain what they are, the user does not to be told they are stories but what they demonstrate.
-- Icons: Use lucide-react for icons.
+# Project Context
+
+Erisfy is an AI-powered stock screener that simplifies investing by transforming raw market data into clear, actionable insights, enabling investors to discover opportunities, analyze trends, and make confident decisions faster​01 - elevator pitch
+
+We are building a React Single Page Application in TypeScript, using client-side routing within a Nrwl Nx Monorepo. We install packages exclusively via pnpm.
+
+## Code Style and Structure
+
+We prioritize clean, modern, type-safe React functional components emphasizing security, robustness, maintainability, readability, separation of concerns, and DRY principles. Follow Nx monorepo structure for organizing code.
+
+- Use React hooks (useState, useEffect) for state management and side effects.
+- Prefer named (explicit) exports.
+- Adhere to TypeScript strict typing.
+- Prefer 'type' over 'interface' unless extending.
+- Place code in relevant Nx library/app folders.
+
+## Tech Stack
+
+Core technologies and libraries used in the project.
+
+- React (SPA)
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Nrwl Nx
+- Vitest and Playwright for testing
+- API Client with TypeScript generics
+- Error handling with custom ApiError types
+
+## Naming Conventions
+
+Ensure clarity and consistency in how files and components are named.
+
+- Use descriptive names for exports and files.
+- Employ direct named imports and relative paths within the project.
+
+## TypeScript Usage
+
+Enforce strict type safety and best practices.
+
+- Use interfaces only when merging or extending object definitions.
+- Keep components as stateless as possible, delegating state or context to higher levels.
+- Use generic types for API client implementations
+- Implement proper error type handling with ApiError
+- Define resource types for API responses
+
+## UI and Styling
+
+Follow Tailwind CSS and shadcn/ui guidelines for consistent design.
+
+- Apply Tailwind classes for styling.
+- Import shadcn components from '@erisfy/shadcnui'.
+- Utilize shadcn theme variables (bg-background, text-foreground, etc.).
+
+## State Management
+
+Handle state and effects efficiently within React hooks.
+
+- Keep logic in functional components.
+- Delegate complex state to parent components or React Context.
+
+## Storybook Usage
+
+Ensure stories are modern and annotated correctly.
+
+- Use modern syntax (StoryObj, tags: ['autodocs']).
+- Cover various use cases with JSDoc comments for each story.
+
+## Icons
+
+Maintain consistent icon usage in the UI.
+
+- Use lucide-react for icons.
+
+## Testing
+
+Verify code functionality using unit and E2E tests.
+
+- Implement Vitest for unit tests.
+- Implement Playwright for end-to-end tests.
+- Place test files alongside their corresponding components.
+
+## Accessibility and Responsiveness
+
+Ensure inclusive UX on various devices.
+
+- Ensure all components are accessible and responsive.
+- Follow best practices for screen readers and dynamic layouts.
+- Use semantic HTML elements to improve accessibility and SEO.
+
+## Project Structure
+
+Follow Nx workspace organization and naming conventions:
+
+```text
+apps/                   # Application projects
+├── client/            # Main web client
+    ├── src/
+        ├── app/       # Core application logic
+        ├── components/# Page-specific components
+        ├── hooks/     # Custom React hooks
+        ├── utils/     # Helper functions
+        ├── pages/     # Route components
+        ├── styles/    # Global styles
+        └── tests/     # Test files
+├── api/               # Backend API
+    └── src/          
+        ├── routes/    # API endpoints
+        ├── services/  # Business logic
+        └── utils/     # Helper functions
+
+libs/                  # Shared libraries
+├── api-client/       # API client library
+    ├── src/
+        ├── clients/  # API client implementations
+        ├── types/    # API types and interfaces
+        ├── utils/    # API utilities
+        └── errors/   # Error handling
+├── shadcnui/         # UI component library
+    ├── src/
+        ├── components/# Reusable UI components
+        ├── hooks/     # Shared hooks
+        └── utils/     # UI utilities
+├── shared/           # Shared utilities
+    ├── src/
+        ├── types/    # Shared TypeScript types
+        ├── utils/    # Common helper functions
+        └── constants/# Shared constants
+
+e2e/                  # End-to-end tests
+├── client/          # Client E2E tests
+    └── src/
+        └── tests/   # Playwright test files
+```
+
+## Component Design
+
+Structure components for maximum reusability and maintainability.
+
+- Extend native HTML element props where applicable
+- Use composition for complex components
+- Allow customization via props, slots, or children
+- Keep components modular and DRY
+- Follow single responsibility principle
+
+## API Integration
+
+Follow these guidelines for API integration:
+
+- Use typed API client from '@erisfy/api-client'
+- Implement proper error handling using ApiError types
+- Use environment variables for API configuration
+- Handle loading and error states in components
+- Implement retry logic where appropriate
+- Use mock client for development and testing
+
+## Error Handling
+
+Implement comprehensive error handling:
+
+- Use try/catch blocks for API calls
+- Handle ApiError instances appropriately
+- Show user-friendly error messages
+- Log errors with meaningful context
+- Implement retry logic where necessary
+
+## Package Management
+
+Follow consistent package management practices.
+
+- Use pnpm exclusively for package installation
+- Maintain clean dependency tree
+- Document new dependencies in README
+
+## Code Organization
+
+Structure code for clarity and maintainability.
+
+- Place components in appropriate Nx library/app folders
+- Use barrel exports (index.ts) for library exports
+- Keep related files close together
+- Follow feature-based organization within apps
+
+## File Naming
+
+Use consistent file naming patterns.
+
+- Components: PascalCase.tsx
+- Hooks: camelCase.ts
+- Utils: camelCase.ts
+- Tests: ComponentName.test.tsx
+- Stories: ComponentName.stories.tsx
+
+## Import/Export Patterns
+
+Follow consistent import/export patterns.
+
+- Use named exports
+- Prefer direct imports (import { FC } from 'react')
+- Use relative paths within projects
+- Use absolute paths across projects
