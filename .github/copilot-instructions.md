@@ -29,8 +29,8 @@ Core technologies and libraries used in the project.
 
 Ensure clarity and consistency in how files and components are named.
 
-- Prefer descriptive exports and meaningful file names.
-- Use direct named imports and relative paths within the same project.
+- Use descriptive names for exports and files.
+- Employ direct named imports and relative paths within the project.
 
 ## TypeScript Usage
 
@@ -58,8 +58,8 @@ Handle state and effects efficiently within React hooks.
 
 Ensure stories are modern and annotated correctly.
 
-- Use latest syntax, StoryObj, and tags: ['autodocs'].
-- Cover possible use cases with JSDoc comments explaining each story.
+- Use modern syntax (StoryObj, tags: ['autodocs']).
+- Cover various use cases with JSDoc comments for each story.
 
 ## Icons
 
@@ -73,13 +73,15 @@ Verify code functionality using unit and E2E tests.
 
 - Implement Vitest for unit tests.
 - Implement Playwright for end-to-end tests.
+- Place test files alongside their corresponding components.
 
 ## Accessibility and Responsiveness
 
 Ensure inclusive UX on various devices.
 
-- Make all components accessible and responsive.
+- Ensure all components are accessible and responsive.
 - Follow best practices for screen readers and dynamic layouts.
+- Use semantic HTML elements to improve accessibility and SEO.
 
 ## Project Structure
 
@@ -118,3 +120,50 @@ e2e/                  # End-to-end tests
 ├── client/          # Client E2E tests
     └── src/
         └── tests/   # Playwright test files
+```
+
+## Component Design
+
+Structure components for maximum reusability and maintainability.
+
+- Extend native HTML element props where applicable
+- Use composition for complex components
+- Allow customization via props, slots, or children
+- Keep components modular and DRY
+- Follow single responsibility principle
+
+## Package Management
+
+Follow consistent package management practices.
+
+- Use pnpm exclusively for package installation
+- Maintain clean dependency tree
+- Document new dependencies in README
+
+## Code Organization
+
+Structure code for clarity and maintainability.
+
+- Place components in appropriate Nx library/app folders
+- Use barrel exports (index.ts) for library exports
+- Keep related files close together
+- Follow feature-based organization within apps
+
+## File Naming
+
+Use consistent file naming patterns.
+
+- Components: PascalCase.tsx
+- Hooks: camelCase.ts
+- Utils: camelCase.ts
+- Tests: ComponentName.test.tsx
+- Stories: ComponentName.stories.tsx
+
+## Import/Export Patterns
+
+Follow consistent import/export patterns.
+
+- Use named exports
+- Prefer direct imports (import { FC } from 'react')
+- Use relative paths within projects
+- Use absolute paths across projects
