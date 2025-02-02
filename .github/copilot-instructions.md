@@ -1,5 +1,7 @@
 # Project Context
 
+Erisfy is an AI-powered stock screener that simplifies investing by transforming raw market data into clear, actionable insights, enabling investors to discover opportunities, analyze trends, and make confident decisions faster​01 - elevator pitch
+
 We are building a React Single Page Application in TypeScript, using client-side routing within a Nrwl Nx Monorepo. We install packages exclusively via pnpm.
 
 ## Code Style and Structure
@@ -78,3 +80,41 @@ Ensure inclusive UX on various devices.
 
 - Make all components accessible and responsive.
 - Follow best practices for screen readers and dynamic layouts.
+
+## Project Structure
+
+Follow Nx workspace organization and naming conventions:
+
+```text
+apps/                   # Application projects
+├── client/            # Main web client
+    ├── src/
+        ├── app/       # Core application logic
+        ├── components/# Page-specific components
+        ├── hooks/     # Custom React hooks
+        ├── utils/     # Helper functions
+        ├── pages/     # Route components
+        ├── styles/    # Global styles
+        └── tests/     # Test files
+├── api/               # Backend API
+    └── src/          
+        ├── routes/    # API endpoints
+        ├── services/  # Business logic
+        └── utils/     # Helper functions
+
+libs/                  # Shared libraries
+├── shadcnui/         # UI component library
+    ├── src/
+        ├── components/# Reusable UI components
+        ├── hooks/     # Shared hooks
+        └── utils/     # UI utilities
+├── shared/           # Shared utilities
+    ├── src/
+        ├── types/    # Shared TypeScript types
+        ├── utils/    # Common helper functions
+        └── constants/# Shared constants
+
+e2e/                  # End-to-end tests
+├── client/          # Client E2E tests
+    └── src/
+        └── tests/   # Playwright test files
