@@ -370,6 +370,38 @@ To learn how to theme your app using Shadcn UI and Tailwind CSS, please refer to
 
 To add a new component page to the routing in your React SPA, please refer to the detailed guide in [docs/adding-new-component-page.md](./docs/adding-new-component-page.md).
 
+## Enabling/Disabling API Mocks
+
+To enable or disable API mocks, follow these steps:
+
+1. Open the `.env` file in the `apps/client` directory.
+2. Set the `VITE_REACT_APP_USE_MOCKS` environment variable to `true` to enable mocks or `false` to disable them.
+
+```ini
+VITE_REACT_APP_USE_MOCKS=true
+```
+
+## Running Tests with MSW
+
+To run tests with MSW, follow these steps:
+
+1. Ensure that the mock server is set up in the `apps/client/src/mocks/server.ts` file.
+2. Import and start the mock server in your test setup file (`apps/client/src/test/setup.ts`).
+
+```typescript
+import { server } from '../mocks/server';
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+```
+
+3. Write your tests as usual, and MSW will intercept the API requests and return the mock responses.
+
+## Reference Documentation
+
+For detailed steps on setting up MSW and integrating API mocking in Erisfy, refer to the [Integrating API Mocking with MSW in Erisfy](./docs/specs/working/Integrating%20API%20Mocking%20with%20MSW%20in%20Erisfy.md) documentation.
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any changes. For detailed guidelines on how to contribute, see [Contributing](./docs/CONTRIBUTING.md).
