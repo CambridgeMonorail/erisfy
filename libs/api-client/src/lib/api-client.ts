@@ -4,9 +4,9 @@ import { MockAPIClient } from './mock-api-client';
 
 /** Determines if the application should use mock API responses */
 const shouldUseMocks = (): boolean => {
-  const mockEnv = process.env.REACT_APP_USE_MOCKS;
+  const mockEnv = import.meta.env.VITE_REACT_APP_USE_MOCKS;
   if (mockEnv === undefined) {
-    console.warn('REACT_APP_USE_MOCKS environment variable is not set, defaulting to real API');
+    console.warn('VITE_REACT_APP_USE_MOCKS environment variable is not set, defaulting to real API');
     return false;
   }
   return mockEnv === 'true';

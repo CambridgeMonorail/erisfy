@@ -9,15 +9,21 @@ type ErrorFallbackProps = {
     statusCode?: number;
     message: string;
   };
+  /** Optional callback for custom reset behavior */
+  onReset?: () => void;
 };
 
 /**
  * A fallback component to display when an error occurs in the application.
  * Provides a user-friendly error message and a refresh button.
  */
-export const ErrorFallback: FC<ErrorFallbackProps> = ({ error }) => {
+export const ErrorFallback: FC<ErrorFallbackProps> = ({ error, onReset }) => {
   const handleRefresh = (): void => {
-    window.location.reload();
+    if (onReset) {
+      onReset();
+    } else {
+      window.location.reload();
+    }
   };
 
   return (
