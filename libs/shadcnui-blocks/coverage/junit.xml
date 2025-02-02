@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="12" failures="0" errors="0" time="0.1057046">
-    <testsuite name="src/lib/components/error-fallback/ErrorFallback.test.tsx" timestamp="2025-02-02T14:30:23.587Z" hostname="WINDOWS-UH9N5GA" tests="7" failures="0" errors="0" skipped="0" time="0.0664582">
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render error title and message correctly" time="0.0191931">
+<testsuites name="vitest tests" tests="20" failures="0" errors="0" time="0.1673301">
+    <testsuite name="src/lib/components/error-fallback/ErrorFallback.test.tsx" timestamp="2025-02-02T15:22:58.443Z" hostname="WINDOWS-UH9N5GA" tests="7" failures="0" errors="0" skipped="0" time="0.0686722">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render error title and message correctly" time="0.0189419">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render default message when error message is empty" time="0.0021827">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render default message when error message is empty" time="0.0022035">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should handle error with status code" time="0.0016947">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should handle error with status code" time="0.0016807">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; accessibility &gt; should have proper ARIA attributes" time="0.0018796">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; accessibility &gt; should have proper ARIA attributes" time="0.0018453">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; accessibility &gt; should have accessible refresh button" time="0.0359975">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; accessibility &gt; should have accessible refresh button" time="0.0381609">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; interactions &gt; should trigger page reload when refresh button is clicked" time="0.0032014">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; interactions &gt; should trigger page reload when refresh button is clicked" time="0.0035296">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; test ids &gt; should have all required test ids" time="0.0013379">
+        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; test ids &gt; should have all required test ids" time="0.001372">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/components/tagline/Tagline.spec.tsx" timestamp="2025-02-02T14:30:23.590Z" hostname="WINDOWS-UH9N5GA" tests="5" failures="0" errors="0" skipped="0" time="0.0392464">
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; renders with the correct text" time="0.0144892">
+    <testsuite name="src/lib/components/steps/Steps.test.tsx" timestamp="2025-02-02T15:22:58.446Z" hostname="WINDOWS-UH9N5GA" tests="8" failures="0" errors="0" skipped="0" time="0.0596096">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders nothing when steps array is empty" time="0.011061">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies additional class names" time="0.0015749">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders all steps with correct content" time="0.0109337">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies inline styles" time="0.0188503">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders heading and subheading when provided" time="0.0022569">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the id attribute" time="0.0016914">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders highlighted text in subheading correctly" time="0.0023561">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the data-testid attribute" time="0.0017146">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; applies custom className when provided" time="0.0019698">
+        </testcase>
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders correct number of steps" time="0.0240717">
+        </testcase>
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders steps with correct accessibility attributes" time="0.0041552">
+        </testcase>
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; handles multiple highlights in subheading" time="0.0019847">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/components/tagline/Tagline.spec.tsx" timestamp="2025-02-02T15:22:58.447Z" hostname="WINDOWS-UH9N5GA" tests="5" failures="0" errors="0" skipped="0" time="0.0390483">
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; renders with the correct text" time="0.014282">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies additional class names" time="0.0015823">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies inline styles" time="0.0188994">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the id attribute" time="0.0016867">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the data-testid attribute" time="0.0017361">
         </testcase>
     </testsuite>
 </testsuites>

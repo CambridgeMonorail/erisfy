@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
+import { cn } from '@erisfy/shadcnui';
 
 /**
  * Represents a single step in the Steps component.
@@ -46,10 +47,14 @@ export const Steps: FC<StepsProps> = ({
   heading,
   subheading,
   highlight,
-  steps,
+  steps = [],
   className = '',
   highlightClassName = 'text-primary',
 }) => {
+  if (!steps.length) {
+    return null;
+  }
+
   const renderSubheading = () => {
     if (!subheading || !highlight) return subheading;
 
@@ -68,41 +73,53 @@ export const Steps: FC<StepsProps> = ({
   };
 
   return (
-    <div
-      className={`max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-between ${className}`}
+    <section
+      className={cn(
+        'max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-between',
+        className
+      )}
+      data-testid="steps-section"
     >
       {(heading || subheading) && (
-        <div className="text-center">
+        <header className="text-center">
           {heading && (
-            <p className="mt-4 text-sm leading-7 text-foreground font-regular">
+            <p className="mt-4 text-sm leading-7 text-foreground font-regular" data-testid="steps-heading">
               {heading}
             </p>
           )}
           {subheading && (
-            <h3 className="text-3xl sm:text-5xl leading-normal font-extrabold tracking-tight text-foreground">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl leading-normal font-extrabold tracking-tight text-foreground" data-testid="steps-subheading">
               {renderSubheading()}
-            </h3>
+            </h2>
           )}
-        </div>
+        </header>
       )}
 
-      <div className="mt-20">
-        <ul className="md:grid md:grid-cols-3 md:gap-10">
+      <div className="mt-10 md:mt-20">
+        <ul 
+          className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-10"
+          role="list"
+          aria-label="Process steps"
+        >
           {steps.map((step, index) => (
             <li
               key={index}
               className="bg-popover p-5 pb-10 text-center relative rounded-[var(--radius)]"
+              data-testid={`step-${index}`}
             >
               <div className="flex flex-col items-center">
                 <div className="flex-shrink-0 relative top-0 -mt-16">
-                  <div className="flex items-center justify-center h-20 w-20 rounded-full bg-primary text-primary-foreground border-4 border-background text-xl font-semibold">
+                  <div 
+                    className="flex items-center justify-center h-20 w-20 rounded-full bg-primary text-primary-foreground border-4 border-background text-xl font-semibold transition-transform duration-200 ease-in-out hover:scale-110"
+                    aria-hidden="true"
+                  >
                     {index + 1}
                   </div>
                 </div>
                 <div className="mt-4">
-                  <h4 className="text-lg leading-6 font-semibold text-foreground">
+                  <h3 className="text-lg leading-6 font-semibold text-foreground">
                     {step.title}
-                  </h4>
+                  </h3>
                   <p className="mt-2 text-base leading-6 text-foreground">
                     {step.description}
                   </p>
@@ -112,6 +129,6 @@ export const Steps: FC<StepsProps> = ({
           ))}
         </ul>
       </div>
-    </div>
+    </section>
   );
 };

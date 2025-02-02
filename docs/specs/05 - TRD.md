@@ -8,6 +8,32 @@ Erisfy is an AI-powered financial market analysis tool that helps traders and in
 
 ## 2. System Architecture Overview
 
+```
+              ┌─────────────────────────────────────┐
+              │            Frontend UI              │
+              │  (React/Next.js, Charting Library)  │
+              └─────────────────────────────────────┘
+                            ▲    │
+         Real-Time Updates  │    │ REST/GraphQL APIs
+                            │    ▼
+              ┌─────────────────────────────────────┐
+              │           Backend Server            │
+              │   (Node.js/Express in TypeScript)   │
+              │  • Data Aggregation & Processing    │
+              │  • Signal Generation & Decision AI  │
+              │  • User Action Logging              │
+              └─────────────────────────────────────┘
+                            ▲    │
+            API Integrations│    │ Database Queries
+                            │    ▼
+              ┌─────────────────────────────────────┐
+              │         External APIs & DBs         │
+              │  • Financial Data Providers         │
+              │  • Broker APIs (Optional)           │
+              │  • Managed DB (PostgreSQL/Mongo)    │
+              └─────────────────────────────────────┘
+```
+
 ### 2.1 Frontend (User Interface)
 
 **Framework:**
@@ -148,31 +174,28 @@ Erisfy is an AI-powered financial market analysis tool that helps traders and in
 ## 4. Supporting Diagram
 
 ```mermaid
-graph LR
-    subgraph Frontend [Frontend: React/Next.js UI (Hosted on Vercel/Netlify)]
-        A[Interactive React UI]
+flowchart LR
+    subgraph "Frontend"
+        A["Interactive React UI"]
     end
 
-    subgraph Backend [Backend: Node.js/Express API (Hosted on Heroku/Render)]
-        B[API Gateway]
-        C[LangChain.js Agent Orchestration (Node.js)]
-        D[Database (Heroku Postgres/MongoDB Atlas)]
+    subgraph "Backend"
+        B["API Gateway"]
+        C["LangChain.js Agent Orchestration"]
+        D["Database"]
     end
 
-    subgraph External [External Services]
-        E[Financial Data APIs (Financial Datasets)]
-        F[Broker APIs (Simulated/Live)]
+    subgraph "External"
+        E["Financial Data APIs"]
+        F["Broker APIs"]
     end
 
-    A -- "User Input / Review" --> B
-    B -- "API Responses / Live Updates" --> A
-
-    B -- "Invoke Agent Workflows" --> C
-    C -- "Fetch Market Data" --> E
-    C -- "Broker Commands" --> F
-    C -- "Log Decisions" --> D
-
-    A -- "Override/Approve Signals" --> C
+    A --"User Input / Review"--> B
+    B --"API Responses / Live Updates"--> A
+    B --"Invoke Agent Workflows"--> C
+    C --"Fetch Market Data"--> E
+    C --"Broker Commands"--> F
+    C --"Log Decisions"--> D
 ```
 
 ## 5. Summary & Next Steps
@@ -187,3 +210,4 @@ This document outlines the technical foundation for Erisfy. Outstanding question
 Next, we should conduct internal discussions and feasibility tests on these areas before finalizing implementation strategies.
 
 **Next Document: [06 - Modular Agent Architecture](./06%20-%20Modular%20Agent%20Architecture.md)**
+````
