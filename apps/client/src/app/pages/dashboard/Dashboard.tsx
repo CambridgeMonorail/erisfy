@@ -15,31 +15,69 @@ export const DashboardPage: FC = () => {
   const [filters, setFilters] = useState<FilterState>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const data = generateMockData(100);
-    setStocks(data);
+    const fetchData = async () => {
+      try {
+        const data = generateMockData(100);
+        setStocks(data);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to fetch data'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    void fetchData();
+  }, []);
+
+  const handleFilterSelection = useCallback((filter: string) => {
+    setSelectedFilters(prev => [...new Set([...prev, filter])]);
   }, []);
 
   const handleFilterChange = useCallback((newFilters: FilterState) => {
     setFilters(newFilters);
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value) {
+        handleFilterSelection(`${key}: ${value}`);
+      }
+    });
+  }, [handleFilterSelection]);
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
   }, []);
 
   const filteredStocks = useMemo(() => 
     stocks.filter((stock) => 
-      stock.ticker.includes(searchQuery) || 
-      stock.companyName.includes(searchQuery)
+      stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      stock.companyName.toLowerCase().includes(searchQuery.toLowerCase())
     ),
     [stocks, searchQuery]
   );
 
   const chartData = useMemo(
     () => filteredStocks.map((stock) => ({
-      date: stock.ticker, // Example: use 'ticker' as date
-      value: stock.marketCap ?? 0 // Example: use 'marketCap' as numeric value
+      date: stock.ticker,
+      value: stock.marketCap ?? 0
     })),
     [filteredStocks]
   );
+
+  if (error) {
+    return (
+      <div role="alert" className="p-4 text-red-600">
+        <h2>Error loading dashboard</h2>
+        <p>{error.message}</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <div role="status" className="p-4">Loading dashboard...</div>;
+  }
 
   return (
     <div
@@ -58,14 +96,19 @@ export const DashboardPage: FC = () => {
           >
             Dashboard
           </h2>
-          <div
-            className="flex items-center space-x-3"
-            data-testid="dashboard-actions"
-          >
+          <div className="flex items-center space-x-4">
+            <input
+              type="text"
+              placeholder="Search stocks..."
+              className="px-4 py-2 border rounded-md"
+              onChange={(e) => handleSearch(e.target.value)}
+              value={searchQuery}
+              aria-label="Search stocks"
+            />
             <CalendarDateRangePicker data-testid="date-range-picker" />
-            <Button variant="default" data-testid="download-button">
+            <Button variant="default">
               <span className="hidden sm:inline">Download</span>
-              <Download className="sm:hidden" />
+              <Download className="sm:hidden" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -226,22 +269,46 @@ export const DashboardPage: FC = () => {
           </div>
         </DashboardCard>
 
-        {/* Quick Actions Toolbar */}
-        <div className="fixed right-0 top-1/4 transform -translate-y-1/2 space-y-2">
-          <Button variant="default" className="w-12 h-12 flex items-center justify-center">
-            <Filter />
+        {/* Quick Actions Toolbar - now with aria labels */}
+        <div 
+          className="fixed right-0 top-1/4 transform -translate-y-1/2 space-y-2"
+          role="toolbar"
+          aria-label="Quick actions"
+        >
+          <Button
+            variant="default"
+            className="w-12 h-12 flex items-center justify-center"
+            aria-label="Filter"
+          >
+            <Filter aria-hidden="true" />
           </Button>
-          <Button variant="default" className="w-12 h-12 flex items-center justify-center">
-            <Search />
+          <Button
+            variant="default"
+            className="w-12 h-12 flex items-center justify-center"
+            aria-label="Search"
+          >
+            <Search aria-hidden="true" />
           </Button>
-          <Button variant="default" className="w-12 h-12 flex items-center justify-center">
-            <Bell />
+          <Button
+            variant="default"
+            className="w-12 h-12 flex items-center justify-center"
+            aria-label="Notifications"
+          >
+            <Bell aria-hidden="true" />
           </Button>
-          <Button variant="default" className="w-12 h-12 flex items-center justify-center">
-            <HelpCircle />
+          <Button
+            variant="default"
+            className="w-12 h-12 flex items-center justify-center"
+            aria-label="Help"
+          >
+            <HelpCircle aria-hidden="true" />
           </Button>
-          <Button variant="default" className="w-12 h-12 flex items-center justify-center">
-            <AlertCircle />
+          <Button
+            variant="default"
+            className="w-12 h-12 flex items-center justify-center"
+            aria-label="Alerts"
+          >
+            <AlertCircle aria-hidden="true" />
           </Button>
         </div>
 

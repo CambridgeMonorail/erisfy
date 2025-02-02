@@ -4,12 +4,13 @@ import { ErrorBoundary } from './ErrorBoundary';
 
 const ErrorComponent = () => {
   throw new Error('Test error');
-  return null;
 };
 
 describe('ErrorBoundary', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {
+      // Suppress console.error during tests
+    });
   });
 
   it('renders children when no error occurs', () => {

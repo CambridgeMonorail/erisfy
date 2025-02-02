@@ -15,7 +15,6 @@ import { BlogPage } from '../pages/blog/Blog';
 import { IndividualBlogPostPage } from '../pages/blog/IndividualBlogPost';
 import { ColorPalettePage } from '../pages/color-palette/ColorPalette';
 import { ContactPage } from '../pages/contact/Contact';
-import { DashboardPage } from '../pages/dashboard/Dashboard';
 import { FAQPage } from '../pages/faq/FAQ';
 import { FeaturesPage } from '../pages/features/Features';
 import { LibraryPage } from '../pages/library/Library';
