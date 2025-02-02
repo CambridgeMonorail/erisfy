@@ -1,4 +1,4 @@
-import { ApiClient, ApiResponse } from './api-client.interface';
+import { ApiClient, ApiResponse } from '../lib/api-client.interface';
 
 export class MockAPIClient implements ApiClient {
   async getResource(id: string): Promise<ApiResponse<unknown>> {
@@ -8,7 +8,7 @@ export class MockAPIClient implements ApiClient {
     };
   }
 
-  async listResources(params?: Record<string, unknown>): Promise<ApiResponse<unknown[]>> {
+  async listResources(): Promise<ApiResponse<unknown[]>> {
     return {
       data: [
         { id: '1', symbol: 'MOCK-AAPL', price: 150 },
