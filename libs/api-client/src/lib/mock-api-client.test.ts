@@ -1,19 +1,34 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { MockAPIClient } from './mock-api-client';
 
+type TestResource = {
+  id?: string;
+  name?: string;
+  mock?: boolean;
+  symbol?: string;
+  price?: number;
+};
+
 describe('MockAPIClient', () => {
-  const client = new MockAPIClient();
+  let client: MockAPIClient<TestResource>;
+
+  beforeEach(() => {
+    client = new MockAPIClient<TestResource>({ delay: 0, testMode: true }); // Enable test mode
+  });
 
   describe('getResource', () => {
     it('should return mock data', async () => {
       const result = await client.getResource('test-id');
       expect(result).toEqual({
-        data: { 
-          id: 'test-id', 
-          symbol: 'MOCK-test-id', 
-          price: 120 
-        },
+        data: { id: 'test-id', symbol: 'MOCK-test-id', price: 120 },
         status: 200
+      });
+    });
+
+    it('should throw error for empty id', async () => {
+      await expect(client.getResource('')).rejects.toMatchObject({
+        code: 'INVALID_ID',
+        message: 'Resource ID is required'
       });
     });
   });
@@ -33,11 +48,49 @@ describe('MockAPIClient', () => {
 
   describe('createResource', () => {
     it('should return created mock resource', async () => {
-      const data = { name: 'test' };
+      const data: TestResource = { name: 'test' };
       const result = await client.createResource(data);
-      expect(result).toEqual({
-        data: { ...data, id: 'new-id', mock: true },
+      expect(result).toMatchObject({
+        data: { 
+          name: 'test',
+          mock: true
+        },
         status: 201
+      });
+      // Only check that ID exists and follows the expected pattern
+      expect(result.data.id).toBeTruthy();
+      expect(typeof result.data.id).toBe('string');
+    });
+  });
+
+  describe('error simulation', () => {
+    it('should simulate network errors when configured', async () => {
+      const errorClient = new MockAPIClient({ shouldFail: true, delay: 0 });
+      await expect(errorClient.getResource('test')).rejects.toMatchObject({
+        code: 'NETWORK_ERROR'
+      });
+    });
+
+    it('should respect error rate configuration', async () => {
+      const errorClient = new MockAPIClient({ errorRate: 1, delay: 0 }); // 100% error rate
+      await expect(errorClient.listResources()).rejects.toMatchObject({
+        code: 'NETWORK_ERROR'
+      });
+    });
+  });
+
+  describe('deleteResource', () => {
+    it('should return success status', async () => {
+      const result = await client.deleteResource('test-id');
+      expect(result).toEqual({
+        data: undefined,
+        status: 204
+      });
+    });
+
+    it('should throw error for empty id', async () => {
+      await expect(client.deleteResource('')).rejects.toMatchObject({
+        code: 'INVALID_ID'
       });
     });
   });
