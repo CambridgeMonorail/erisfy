@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import { MetricDisplay } from './metric-display';
 
 describe('MetricDisplay', () => {
@@ -34,7 +35,7 @@ describe('MetricDisplay', () => {
     );
 
     const container = screen.getByRole('group');
-    expect(container).toHaveClass('custom-class');
+    expect(container.className).toContain('custom-class');
   });
 
   it('adds title attribute when provided', () => {
@@ -48,7 +49,7 @@ describe('MetricDisplay', () => {
     );
 
     const container = screen.getByRole('group');
-    expect(container).toHaveAttribute('title', title);
+    expect(container.getAttribute('title')).toBe(title);
   });
 
   it('generates correct aria-labelledby ID', () => {
@@ -57,8 +58,8 @@ describe('MetricDisplay', () => {
     const container = screen.getByRole('group');
     const label = screen.getByText('Active Users');
     
-    expect(container).toHaveAttribute('aria-labelledby', 'metric-label-active-users');
-    expect(label).toHaveAttribute('id', 'metric-label-active-users');
+    expect(container.getAttribute('aria-labelledby')).toBe('metric-label-active-users');
+    expect(label.getAttribute('id')).toBe('metric-label-active-users');
   });
 
   it('handles numeric values correctly', () => {

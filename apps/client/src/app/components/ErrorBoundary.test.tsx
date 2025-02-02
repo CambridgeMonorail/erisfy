@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import { ErrorBoundary } from './ErrorBoundary';
 
 const ErrorComponent = () => {
@@ -20,7 +21,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText('Test content')).toBeInTheDocument();
+    expect(screen.getByText('Test content')).toBeDefined();
   });
 
   it('renders fallback when error occurs', () => {
@@ -30,7 +31,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText('Error: Test error')).toBeInTheDocument();
+    expect(screen.getByText('Error: Test error')).toBeDefined();
   });
 
   it('calls onError when error occurs', () => {
