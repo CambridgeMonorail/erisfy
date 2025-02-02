@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, cn } from '@erisfy/shadcnui';
-import { type Feature, type FeaturesSectionProps } from './types';
+import { type FeaturesSectionProps } from './types';
 
 
 /**

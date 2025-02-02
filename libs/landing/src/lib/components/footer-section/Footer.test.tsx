@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Github, Twitter } from 'lucide-react';
+import '@test-setup';
 import { Footer } from './index';
 
 
@@ -136,13 +137,13 @@ describe('Footer', () => {
   });
 
   it('handles malformed props gracefully', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(vi.fn());
     
     render(
       <Footer
         {...defaultProps}
         navigationLinks={[{ text: '', url: '' }]}
-        socialMediaIcons={[{ icon: () => null, url: '', 'aria-label': '' }]}
+        socialMediaIcons={[{ icon: vi.fn(), url: '', 'aria-label': '' }]}
       />
     );
     
