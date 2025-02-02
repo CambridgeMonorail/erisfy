@@ -55,7 +55,9 @@ Modify the index.tsx entry file to conditionally start MSW in development mode.
 #### apps/client/src/main.tsx
 
 ```typescript
-if (process.env.NODE_ENV === 'development') {
+const useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
+
+if (useMocks) {
   const { worker } = require('./mocks/browser');
   worker.start();
 }
@@ -191,3 +193,7 @@ If MSW is working correctly, it should return:
 ```
 ✓ API Client Mock Tests › should return mock stock data
 ```
+
+## Note
+
+Ensure that `REACT_APP_USE_MOCKS` is set to 'true' in your environment variables to enable MSW. If `REACT_APP_USE_MOCKS` is 'false' or undefined, MSW will not start.

@@ -3,7 +3,9 @@
  * @returns Promise<boolean> indicating if the worker was successfully started
  */
 export const initializeMockWorker = async (): Promise<boolean> => {
-  if (process.env.NODE_ENV !== 'development') {
+  const useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
+
+  if (!useMocks) {
     return false;
   }
 
