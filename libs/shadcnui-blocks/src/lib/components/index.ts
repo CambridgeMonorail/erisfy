@@ -1,5 +1,6 @@
 export * from './action-buttons/index';
 export * from './date-range-picker/index';
+export * from './error-fallback/index';
 export * from './forecast-chart/index';
 export * from './interactive-chart/index';
 export * from './logo-carousel/index';

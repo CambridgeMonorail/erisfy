@@ -2,7 +2,8 @@ import { Component, ReactNode, ErrorInfo } from 'react';
 
 type ErrorBoundaryProps = {
   children: ReactNode;
-  fallback: (error: Error) => ReactNode;
+  fallback: (error: Error, reset: () => void) => ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 };
 
 type ErrorBoundaryState = {
@@ -10,6 +11,10 @@ type ErrorBoundaryState = {
   error: Error | null;
 };
 
+/**
+ * ErrorBoundary catches JavaScript errors anywhere in their child component tree,
+ * logs those errors, and displays a fallback UI.
+ */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
@@ -26,13 +31,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // Log to error reporting service
+    this.props.onError?.(error, errorInfo);
   }
 
-  render() {
+  reset = (): void => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  render(): ReactNode {
     if (this.state.hasError && this.state.error) {
-      return this.props.fallback(this.state.error);
+      return this.props.fallback(this.state.error, this.reset);
     }
 
     return this.props.children;
