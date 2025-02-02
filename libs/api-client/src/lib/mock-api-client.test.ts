@@ -8,7 +8,11 @@ describe('MockAPIClient', () => {
     it('should return mock data', async () => {
       const result = await client.getResource('test-id');
       expect(result).toEqual({
-        data: { id: 'test-id', mock: true },
+        data: { 
+          id: 'test-id', 
+          symbol: 'MOCK-test-id', 
+          price: 120 
+        },
         status: 200
       });
     });
@@ -19,8 +23,8 @@ describe('MockAPIClient', () => {
       const result = await client.listResources();
       expect(result).toEqual({
         data: [
-          { id: '1', mock: true },
-          { id: '2', mock: true }
+          { id: '1', symbol: 'MOCK-AAPL', price: 150 },
+          { id: '2', symbol: 'MOCK-MSFT', price: 280 }
         ],
         status: 200
       });
