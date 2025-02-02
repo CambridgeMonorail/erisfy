@@ -87,7 +87,7 @@ export const LandingPage: FC = () => {
       </div>
       <AboutSection
         title="The Smartest Stock Screener for Everyday Investors"
-        description="Finding the right stocks shouldn’t be complicated. Erisfy’s AI-powered screener simplifies investing by filtering through thousands of stocks to find the best opportunities—so you don’t have to. No jargon. No endless spreadsheets. Just clear, actionable insights."
+        description="Finding the right stocks shouldn't be complicated. Erisfy's AI-powered screener simplifies investing by filtering through thousands of stocks to find the best opportunities. We do the heavy lifting so you don't have to. No jargon. No endless spreadsheets. Just clear, actionable insights."
         logos={[
           <Logo
             name="nx"
@@ -132,8 +132,8 @@ export const LandingPage: FC = () => {
             ariaLabel="Vite"
           />,
         ]}
-        header="Built To Industry Best Practices"
-        subheader="Built on foundations you can trust"
+        header="Enterprise-Grade Technology Stack"
+        subheader="Built with the same tools trusted by Fortune 500 companies"
         data-testid="about-section"
       />
       <FeaturesSection
@@ -141,6 +141,7 @@ export const LandingPage: FC = () => {
         title="Smarter Investing, Powered by AI"
         features={[
           {
+            id: 'ai-screening',
             title: 'Find High-Quality Stocks with AI',
             description:
               'Find high-quality stock opportunities with AI-powered screening, tailored to your investment strategy.',
@@ -149,6 +150,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
+            id: 'smart-filters',
             title: 'Smart Filters & Natural Language Search',
             description:
               'Screen thousands of stocks instantly using smart filters or simple natural language search.',
@@ -157,6 +159,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
+            id: 'market-moves',
             title: 'Understand Market Moves with AI',
             description:
               'Get AI-driven insights that break down stock trends, risks, and opportunities in plain language—so you always know why a stock is moving.',
@@ -165,6 +168,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
+            id: 'adaptive-ai',
             title: 'AI That Adapts to You',
             description:
               'Erisfy grows with your portfolio—customizable AI tools that adapt as your investment strategies evolve.',
@@ -173,6 +177,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
+            id: 'learn-invest',
             title: 'Learn & Invest with Confidence',
             description:
               'Step-by-step guides and AI-explained insights help you navigate Erisfy like a pro—whether you’re new to investing or an expert.',
@@ -181,6 +186,7 @@ export const LandingPage: FC = () => {
               'hover:shadow-lg hover:scale-105 transition-transform duration-300',
           },
           {
+            id: 'real-time',
             title: 'Real-Time AI Market Insights',
             description:
               'AI-powered analysis delivers real-time stock insights—so you’re always ahead of the market.',

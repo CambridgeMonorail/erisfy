@@ -18,13 +18,13 @@ mkdir -p apps/client/src/mocks
 
 Then, create the MSW service worker setup file:
 
-#### apps/client/src/mocks/browser.ts
+### apps/client/src/mocks/browser.ts
 
 ```typescript
 import { setupWorker, rest } from 'msw';
 
 export const worker = setupWorker(
-  rest.get(`${process.env.REACT_APP_API_BASE_URL}/stocks/:id`, (req, res, ctx) => {
+  rest.get(`${import.meta.env.VITE_API_BASE_URL}/stocks/:id`, (req, res, ctx) => {
     const { id } = req.params;
     return res(
       ctx.status(200),
@@ -36,7 +36,7 @@ export const worker = setupWorker(
     );
   }),
 
-  rest.get(`${process.env.REACT_APP_API_BASE_URL}/stocks`, (req, res, ctx) => {
+  rest.get(`${import.meta.env.VITE_API_BASE_URL}/stocks`, (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json([
@@ -50,12 +50,12 @@ export const worker = setupWorker(
 
 ## 3. Initialize MSW in Development Mode
 
-Modify the index.tsx entry file to conditionally start MSW in development mode.
+Modify the main.tsx entry file to conditionally start MSW in development mode.
 
-#### apps/client/src/main.tsx
+### apps/client/src/main.tsx
 
 ```typescript
-const useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
+const useMocks = import.meta.env.VITE_USE_MOCKS === 'true';
 
 if (useMocks) {
   const { worker } = require('./mocks/browser');
@@ -67,13 +67,13 @@ if (useMocks) {
 
 Modify the Erisfy API Client to conditionally switch between the real API and the mock API.
 
-#### libs/api-client/src/clients/apiClient.ts
+### libs/api-client/src/clients/apiClient.ts
 
 ```typescript
 import { ApiClient } from '../types';
 import { MockAPIClient } from './mockApiClient';
 
-const isMock = process.env.REACT_APP_USE_MOCKS === 'true';
+const isMock = import.meta.env.VITE_USE_MOCKS === 'true';
 
 const apiClient: ApiClient = isMock
   ? new MockAPIClient()
@@ -82,7 +82,7 @@ const apiClient: ApiClient = isMock
 export default apiClient;
 ```
 
-#### libs/api-client/src/clients/mockApiClient.ts
+### libs/api-client/src/clients/mockApiClient.ts
 
 ```typescript
 import { ApiClient } from '../types';
@@ -111,11 +111,11 @@ export class MockAPIClient implements ApiClient {
 
 Modify the .env.development file to enable API mocking:
 
-#### apps/client/.env.development
+### apps/client/.env.development
 
 ```ini
-REACT_APP_API_BASE_URL=http://localhost:4000/api
-REACT_APP_USE_MOCKS=true
+VITE_API_BASE_URL=http://localhost:4000/api
+VITE_USE_MOCKS=true
 ```
 
 ## 6. Running the Application with Mocks
@@ -138,14 +138,14 @@ In the browser console, you should see:
 
 You should also mock API requests in unit tests using MSW.
 
-#### apps/client/src/mocks/server.ts
+### apps/client/src/mocks/server.ts
 
 ```typescript
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 
 export const server = setupServer(
-  rest.get(`${process.env.REACT_APP_API_BASE_URL}/stocks/:id`, (req, res, ctx) => {
+  rest.get(`${import.meta.env.VITE_API_BASE_URL}/stocks/:id`, (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({ id: '1', symbol: 'MOCK-TSLA', price: 900 })
@@ -154,7 +154,7 @@ export const server = setupServer(
 );
 ```
 
-#### apps/client/src/test/setup.ts
+### apps/client/src/test/setup.ts
 
 ```typescript
 import { server } from '../mocks/server';
@@ -168,7 +168,7 @@ afterAll(() => server.close());
 
 Example Vitest test case for verifying API mocking.
 
-#### apps/client/src/api/apiClient.test.ts
+### apps/client/src/api/apiClient.test.ts
 
 ```typescript
 import { describe, it, expect } from 'vitest';
@@ -196,4 +196,4 @@ If MSW is working correctly, it should return:
 
 ## Note
 
-Ensure that `REACT_APP_USE_MOCKS` is set to 'true' in your environment variables to enable MSW. If `REACT_APP_USE_MOCKS` is 'false' or undefined, MSW will not start.
+Ensure that `VITE_USE_MOCKS` is set to 'true' in your environment variables to enable MSW. If `VITE_USE_MOCKS` is 'false' or undefined, MSW will not start.

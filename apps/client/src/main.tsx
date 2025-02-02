@@ -2,22 +2,25 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 
-import { App } from './app/app';
-import { ErrorBoundary } from './app/components/ErrorBoundary';
-import { initializeMockWorker } from './utils/mockWorker';
-
 import { ThemeProvider } from '@erisfy/shadcnui/lib/theme';
 import { ErrorFallback } from '@erisfy/shadcnui-blocks';
 
-const useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
+import { App } from './app/app';
+import { ErrorBoundary } from './app/components/ErrorBoundary';
+import { initializeMockWorker } from './utils/mockWorker';
+import { shouldUseMocks } from './utils/environment';
 
-if (useMocks) {
-  initializeMockWorker();
+if (shouldUseMocks()) {
+  initializeMockWorker().catch((error) => {
+    console.error('Failed to initialize mock worker:', error);
+  });
 }
 
 if (typeof window !== 'undefined') {
   const rootElement = document.getElementById('root');
-  if (!rootElement) throw new Error('Root element not found');
+  if (!rootElement) {
+    throw new Error('Failed to find root element. Ensure there is a <div id="root"> in your HTML.');
+  }
 
   const root = ReactDOM.createRoot(rootElement);
 
@@ -25,7 +28,10 @@ if (typeof window !== 'undefined') {
     <StrictMode>
       <ErrorBoundary 
         fallback={(error: Error) => (
-          <ErrorFallback error={error} />
+          <ErrorFallback 
+            error={error}
+            onReset={() => window.location.reload()} 
+          />
         )}
       >
         <HashRouter>
