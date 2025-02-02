@@ -24,6 +24,8 @@ Core technologies and libraries used in the project.
 - shadcn/ui
 - Nrwl Nx
 - Vitest and Playwright for testing
+- API Client with TypeScript generics
+- Error handling with custom ApiError types
 
 ## Naming Conventions
 
@@ -38,6 +40,9 @@ Enforce strict type safety and best practices.
 
 - Use interfaces only when merging or extending object definitions.
 - Keep components as stateless as possible, delegating state or context to higher levels.
+- Use generic types for API client implementations
+- Implement proper error type handling with ApiError
+- Define resource types for API responses
 
 ## UI and Styling
 
@@ -105,6 +110,12 @@ apps/                   # Application projects
         └── utils/     # Helper functions
 
 libs/                  # Shared libraries
+├── api-client/       # API client library
+    ├── src/
+        ├── clients/  # API client implementations
+        ├── types/    # API types and interfaces
+        ├── utils/    # API utilities
+        └── errors/   # Error handling
 ├── shadcnui/         # UI component library
     ├── src/
         ├── components/# Reusable UI components
@@ -131,6 +142,27 @@ Structure components for maximum reusability and maintainability.
 - Allow customization via props, slots, or children
 - Keep components modular and DRY
 - Follow single responsibility principle
+
+## API Integration
+
+Follow these guidelines for API integration:
+
+- Use typed API client from '@erisfy/api-client'
+- Implement proper error handling using ApiError types
+- Use environment variables for API configuration
+- Handle loading and error states in components
+- Implement retry logic where appropriate
+- Use mock client for development and testing
+
+## Error Handling
+
+Implement comprehensive error handling:
+
+- Use try/catch blocks for API calls
+- Handle ApiError instances appropriately
+- Show user-friendly error messages
+- Log errors with meaningful context
+- Implement retry logic where necessary
 
 ## Package Management
 
