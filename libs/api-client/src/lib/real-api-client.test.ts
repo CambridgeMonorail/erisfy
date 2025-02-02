@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { RealAPIClient } from './real-api-client';
 
 vi.mock('axios');
