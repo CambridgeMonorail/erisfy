@@ -1,12 +1,20 @@
 import { faker } from '@faker-js/faker';
 
+const SECTORS = ['Technology', 'Finance', 'Healthcare', 'Energy'] as const;
+const INDUSTRIES = ['Software', 'Banking', 'Pharmaceuticals', 'Oil & Gas'] as const;
+const COUNTRIES = ['USA', 'Canada', 'UK', 'Germany'] as const;
+
+type Sector = (typeof SECTORS)[number];
+type Industry = (typeof INDUSTRIES)[number];
+type Country = (typeof COUNTRIES)[number];
+
 export type StockData = {
   ticker: string;
   companyName: string;
-  sector: string;
-  industry: string;
-  country: string;
-  currentPrice: number; // Changed from 'price' to 'currentPrice'
+  sector: Sector;
+  industry: Industry;
+  country: Country;
+  currentPrice: number;
   marketCap: number;
   historicalPerformance: Array<{
     date: string;
@@ -14,29 +22,52 @@ export type StockData = {
   }>;
 };
 
-// Update the mock data generation to include all properties
+/**
+ * Generates an array of mock stock data for testing purposes.
+ * @param count - The number of mock stock entries to generate
+ * @returns An array of StockData objects
+ * @throws {Error} If count is negative
+ */
 export const generateMockData = (count: number): StockData[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    ticker: `TICK${i}`,
-    companyName: `Company ${i}`,
-    sector: ['Technology', 'Finance', 'Healthcare', 'Energy'][Math.floor(Math.random() * 4)],
-    industry: ['Software', 'Banking', 'Pharmaceuticals', 'Oil & Gas'][Math.floor(Math.random() * 4)],
-    country: ['USA', 'Canada', 'UK', 'Germany'][Math.floor(Math.random() * 4)],
-    currentPrice: Math.random() * 1000,
-    marketCap: Math.random() * 1000000,
-    historicalPerformance: Array.from({ length: 30 }, (_, j) => ({
-      date: new Date(Date.now() - j * 24 * 60 * 60 * 1000).toISOString(),
-      value: Math.random() * 1000
-    }))
+  if (count < 0) throw new Error('Count must be non-negative');
+
+  return Array.from({ length: count }, () => ({
+    ticker: faker.finance.currencyCode(),
+    companyName: faker.company.name(),
+    sector: faker.helpers.arrayElement(SECTORS),
+    industry: faker.helpers.arrayElement(INDUSTRIES),
+    country: faker.helpers.arrayElement(COUNTRIES),
+    currentPrice: Number(faker.number.float({ min: 10, max: 1000 }).toFixed(2)),
+    marketCap: Number(faker.number.float({ min: 1e6, max: 1e9 }).toFixed(0)),
+    historicalPerformance: generateHistoricalData(30)
   }));
 };
 
 /**
- * Filters the historical performance data from the first entry of the provided StockData array.
- * @param stocks - The array of StockData.
- * @returns The historical performance data of the first stock.
+ * Generates historical performance data for a given number of days
+ * @param days - Number of days of historical data to generate
+ * @returns Array of daily price data points
  */
-export const getHistoricalPerformance = (stocks: StockData[]): { date: string; price: number }[] => {
-  if (stocks.length === 0) return [];
-  return stocks[0].historicalPerformance;
+const generateHistoricalData = (days: number) => {
+  const baseValue = Number(faker.number.float({ min: 100, max: 1000 }).toFixed(2));
+  return Array.from({ length: days }, (_, i) => ({
+    date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
+    value: Number((baseValue * (1 + faker.number.float({ min: -0.1, max: 0.1 }))).toFixed(2))
+  }));
+};
+
+/**
+ * Retrieves historical performance data from the first stock in an array
+ * @param stocks - Array of StockData objects
+ * @returns Historical performance data or empty array if no stocks provided
+ */
+export const getHistoricalPerformance = (
+  stocks: StockData[]
+): Array<{ date: string; price: number }> => {
+  if (!Array.isArray(stocks) || stocks.length === 0) return [];
+  
+  return stocks[0].historicalPerformance.map(({ date, value }) => ({
+    date,
+    price: value
+  }));
 };

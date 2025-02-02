@@ -3,6 +3,10 @@ export type ApiResponse<T> = {
   data: T;
   status: number;
   message?: string;
+  metadata?: {
+    timestamp: string;
+    requestId?: string;
+  };
 };
 
 /** Generic error type for API errors */
@@ -10,7 +14,20 @@ export type ApiError = {
   code: string;
   message: string;
   details?: unknown;
+  status?: number;
+  timestamp?: string;
 };
+
+/** Error codes enum for consistent error handling */
+export enum ApiErrorCode {
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  INVALID_REQUEST = 'INVALID_REQUEST',
+  NOT_FOUND = 'NOT_FOUND',
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  FORBIDDEN = 'FORBIDDEN',
+  TIMEOUT = 'TIMEOUT',
+  SERVER_ERROR = 'SERVER_ERROR',
+}
 
 /**
  * Core API client interface defining common API operations

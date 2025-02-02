@@ -1,11 +1,18 @@
-// libs/api-client/src/lib/apiClient.ts
-
 import { ApiClient } from './api-client.interface';
 import { RealAPIClient } from './real-api-client';
 import { MockAPIClient } from './mock-api-client';
 
-// Generic type parameter T can be specified when importing this client
-const apiClient: ApiClient = 
-  process.env.NODE_ENV === 'development' ? new MockAPIClient() : new RealAPIClient();
+/** Determines if the application should use mock API responses */
+const shouldUseMocks = (): boolean => {
+  const mockEnv = process.env.REACT_APP_USE_MOCKS;
+  if (mockEnv === undefined) {
+    console.warn('REACT_APP_USE_MOCKS environment variable is not set, defaulting to real API');
+    return false;
+  }
+  return mockEnv === 'true';
+};
 
-export default apiClient;
+/** Creates and exports the appropriate API client based on environment configuration */
+export const apiClient: ApiClient = shouldUseMocks()
+  ? new MockAPIClient()
+  : new RealAPIClient();
