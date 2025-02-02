@@ -1,115 +1,159 @@
 import React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Footer } from '.';
-import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Github, Twitter, Linkedin } from 'lucide-react';
 
-const meta: Meta<typeof Footer> = {
+const meta = {
   title: 'Landing/Footer',
   component: Footer,
   tags: ['autodocs'],
+  parameters: {
+    layout: 'fullscreen',
+    componentSubtitle: 'Site footer component with navigation and social links',
+    docs: {
+      description: {
+        component: 'A responsive footer component that includes navigation links, social media icons, and copyright information.'
+      }
+    }
+  },
   argTypes: {
     navigationLinks: {
-      name: 'Navigation Links',
-      control: 'object',
       description: 'Array of navigation links to be displayed in the footer',
+      control: { type: 'object' },
+      table: {
+        type: { summary: 'Array<{ text: string, url: string }>' }
+      }
     },
     socialMediaIcons: {
-      name: 'Social Media Icons',
-      control: 'object',
-      description: 'Array of social media icons to be displayed in the footer',
+      description: 'Array of social media icons with links',
+      control: { type: 'object' },
+      table: {
+        type: { summary: 'Array<{ icon: LucideIcon, url: string, target?: string, rel?: string }>' }
+      }
     },
     copyrightText: {
-      name: 'Copyright Text',
-      control: 'text',
-      description: 'Text to be displayed as the copyright information',
+      description: 'Copyright text displayed at the bottom',
+      control: 'text'
     },
     className: {
-      name: 'Class Name',
-      control: 'text',
-      description: 'Additional class names to apply to the footer element',
+      description: 'Additional CSS classes to apply',
+      control: 'text'
     },
-    backgroundColor: {
-      name: 'Background Color',
+    'aria-label': {
+      description: 'Accessible label for the footer',
       control: 'text',
-      description: 'Background color for the footer',
-    },
-    textColor: {
-      name: 'Text Color',
-      control: 'text',
-      description: 'Text color for the footer',
-    },
-  },
-};
+      table: {
+        type: { summary: 'string' }
+      }
+    }
+  }
+} satisfies Meta<typeof Footer>;
 
 export default meta;
-
 type Story = StoryObj<typeof Footer>;
 
-export const Default: Story = {
+/**
+ * Primary footer configuration with standard navigation and social links
+ */
+export const Primary: Story = {
+  args: {
+    navigationLinks: [
+      { text: 'About Us', url: '/about' },
+      { text: 'Features', url: '/features' },
+      { text: 'Pricing', url: '/pricing' },
+      { text: 'Contact', url: '/contact' }
+    ],
+    socialMediaIcons: [
+      {
+        icon: (props) => <Github {...props} />,
+        url: 'https://github.com/CambridgeMonorail/erisfy',
+        'aria-label': 'Visit our GitHub page',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      },
+      {
+        icon: (props) => <Twitter {...props} />,
+        url: 'https://twitter.com',
+        'aria-label': 'Visit our Twitter page',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      },
+      {
+        icon: (props) => <Linkedin {...props} />,
+        url: 'https://linkedin.com',
+        'aria-label': 'Visit our LinkedIn page',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }
+    ],
+    copyrightText: '© 2025 Erisfy. All rights reserved.',
+    'aria-label': 'Site footer'
+  }
+};
+
+/**
+ * Minimal footer configuration with essential elements only
+ */
+export const Minimal: Story = {
+  args: {
+    navigationLinks: [
+      { text: 'Privacy', url: '/privacy' },
+      { text: 'Terms', url: '/terms' }
+    ],
+    socialMediaIcons: [
+      {
+        icon: (props) => <Github {...props} />,
+        url: 'https://github.com/CambridgeMonorail/erisfy',
+        'aria-label': 'Visit our GitHub page',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }
+    ],
+    copyrightText: '© 2025 Erisfy',
+    'aria-label': 'Site footer'
+  }
+};
+
+/**
+ * Footer with dark theme styling
+ */
+export const DarkTheme: Story = {
+  args: {
+    ...Primary.args,
+    className: 'bg-background text-foreground dark'
+  },
+  parameters: {
+    backgrounds: { default: 'dark' }
+  }
+};
+
+/**
+ * Footer with many navigation items to test responsive behavior
+ */
+export const WithManyLinks: Story = {
   args: {
     navigationLinks: [
       { text: 'Home', url: '/' },
       { text: 'About', url: '/about' },
+      { text: 'Features', url: '/features' },
+      { text: 'Pricing', url: '/pricing' },
       { text: 'Contact', url: '/contact' },
-    ],
-    socialMediaIcons: [
-      { icon: Facebook, url: 'https://facebook.com' },
-      { icon: Twitter, url: 'https://twitter.com' },
-      { icon: Instagram, url: 'https://instagram.com' },
-      { icon: Linkedin, url: 'https://linkedin.com' },
-    ],
-    copyrightText: '© 2025 Your Company. All rights reserved.',
-  },
-};
-
-export const WithDifferentProps: Story = {
-  name: 'With Different Props',
-  render: (args) => <Footer {...args} />,
-  args: {
-    navigationLinks: [
-      { text: 'Services', url: '/services' },
       { text: 'Blog', url: '/blog' },
       { text: 'Careers', url: '/careers' },
+      { text: 'Support', url: '/support' }
     ],
-    socialMediaIcons: [
-      { icon: Facebook, url: 'https://facebook.com' },
-      { icon: Twitter, url: 'https://twitter.com' },
-      { icon: Instagram, url: 'https://instagram.com' },
-      { icon: Linkedin, url: 'https://linkedin.com' },
-    ],
-    copyrightText: '© 2025 Your Company. All rights reserved.',
-    className: 'bg-dark text-light',
-  },
+    ...Primary.args
+  }
 };
 
-export const WithCustomColors: Story = {
-  name: 'With Custom Colors',
-  render: (args) => <Footer {...args} />,
-  args: {
-    navigationLinks: [
-      { text: 'Portfolio', url: '/portfolio' },
-      { text: 'Testimonials', url: '/testimonials' },
-      { text: 'FAQ', url: '/faq' },
-    ],
-    socialMediaIcons: [
-      { icon: Facebook, url: 'https://facebook.com' },
-      { icon: Twitter, url: 'https://twitter.com' },
-      { icon: Instagram, url: 'https://instagram.com' },
-      { icon: Linkedin, url: 'https://linkedin.com' },
-    ],
-    copyrightText: '© 2025 Your Company. All rights reserved.',
-    backgroundColor: 'bg-secondary',
-    textColor: 'text-secondary-foreground',
-  },
-};
-
-export const WithEdgeCases: Story = {
-  name: 'With Edge Cases',
-  render: (args) => <Footer {...args} />,
+/**
+ * Footer rendered without any content to test fallback behavior
+ */
+export const Empty: Story = {
   args: {
     navigationLinks: [],
     socialMediaIcons: [],
     copyrightText: '',
-    className: '',
-  },
+    'aria-label': 'Site footer'
+  }
 };

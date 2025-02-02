@@ -4,6 +4,7 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
+    "composite": true,
     "strict": true,
     "declaration": true,
     "declarationMap": true,

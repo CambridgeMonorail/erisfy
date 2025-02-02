@@ -159,3 +159,43 @@ export const WithoutHeadingAndSubheading: Story = {
     className: '',
   },
 };
+
+/**
+ * This example shows how the Steps component handles empty steps array.
+ * It should render nothing when no steps are provided.
+ */
+export const EmptySteps: Story = {
+  name: 'Empty Steps',
+  render: (args: StepsProps) => <Steps {...args} />,
+  args: {
+    heading: 'Empty Steps',
+    subheading: 'This should not render',
+    steps: [],
+  },
+};
+
+/**
+ * This example shows the Steps component with long content to test responsiveness.
+ */
+export const LongContent: Story = {
+  name: 'Long Content',
+  render: (args: StepsProps) => <Steps {...args} />,
+  args: {
+    heading: 'Long Content Example',
+    subheading: 'Testing with longer content',
+    steps: [
+      {
+        title: 'Very Long Step Title That Should Wrap on Mobile Devices',
+        description: 'This is a very long description that should properly wrap and maintain readability on all screen sizes without breaking the layout.'
+      },
+      {
+        title: 'Another Very Long Step Title That Should Wrap on Mobile Devices',
+        description: 'This is another very long description that should properly wrap and maintain readability on all screen sizes without breaking the layout.'
+      },
+      {
+        title: 'Yet Another Very Long Step Title That Should Wrap on Mobile Devices',
+        description: 'This is yet another very long description that should properly wrap and maintain readability on all screen sizes without breaking the layout.'
+      },
+    ],
+  },
+};

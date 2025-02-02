@@ -1,4 +1,3 @@
-import React from "react"
 import { Meta, StoryObj } from "@storybook/react"
 import { Stepper } from "./index"
 import { MapPin, Truck, CreditCard, ShoppingCart } from "lucide-react"

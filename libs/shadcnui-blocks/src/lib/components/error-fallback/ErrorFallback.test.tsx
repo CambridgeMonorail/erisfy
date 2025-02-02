@@ -3,33 +3,37 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ErrorFallback } from './index';
 import '@testing-library/jest-dom';
 
+type MockLocation = Partial<Location> & {
+  reload: () => void;
+};
+
 describe('ErrorFallback', () => {
   const originalWindow = { ...window };
   
   beforeEach(() => {
     // Create a new mock for window.location
-    const mockLocation = {
+    const mockLocation: MockLocation = {
       ...window.location,
       reload: vi.fn(),
     };
     
     // Delete the property to avoid the "Cannot redefine property" error
-    delete (window as any).location;
+    delete (window as { location?: Location }).location;
     
     // Set up our mock implementation
-    (window as any).location = mockLocation;
+    (window as { location: MockLocation }).location = mockLocation;
   });
 
   afterEach(() => {
     // Restore the original window object
-    (window as any).location = originalWindow.location;
+    (window as { location: Location }).location = originalWindow.location;
     vi.clearAllMocks();
   });
 
   describe('rendering', () => {
     it('should render error title and message correctly', () => {
       const error = new Error('Test error message');
-      const { container } = render(<ErrorFallback error={error} />);
+      render(<ErrorFallback error={error} />);
       
       expect(screen.getByText('Something went wrong')).toBeInTheDocument();
       expect(screen.getByText('Test error message')).toBeInTheDocument();
