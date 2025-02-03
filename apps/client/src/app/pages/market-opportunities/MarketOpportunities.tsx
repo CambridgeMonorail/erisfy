@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback, useMemo } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import { Button, cn, Alert, AlertTitle, AlertDescription } from '@erisfy/shadcnui';
 import { Download, AlertTriangle } from 'lucide-react';
 import { CalendarDateRangePicker } from '@erisfy/shadcnui-blocks';
@@ -7,11 +7,9 @@ import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
 
 import { generateMockData, StockData } from '../../utils/mockData';
 import { AIPoweredMarketOverview } from '../../components/AIPoweredMarketOverview';
-import { SmartFilterLibrary } from '../../components/SmartFilterLibrary';
 import { MainWorkspace } from '../../components/MainWorkspace';
-import { QuickActionsToolbar } from '../../components/QuickActionsToolbar';
 import { MarketSentimentNewsFeed } from '../../components/MarketSentimentNewsFeed';
-import { type FilterType, type MarketOpportunitiesProps } from '../../types/market';
+import { type MarketOpportunitiesProps } from '../../types/market';
 
 const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({ error, onRetry }) => (
   <Alert variant="destructive">
@@ -29,9 +27,6 @@ const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({ error, on
 export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ className }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [stocks, setStocks] = useState<StockData[]>([]);
-  const [filters, setFilters] = useState<FilterType>({});
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -68,76 +63,14 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
     fetchData();
   }, []);
 
-  const handleFilterSelect = useCallback((filter: string): void => {
-    setSelectedFilters((prevFilters) =>
-      prevFilters.includes(filter)
-        ? prevFilters.filter((f) => f !== filter)
-        : [...prevFilters, filter]
-    );
-  }, []);
-
-  const handleFilterChange = useCallback((newFilters: FilterType): void => {
-    try {
-      setFilters(newFilters);
-      // Add the filter to selected filters if it has a value
-      Object.entries(newFilters).forEach(([key, value]) => {
-        if (value) {
-          handleFilterSelect(key);
-        }
-      });
-    } catch (err) {
-      setError(new ApiError('Failed to apply filters', {
-        code: 'FILTER_ERROR',
-        details: err
-      }));
-    }
-  }, [handleFilterSelect]);
-
-  const handleSliderChange = (key: 'marketCap' | 'priceRange', value: number[]) => {
-    // Ensure we always have exactly two numbers
-    const [start = 0, end = 0] = value;
-    handleFilterChange({ 
-      ...filters, 
-      [key]: [start, end] as [number, number] 
-    });
-  };
-
-  // Apply both search and filters
+  // Apply search only
   const filteredStocks = useMemo(() => 
-    stocks.filter((stock) => {
-      const matchesSearch = searchQuery === '' || 
-        stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        stock.companyName.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesFilters = Object.entries(filters).every(([key, value]) => {
-        if (!value) return true;
-        
-        switch (key) {
-          case 'sector':
-          case 'industry':
-          case 'country':
-            return typeof value === 'string' && stock[key] === value;
-          case 'marketCap':
-            return Array.isArray(value) && 
-              stock.marketCap >= value[0] && 
-              stock.marketCap <= value[1];
-          case 'priceRange':
-            return Array.isArray(value) && 
-              stock.currentPrice >= value[0] && // Changed from price to currentPrice
-              stock.currentPrice <= value[1];   // Changed from price to currentPrice
-          default:
-            return true;
-        }
-      });
-
-      return matchesSearch && matchesFilters;
-    }), [stocks, searchQuery, filters]);
+    stocks, [stocks]);
 
   const handleReset = () => {
     setError(null);
     setIsLoading(false);
     setStocks([]);
-    // Reset other state as needed
   };
 
   // Move the content into a separate component to prevent the entire page from unmounting
@@ -166,32 +99,19 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
         </div>
       </div>
 
-      {/* Wrap sections that might throw errors in their own error boundaries */}
+      {/* Market Analysis Section */}
       <ErrorBoundary>
-        <AIPoweredMarketOverview filteredStocks={filteredStocks} isLoading={isLoading} />
+        <div className="space-y-4">
+          <AIPoweredMarketOverview filteredStocks={filteredStocks} isLoading={isLoading} />
+          <MainWorkspace />
+        </div>
       </ErrorBoundary>
 
+      {/* Market Intel Section */}
       <ErrorBoundary>
-        <SmartFilterLibrary 
-          filters={filters} 
-          handleFilterChange={handleFilterChange}
-          handleSliderChange={handleSliderChange}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedFilters={selectedFilters}
-        />
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <MainWorkspace />
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <QuickActionsToolbar />
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <MarketSentimentNewsFeed />
+        <div className="space-y-4">
+          <MarketSentimentNewsFeed />
+        </div>
       </ErrorBoundary>
 
       {/* Footer Section */}

@@ -1,26 +1,11 @@
 import { FC } from 'react';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-} from '@erisfy/shadcnui';
-
+import { Card, CardHeader, CardTitle, CardContent, Badge } from '@erisfy/shadcnui';
 import { InteractiveChart, Spinner } from '@erisfy/shadcnui-blocks';
 import { TrendingUp, ArrowDown } from 'lucide-react';
-import { useMarketInsights, MarketInsight } from '../hooks/useMarketInsights';
-import { ErrorBoundary } from '../../../../../libs/shadcnui-blocks/src/lib/components/error-boundary';
-import { StockData } from '../utils/mockData';
-
-type MarketTrend = 'positive' | 'negative';
-type InsightCategory = 'Market Trend' | 'Sector Movement';
-
-interface MarketInsight {
-  category: InsightCategory;
-  text: string;
-  trend: MarketTrend;
-}
+import { useMarketInsights } from '../hooks/useMarketInsights';
+import { MarketInsight } from '@erisfy/shared';
+import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
+import { StockData } from '../types/stock.types';
 
 export interface AIPoweredMarketOverviewProps {
   filteredStocks: StockData[];

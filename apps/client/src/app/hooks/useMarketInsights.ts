@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@erisfy/api-client';
 import { StockData } from '../utils/mockData';
+import { MarketInsight } from 'libs/api-client/src/types/market.types';
 
-type MarketTrend = 'positive' | 'negative';
-type InsightCategory = 'Market Trend' | 'Sector Movement';
-
-export interface MarketInsight {
-  category: InsightCategory;
-  text: string;
-  trend: MarketTrend;
-}
 
 export const useMarketInsights = (stocks: StockData[]) => {
   const [insights, setInsights] = useState<MarketInsight[]>([]);
@@ -19,11 +12,7 @@ export const useMarketInsights = (stocks: StockData[]) => {
     const loadInsights = async () => {
       try {
         const response = await apiClient.getMarketInsights();
-        if (Array.isArray(response.data)) {
-          setInsights(response.data as MarketInsight[]);
-        } else {
-          setInsights([]);
-        }
+        setInsights(response.data.insights);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load insights'));
         setInsights([]);
@@ -35,3 +24,5 @@ export const useMarketInsights = (stocks: StockData[]) => {
 
   return { insights, error };
 };
+
+export type { MarketInsight };  // Re-export from shared

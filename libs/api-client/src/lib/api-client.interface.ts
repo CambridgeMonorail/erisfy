@@ -1,4 +1,6 @@
+import { MarketInsightsResponse } from '../types/market.types';
 import { ApiError } from './errors/ApiError';
+
 
 /** Base response type for API responses */
 export type ApiResponse<T> = {
@@ -65,5 +67,5 @@ export interface ApiClient<T = unknown> {
    * Fetches market insights and analytics
    * @returns Market insights data
    */
-  getMarketInsights(): Promise<ApiResponse<unknown>>;
+  getMarketInsights(): Promise<ApiResponse<MarketInsightsResponse>>;
 }

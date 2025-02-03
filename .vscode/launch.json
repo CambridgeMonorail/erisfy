@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "start client",
+      "type": "shell",
+      "command": "pnpm nx serve client",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Local:.*(localhost:\\d+)"
+        }
+      }
+    }
+  ],
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Client in Chrome",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/apps/client/src",
+      "preLaunchTask": "start client",
+      "sourceMapPathOverrides": {
+        "webpack:///apps/client/src/*": "${workspaceFolder}/apps/client/src/*"
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Debug Client in Edge",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/apps/client/src",
+      "preLaunchTask": "start client",
+      "sourceMapPathOverrides": {
+        "webpack:///apps/client/src/*": "${workspaceFolder}/apps/client/src/*"
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    }
+  ]
+}

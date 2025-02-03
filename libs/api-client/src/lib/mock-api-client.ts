@@ -1,5 +1,7 @@
+import { MarketInsightsResponse } from '../types/market.types';
 import { ApiClient, ApiResponse } from './api-client.interface';
 import { ApiError } from './errors/ApiError';
+
 
 export type MockData<T> = {
   [key: string]: T;
@@ -119,16 +121,23 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
     };
   }
 
-  async getMarketInsights(): Promise<ApiResponse<unknown>> {
+  async getMarketInsights(): Promise<ApiResponse<MarketInsightsResponse>> {
     await this.simulateNetwork();
     
     return {
       data: {
-        trends: [
-          { symbol: 'MOCK-AAPL', trend: 'upward', confidence: 0.85 },
-          { symbol: 'MOCK-MSFT', trend: 'stable', confidence: 0.75 }
+        insights: [
+          {
+            category: 'Market Trend',
+            text: 'AAPL showing strong upward momentum',
+            trend: 'positive'
+          },
+          {
+            category: 'Sector Movement',
+            text: 'Tech sector remains stable',
+            trend: 'positive'
+          }
         ],
-        marketSentiment: 'bullish',
         lastUpdated: new Date().toISOString()
       },
       status: 200,

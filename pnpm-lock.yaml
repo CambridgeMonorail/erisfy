@@ -421,6 +421,8 @@ importers:
         specifier: ^17.7.2
         version: 17.7.2
 
+  libs/api-client: {}
+
   libs/shadcnui: {}
 
   libs/shell: {}

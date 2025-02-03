@@ -1,6 +1,8 @@
-import { ApiClient } from '../types';
+
+import { ApiClient } from '../lib/api-client.interface';
+import { RealAPIClient } from '../lib/real-api-client';
 import { MockAPIClient } from './mockApiClient';
-import { RealAPIClient } from './realApiClient';
+
 
 const isMock = import.meta.env.VITE_REACT_APP_USE_MOCKS === 'true';
 
