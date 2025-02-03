@@ -5,7 +5,7 @@
     "composite": true,
     "esModuleInterop": false,
     "jsx": "react-jsx",
-    "strict": true
+    "strict": true,
   },
   "files": [],
   "include": [],

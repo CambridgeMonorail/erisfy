@@ -1,9 +1,22 @@
+export type FilterValue = string | [number, number] | undefined;
+
 export type Filters = {
-  priceRange: [number, number];
-  marketCap: [number, number];
-  sector: string;
-  industry: string;
-  country: string;
+  sector?: string;
+  industry?: string;
+  country?: string;
+  marketCap?: [number, number];
+  priceRange?: [number, number];
+};
+
+export type SmartFilterLibraryProps = {
+  filters: Filters;
+  handleFilterChange: (newFilters: Filters) => void;
+  handleSliderChange: (key: 'marketCap' | 'priceRange', value: number[]) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  selectedFilters: string[];
+  isLoading?: boolean;
+  error?: Error | null;
 };
 
 export const SECTORS = ['Technology', 'Finance', 'Healthcare', 'Energy'] as const;

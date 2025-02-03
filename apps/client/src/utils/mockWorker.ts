@@ -1,7 +1,19 @@
+import { shouldUseMocks } from './environment';
+
 const MOCK_WORKER_ERROR = {
   INITIALIZATION_FAILED: 'Mock Service Worker initialization failed',
   UNKNOWN_ERROR: 'Unknown error occurred during mock worker initialization'
 } as const;
+
+/**
+ * Gets the correct path for the mock service worker based on the environment
+ */
+const getMockServiceWorkerPath = (): string => {
+  const base = import.meta.env.BASE_URL || '/';
+  // Remove trailing slash if it exists
+  const basePath = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${basePath}/mockServiceWorker.js`;
+};
 
 /**
  * Initializes the Mock Service Worker for development environment.
@@ -23,18 +35,33 @@ const MOCK_WORKER_ERROR = {
  * ```
  */
 export const initializeMockWorker = async (): Promise<boolean> => {
-  const useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
+  if (!shouldUseMocks()) {
+    return false;
+  }
 
-  if (!useMocks) {
+  if (typeof window === 'undefined') {
     return false;
   }
 
   try {
+    // Ensure global process is defined for MSW
+    if (typeof global.process === 'undefined') {
+      (window as any).process = { env: {} };
+    }
+
     const { worker } = await import('../mocks/browser');
-    await worker.start({
-      onUnhandledRequest: 'bypass',
-    });
-    return true;
+    
+    // Only start if we're in a browser environment
+    if (typeof worker.start === 'function') {
+      await worker.start({
+        onUnhandledRequest: 'bypass',
+        serviceWorker: {
+          url: getMockServiceWorkerPath(),
+        },
+      });
+      return true;
+    }
+    return false;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error 
       ? error.message 

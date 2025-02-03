@@ -16,13 +16,24 @@ export default defineConfig({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
+  plugins: [
+    react(), 
+    nxViteTsPaths(), 
+    nxCopyAssetsPlugin([
+      '*.md',
+      'mockServiceWorker.js' // Add this line
+    ])
+  ],
   css: {
     preprocessorOptions: {
       css: {
         additionalData: `@import "../../../libs/common-tailwind/src/preflight.css"; @import "../../../libs/common-tailwind/src/shadcn-theme.css";`,
       },
     },
+  },
+  define: {
+    'process.env': {},
+    global: {},
   },
   // Uncomment this if you are using workers.
   // worker: {
