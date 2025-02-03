@@ -1,4 +1,5 @@
-import { ApiClient, ApiResponse, ApiError } from './api-client.interface';
+import { ApiClient, ApiResponse } from './api-client.interface';
+import { ApiError } from './errors/ApiError';
 
 export type MockData<T> = {
   [key: string]: T;
@@ -39,15 +40,14 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
   }
 
   private createError(code: string, message: string, status = 400): ApiError {
-    return {
+    return new ApiError(message, {
       code,
-      message,
+      status,
       details: { 
         mock: true, 
-        timestamp: new Date().toISOString(),
-        status 
+        timestamp: new Date().toISOString()
       }
-    };
+    });
   }
 
   private generateId(): string {
@@ -116,6 +116,22 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
     return {
       data: void 0,
       status: 204,
+    };
+  }
+
+  async getMarketInsights(): Promise<ApiResponse<unknown>> {
+    await this.simulateNetwork();
+    
+    return {
+      data: {
+        trends: [
+          { symbol: 'MOCK-AAPL', trend: 'upward', confidence: 0.85 },
+          { symbol: 'MOCK-MSFT', trend: 'stable', confidence: 0.75 }
+        ],
+        marketSentiment: 'bullish',
+        lastUpdated: new Date().toISOString()
+      },
+      status: 200,
     };
   }
 }

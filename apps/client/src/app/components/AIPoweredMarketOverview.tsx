@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC } from 'react';
 import {
   Card,
   CardHeader,
@@ -6,96 +6,120 @@ import {
   CardContent,
   Badge,
 } from '@erisfy/shadcnui';
-import { StockData } from '../../utils/mockData';
-import { InteractiveChart } from '@erisfy/shadcnui-blocks';
-import { faker } from '@faker-js/faker';
-import { TrendingUp, ArrowDown } from 'lucide-react';
 
-interface ChartDataPoint {
-  date: string;
-  value: number;
+import { InteractiveChart, Spinner } from '@erisfy/shadcnui-blocks';
+import { TrendingUp, ArrowDown } from 'lucide-react';
+import { useMarketInsights, MarketInsight } from '../hooks/useMarketInsights';
+import { ErrorBoundary } from '../../../../../libs/shadcnui-blocks/src/lib/components/error-boundary';
+import { StockData } from '../utils/mockData';
+
+type MarketTrend = 'positive' | 'negative';
+type InsightCategory = 'Market Trend' | 'Sector Movement';
+
+interface MarketInsight {
+  category: InsightCategory;
+  text: string;
+  trend: MarketTrend;
 }
 
-interface AIPoweredMarketOverviewProps {
+export interface AIPoweredMarketOverviewProps {
   filteredStocks: StockData[];
   isLoading?: boolean;
 }
 
-const generateMockInsights = () => {
-  const insights = [];
-  for (let i = 0; i < 5; i++) {
-    insights.push({
-      category: faker.helpers.arrayElement(['Market Trend', 'Sector Movement']),
-      text: faker.lorem.sentence(),
-      trend: faker.helpers.arrayElement(['positive', 'negative']),
-    });
-  }
-  return insights;
-};
+const InsightItem: FC<MarketInsight> = ({ category, trend, text }) => (
+  <div className="flex items-center space-x-2">
+    <Badge variant="outline">{category}</Badge>
+    {trend === 'positive' ? (
+      <TrendingUp
+        className="text-success h-4 w-4"
+        aria-label="Positive trend"
+      />
+    ) : (
+      <ArrowDown
+        className="text-destructive h-4 w-4"
+        aria-label="Negative trend"
+      />
+    )}
+    <p className="text-lg font-semibold">{text}</p>
+  </div>
+);
 
-const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ 
+export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
   filteredStocks,
-  isLoading = false 
-}): JSX.Element => {
-  const [insights, setInsights] = useState(generateMockInsights());
-
-  useEffect(() => {
-    setInsights(generateMockInsights());
-  }, [filteredStocks]);
-
-  const chartData: ChartDataPoint[] = filteredStocks.map((stock) => ({
-    date: stock.ticker,
-    value: stock.marketCap ?? 0,
-  }));
+  isLoading = false,
+}) => {
+  const { insights = [], error } = useMarketInsights(filteredStocks);
 
   if (isLoading) {
+    return <Spinner aria-label="Loading market insights" />;
+  }
+
+  if (error) {
     return (
-      <div role="status" aria-busy="true">
-        <div className="h-4 w-full bg-muted animate-pulse"></div>
-        <div className="h-4 w-full bg-muted animate-pulse"></div>
-        <div className="h-4 w-full bg-muted animate-pulse"></div>
+      <div role="alert" className="text-destructive">
+        Error loading market insights
       </div>
     );
   }
 
   if (filteredStocks.length === 0) {
-    return <div>Market Insights Loading...</div>;
+    return <div role="status">No market data available</div>;
   }
 
+  const chartData = filteredStocks.map((stock) => ({
+    date: stock.ticker,
+    value: stock.marketCap ?? 0,
+  }));
+
   return (
-    <Card className="p-6 rounded-xl shadow-md">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold mb-2 text-primary">
-          AI-Powered Market Overview
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <section aria-label="Market Summary">
-            <h3 className="text-lg font-semibold">Personalized AI Summary</h3>
-            <p>Tech stocks rebounded today as interest rate fears eased.</p>
-          </section>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {insights.map((insight, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <Badge variant="outline">{insight.category}</Badge>
-                {insight.trend === 'positive' ? (
-                  <TrendingUp className="text-success" />
-                ) : (
-                  <ArrowDown className="text-destructive" />
-                )}
-                <p className="text-lg font-semibold">{insight.text}</p>
-              </div>
-            ))}
-          </div>
-          <div>
-            <strong>Quick Chart Toggle:</strong>
-            <InteractiveChart data={chartData} />
-          </div>
+    <ErrorBoundary
+      fallback={(error, reset) => (
+        <div role="alert" className="p-4 border border-destructive rounded-md">
+          <h2 className="text-lg font-semibold text-destructive">Error in market overview</h2>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+          <button
+            onClick={reset}
+            className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md"
+          >
+            Try again
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    >
+      <Card className="p-6 rounded-xl shadow-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold mb-2 text-primary">
+            AI-Powered Market Overview
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <section aria-label="Market Summary">
+              <h3 className="text-lg font-semibold">Personalized AI Summary</h3>
+              <p>Tech stocks rebounded today as interest rate fears eased.</p>
+            </section>
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              role="list"
+              aria-label="Market insights"
+            >
+              {Array.isArray(insights) && insights.map((insight, index) => (
+                <InsightItem 
+                  key={index}
+                  category={insight.category}
+                  trend={insight.trend}
+                  text={insight.text}
+                />
+              ))}
+            </div>
+            <section aria-label="Market chart">
+              <strong>Quick Chart Toggle:</strong>
+              <InteractiveChart data={chartData} />
+            </section>
+          </div>
+        </CardContent>
+      </Card>
+    </ErrorBoundary>
   );
 };
-
-export { AIPoweredMarketOverview };

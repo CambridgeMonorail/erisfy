@@ -1,3 +1,5 @@
+import { ApiError } from './errors/ApiError';
+
 /** Base response type for API responses */
 export type ApiResponse<T> = {
   data: T;
@@ -9,14 +11,7 @@ export type ApiResponse<T> = {
   };
 };
 
-/** Generic error type for API errors */
-export type ApiError = {
-  code: string;
-  message: string;
-  details?: unknown;
-  status?: number;
-  timestamp?: string;
-};
+// Remove ApiError type definition as we'll use the class
 
 /** Error codes enum for consistent error handling */
 export enum ApiErrorCode {
@@ -65,4 +60,10 @@ export interface ApiClient<T = unknown> {
    * @param id - Unique identifier of the resource to delete
    */
   deleteResource(id: string): Promise<ApiResponse<void>>;
+
+  /**
+   * Fetches market insights and analytics
+   * @returns Market insights data
+   */
+  getMarketInsights(): Promise<ApiResponse<unknown>>;
 }

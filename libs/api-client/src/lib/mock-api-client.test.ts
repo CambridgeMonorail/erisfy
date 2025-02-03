@@ -94,4 +94,31 @@ describe('MockAPIClient', () => {
       });
     });
   });
+
+  describe('getMarketInsights', () => {
+    it('should return market insights data', async () => {
+      const result = await client.getMarketInsights();
+      expect(result).toMatchObject({
+        data: {
+          trends: expect.arrayContaining([
+            expect.objectContaining({
+              symbol: expect.any(String),
+              trend: expect.any(String),
+              confidence: expect.any(Number)
+            })
+          ]),
+          marketSentiment: expect.any(String),
+          lastUpdated: expect.any(String)
+        },
+        status: 200
+      });
+    });
+
+    it('should fail with network error when configured', async () => {
+      const errorClient = new MockAPIClient({ shouldFail: true, delay: 0 });
+      await expect(errorClient.getMarketInsights()).rejects.toMatchObject({
+        code: 'NETWORK_ERROR'
+      });
+    });
+  });
 });

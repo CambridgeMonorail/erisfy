@@ -24,7 +24,7 @@
     "vite.config.ts",
     "vitest.config.ts"
   ],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../libs/shadcnui-blocks/src/lib/components/error-boundary/ErrorBoundary.test.tsx", "../../libs/shadcnui-blocks/src/lib/components/error-boundary/index.tsx"],
   "files": [],
   "references": [
     {

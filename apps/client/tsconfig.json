@@ -20,7 +20,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.d.ts"
-  ],
+, "../../libs/shadcnui-blocks/src/lib/components/error-boundary/ErrorBoundary.test.tsx", "../../libs/shadcnui-blocks/src/lib/components/error-boundary/index.tsx"  ],
   "references": [
     {
       "path": "./tsconfig.app.json"

@@ -1,8 +1,10 @@
 import { FC, useState, useEffect, useCallback, useMemo } from 'react';
-import { Button, cn } from '@erisfy/shadcnui';
-import { Download } from 'lucide-react';
+import { Button, cn, Alert, AlertTitle, AlertDescription } from '@erisfy/shadcnui';
+import { Download, AlertTriangle } from 'lucide-react';
 import { CalendarDateRangePicker } from '@erisfy/shadcnui-blocks';
 import { ApiError } from '@erisfy/api-client';
+import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
+
 import { generateMockData, StockData } from '../../utils/mockData';
 import { AIPoweredMarketOverview } from '../../components/AIPoweredMarketOverview';
 import { SmartFilterLibrary } from '../../components/SmartFilterLibrary';
@@ -10,6 +12,19 @@ import { MainWorkspace } from '../../components/MainWorkspace';
 import { QuickActionsToolbar } from '../../components/QuickActionsToolbar';
 import { MarketSentimentNewsFeed } from '../../components/MarketSentimentNewsFeed';
 import { type FilterType, type MarketOpportunitiesProps } from '../../types/market';
+
+const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({ error, onRetry }) => (
+  <Alert variant="destructive">
+    <AlertTriangle className="h-4 w-4" />
+    <AlertTitle>Error</AlertTitle>
+    <AlertDescription>
+      <p className="mb-4">{error.message}</p>
+      <Button variant="outline" onClick={onRetry}>
+        Retry
+      </Button>
+    </AlertDescription>
+  </Alert>
+);
 
 export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ className }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -118,88 +133,111 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
       return matchesSearch && matchesFilters;
     }), [stocks, searchQuery, filters]);
 
-  if (isLoading) {
-    return (
-      <div role="status" aria-label="Loading content" className="p-4">
-        {/* Add skeleton UI here */}
-      </div>
-    );
-  }
+  const handleReset = () => {
+    setError(null);
+    setIsLoading(false);
+    setStocks([]);
+    // Reset other state as needed
+  };
 
-  if (error) {
-    return <div role="alert" className="p-4">Error: {error.message}</div>;
-  }
+  // Move the content into a separate component to prevent the entire page from unmounting
+  const DashboardContent: FC = () => (
+    <div
+      className="flex-1 space-y-4 p-4 md:p-2 pt-6 w-full"
+      data-testid="dashboard-content"
+    >
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+        <h2
+          className="text-3xl md:text-4xl font-bold tracking-tight text-primary"
+          data-testid="dashboard-title"
+        >
+          Market Opportunities
+        </h2>
+        <div
+          className="flex items-center space-x-3"
+          data-testid="dashboard-actions"
+        >
+          <CalendarDateRangePicker data-testid="date-range-picker" />
+          <Button variant="default" data-testid="download-button">
+            <span className="hidden sm:inline">Download</span>
+            <Download className="sm:hidden" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Wrap sections that might throw errors in their own error boundaries */}
+      <ErrorBoundary>
+        <AIPoweredMarketOverview filteredStocks={filteredStocks} isLoading={isLoading} />
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <SmartFilterLibrary 
+          filters={filters} 
+          handleFilterChange={handleFilterChange}
+          handleSliderChange={handleSliderChange}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedFilters={selectedFilters}
+        />
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <MainWorkspace />
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <QuickActionsToolbar />
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <MarketSentimentNewsFeed />
+      </ErrorBoundary>
+
+      {/* Footer Section */}
+      <footer className="bg-background text-foreground p-4">
+        <div className="space-y-4">
+          <div>
+            <strong>Learning & Community Resources:</strong>
+            <ul className="list-disc list-inside">
+              <li>Glossary of financial terms</li>
+              <li>Tutorials on how to use filters effectively</li>
+              <li>Community forum or expert discussion groups</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Elite Upgrade Prompt:</strong>
+            <p>Unlock real-time alerts and advanced AI insights with Elite.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 
   return (
     <div
       role="main"
       data-testid="market-opportunities-page"
-      className={cn("h-full min-h-full w-full text-primary-900 flex-col", 
-        isMobile ? 'flex' : 'hidden', 
+      className={cn(
+        "h-full min-h-full w-full text-primary-900 flex-col",
+        isMobile ? 'flex' : 'hidden',
         'md:flex',
         className
       )}
     >
-      <div
-        className="flex-1 space-y-4 p-4 md:p-2 pt-6 w-full"
-        data-testid="dashboard-content"
-      >
-        {/* Header Section */}
-        <div
-          className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
-          data-testid="dashboard-header"
-        >
-          <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight text-primary"
-            data-testid="dashboard-title"
-          >
-            Market Opportunities
-          </h2>
-          <div
-            className="flex items-center space-x-3"
-            data-testid="dashboard-actions"
-          >
-            <CalendarDateRangePicker data-testid="date-range-picker" />
-            <Button variant="default" data-testid="download-button">
-              <span className="hidden sm:inline">Download</span>
-              <Download className="sm:hidden" />
-            </Button>
-          </div>
+      {isLoading ? (
+        <div role="status" aria-label="Loading content" className="p-4">
+          {/* Add skeleton UI here */}
         </div>
-
-        {/* AI-Powered Market Overview Section */}
-        <AIPoweredMarketOverview filteredStocks={filteredStocks} isLoading={isLoading} />
-
-        {/* Smart Filter Library Section */}
-        <SmartFilterLibrary filters={filters} handleFilterChange={handleFilterChange} handleSliderChange={handleSliderChange} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedFilters={selectedFilters} />
-
-        {/* Main Workspace Section */}
-        <MainWorkspace />
-
-        {/* Quick Actions Toolbar */}
-        <QuickActionsToolbar />
-
-        {/* Market Sentiment & News Feed Section */}
-        <MarketSentimentNewsFeed />
-
-        {/* Footer Section */}
-        <footer className="bg-background text-foreground p-4">
-          <div className="space-y-4">
-            <div>
-              <strong>Learning & Community Resources:</strong>
-              <ul className="list-disc list-inside">
-                <li>Glossary of financial terms</li>
-                <li>Tutorials on how to use filters effectively</li>
-                <li>Community forum or expert discussion groups</li>
-              </ul>
-            </div>
-            <div>
-              <strong>Elite Upgrade Prompt:</strong>
-              <p>Unlock real-time alerts and advanced AI insights with Elite.</p>
-            </div>
-          </div>
-        </footer>
-      </div>
+      ) : error ? (
+        <div className="p-4">
+          <ApiErrorAlert error={error} onRetry={handleReset} />
+        </div>
+      ) : (
+        <ErrorBoundary>
+          <DashboardContent />
+        </ErrorBoundary>
+      )}
     </div>
   );
 };

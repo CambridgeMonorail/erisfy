@@ -1,5 +1,6 @@
 import { ApiClient, ApiResponse } from '../lib/api-client.interface';
 
+
 export class MockAPIClient implements ApiClient {
   async getResource(id: string): Promise<ApiResponse<unknown>> {
     return {
@@ -36,6 +37,13 @@ export class MockAPIClient implements ApiClient {
     return {
       data: void 0,
       status: 204,
+    };
+  }
+
+  async getMarketInsights(): Promise<ApiResponse<unknown>> {
+    return {
+      data: generateMockInsights(),
+      status: 200,
     };
   }
 }

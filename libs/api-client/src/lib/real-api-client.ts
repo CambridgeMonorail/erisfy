@@ -1,4 +1,5 @@
-import { ApiClient, ApiResponse, ApiError, ApiErrorCode } from './api-client.interface';
+import { ApiClient, ApiResponse, ApiErrorCode } from './api-client.interface';
+import { ApiError } from './errors/ApiError';
 import axios, { AxiosError, AxiosInstance, CreateAxiosDefaults } from 'axios';
 
 export type RealAPIClientConfig = {
@@ -42,12 +43,11 @@ export class RealAPIClient<T = unknown> implements ApiClient<T> {
     this.client.interceptors.response.use(
       (response) => response,
       (error: AxiosError) => {
-        const apiError: ApiError = {
+        throw new ApiError(error.message, {
           code: error.code || 'UNKNOWN_ERROR',
-          message: error.message,
+          status: error.response?.status,
           details: error.response?.data
-        };
-        throw apiError;
+        });
       }
     );
   }
@@ -120,6 +120,16 @@ export class RealAPIClient<T = unknown> implements ApiClient<T> {
       const response = await this.client.delete(`/resources/${id}`);
       return {
         data: undefined,
+        status: response.status,
+      };
+    });
+  }
+
+  async getMarketInsights(): Promise<ApiResponse<unknown>> {
+    return this.withRetry(async () => {
+      const response = await this.client.get('/market/insights');
+      return {
+        data: response.data,
         status: response.status,
       };
     });

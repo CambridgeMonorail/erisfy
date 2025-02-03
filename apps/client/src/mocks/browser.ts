@@ -1,6 +1,7 @@
 import { http, HttpResponse, delay } from 'msw'
 import { setupWorker } from 'msw/browser'
 import { getMockStockById, mockStocks } from './data/stocks'
+import { generateMockInsights } from './data/marketInsights'
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '';
 
@@ -22,6 +23,11 @@ const handlers = [
   http.get(`${API_BASE_URL}/stocks`, async () => {
     await delay(500);
     return HttpResponse.json(mockStocks);
+  }),
+
+  http.get(`${API_BASE_URL}/market/insights`, async () => {
+    await delay(300);
+    return HttpResponse.json(generateMockInsights());
   })
 ];
 

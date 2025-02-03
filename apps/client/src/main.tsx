@@ -6,7 +6,7 @@ import { ThemeProvider } from '@erisfy/shadcnui/lib/theme';
 import { ErrorFallback } from '@erisfy/shadcnui-blocks';
 
 import { App } from './app/app';
-import { ErrorBoundary } from './app/components/ErrorBoundary';
+import { ErrorBoundary } from '../../../libs/shadcnui-blocks/src/lib/components/error-boundary';
 import { initializeMockWorker } from './utils/mockWorker';
 import { shouldUseMocks } from './utils/environment';
 
