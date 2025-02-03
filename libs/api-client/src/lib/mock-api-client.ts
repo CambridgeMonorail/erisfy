@@ -1,7 +1,7 @@
 import { MarketInsightsResponse } from '../types/market.types';
 import { ApiClient, ApiResponse } from './api-client.interface';
 import { ApiError } from './errors/ApiError';
-
+import { DEFAULT_MARKET_INSIGHTS, DEFAULT_MOCK_RESOURCES } from './constants/mockData';
 
 export type MockData<T> = {
   [key: string]: T;
@@ -11,7 +11,7 @@ type MockConfig = {
   delay?: number;
   shouldFail?: boolean;
   errorRate?: number;
-  testMode?: boolean;  // Add test mode flag
+  testMode?: boolean;
 };
 
 export class MockAPIClient<T = unknown> implements ApiClient<T> {
@@ -56,13 +56,14 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
     return this.config.testMode ? 'new-id' : `mock-${Date.now()}`;
   }
 
+  private validateId(id: string): void {
+    if (!id) throw this.createError('INVALID_ID', 'Resource ID is required');
+  }
+
   async getResource(id: string): Promise<ApiResponse<T>> {
     await this.simulateNetwork();
+    this.validateId(id);
     
-    if (!id) {
-      throw this.createError('INVALID_ID', 'Resource ID is required');
-    }
-
     return {
       data: { id, symbol: `MOCK-${id}`, price: 120 } as T,
       status: 200,
@@ -71,23 +72,16 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
 
   async listResources(params?: Record<string, unknown>): Promise<ApiResponse<T[]>> {
     await this.simulateNetwork();
-
     return {
-      data: [
-        { id: '1', symbol: 'MOCK-AAPL', price: 150 },
-        { id: '2', symbol: 'MOCK-MSFT', price: 280 }
-      ] as T[],
+      data: DEFAULT_MOCK_RESOURCES as T[],
       status: 200,
-      ...(params && { params }) // Include passed params in response for debugging
+      ...(params && { params })
     };
   }
 
   async createResource(data: Partial<T>): Promise<ApiResponse<T>> {
     await this.simulateNetwork();
-
-    if (!data) {
-      throw this.createError('INVALID_DATA', 'Resource data is required');
-    }
+    if (!data) throw this.createError('INVALID_DATA', 'Resource data is required');
 
     return {
       data: { ...data, id: this.generateId(), mock: true } as T,
@@ -97,10 +91,7 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
 
   async updateResource(id: string, data: Partial<T>): Promise<ApiResponse<T>> {
     await this.simulateNetwork();
-
-    if (!id) {
-      throw this.createError('INVALID_ID', 'Resource ID is required');
-    }
+    this.validateId(id);
 
     return {
       data: { ...data, id, mock: true } as T,
@@ -110,10 +101,7 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
 
   async deleteResource(id: string): Promise<ApiResponse<void>> {
     await this.simulateNetwork();
-
-    if (!id) {
-      throw this.createError('INVALID_ID', 'Resource ID is required');
-    }
+    this.validateId(id);
 
     return {
       data: void 0,
@@ -126,18 +114,7 @@ export class MockAPIClient<T = unknown> implements ApiClient<T> {
     
     return {
       data: {
-        insights: [
-          {
-            category: 'Market Trend',
-            text: 'AAPL showing strong upward momentum',
-            trend: 'positive'
-          },
-          {
-            category: 'Sector Movement',
-            text: 'Tech sector remains stable',
-            trend: 'positive'
-          }
-        ],
+        ...DEFAULT_MARKET_INSIGHTS,
         lastUpdated: new Date().toISOString()
       },
       status: 200,

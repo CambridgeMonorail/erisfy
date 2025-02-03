@@ -101,6 +101,65 @@ type ApiError = {
 };
 ```
 
+## Adding Mock Endpoints
+
+To add new mock endpoints to the API client:
+
+1. Define your mock data types in the MockAPIClient:
+```typescript
+type MockStock = {
+  id: string;
+  symbol: string;
+  price: number;
+};
+```
+
+2. Add the endpoint to MockAPIClient:
+```typescript
+export class MockAPIClient implements ApiClient<MockStock> {
+  async getStocks(): Promise<ApiResponse<MockStock[]>> {
+    return {
+      data: mockStocks,
+      status: 200
+    };
+  }
+}
+```
+
+3. Add handlers to the central handlers.ts file:
+```typescript
+// In apps/client/src/mocks/handlers.ts
+export const handlers = [
+  http.get('/api/stocks', () => {
+    return HttpResponse.json(mockStocks);
+  }),
+  // Add more handlers here
+];
+```
+
+### Best Practices for Mocking
+
+- Keep all MSW handlers in the central handlers.ts file
+- Define mock data at the top of handlers.ts
+- Match the real API response structure exactly
+- Include error scenarios in your mocks
+- Use TypeScript for type safety in mock data
+
+## Testing Mock Endpoints
+
+```typescript
+import { describe, it, expect } from 'vitest';
+import { mockApiClient } from './mockApiClient';
+
+describe('Mock API Client', () => {
+  it('should return mock stocks', async () => {
+    const response = await mockApiClient.getStocks();
+    expect(response.data).toHaveLength(2);
+    expect(response.data[0].symbol).toBe('MOCK-AAPL');
+  });
+});
+```
+
 ## Testing
 
 Run unit tests:
