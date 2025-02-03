@@ -7,14 +7,6 @@ import { ErrorFallback } from '@erisfy/shadcnui-blocks';
 
 import { App } from './app/app';
 import { ErrorBoundary } from '../../../libs/shadcnui-blocks/src/lib/components/error-boundary';
-import { initializeMockWorker } from './utils/mockWorker';
-import { shouldUseMocks } from './utils/environment';
-
-if (shouldUseMocks()) {
-  initializeMockWorker().catch((error) => {
-    console.error('Failed to initialize mock worker:', error);
-  });
-}
 
 if (typeof window !== 'undefined') {
   const rootElement = document.getElementById('root');
