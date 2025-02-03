@@ -168,7 +168,7 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
         </div>
 
         {/* AI-Powered Market Overview Section */}
-        <AIPoweredMarketOverview filteredStocks={filteredStocks} />
+        <AIPoweredMarketOverview filteredStocks={filteredStocks} isLoading={isLoading} />
 
         {/* Smart Filter Library Section */}
         <SmartFilterLibrary filters={filters} handleFilterChange={handleFilterChange} handleSliderChange={handleSliderChange} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedFilters={selectedFilters} />
