@@ -1,51 +1,88 @@
 import { FC } from 'react';
-import { Button } from '@erisfy/shadcnui';
+import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@erisfy/shadcnui';
 import { Filter, Search, Bell, HelpCircle, AlertCircle } from 'lucide-react';
+import { cn } from '@erisfy/shadcnui';
 
-const QuickActionsToolbar: FC = () => {
+type QuickAction = {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+};
+
+type QuickActionsToolbarProps = {
+  className?: string;
+  position?: 'left' | 'right';
+  actions?: QuickAction[];
+};
+
+const defaultActions: QuickAction[] = [
+  {
+    icon: <Filter aria-hidden="true" />,
+    label: 'Filter',
+    onClick: () => console.log('Filter clicked'),
+  },
+  {
+    icon: <Search aria-hidden="true" />,
+    label: 'Search',
+    onClick: () => console.log('Search clicked'),
+  },
+  {
+    icon: <Bell aria-hidden="true" />,
+    label: 'Notifications',
+    onClick: () => console.log('Notifications clicked'),
+  },
+  {
+    icon: <HelpCircle aria-hidden="true" />,
+    label: 'Help',
+    onClick: () => console.log('Help clicked'),
+  },
+  {
+    icon: <AlertCircle aria-hidden="true" />,
+    label: 'Alerts',
+    onClick: () => console.log('Alerts clicked'),
+  },
+];
+
+const QuickActionsToolbar: FC<QuickActionsToolbarProps> = ({
+  className,
+  position = 'right',
+  actions = defaultActions,
+}) => {
   return (
     <div 
-      className="fixed right-0 top-1/4 transform -translate-y-1/2 space-y-2"
+      className={cn(
+        "fixed top-[250px] -translate-y-1/2 flex flex-col gap-2 p-2",
+        position === 'right' ? 'right-4' : 'left-4',
+        className
+      )}
       role="toolbar"
       aria-label="Quick actions"
+      data-testid="quick-actions-toolbar"
     >
-      <Button
-        variant="default"
-        className="w-12 h-12 flex items-center justify-center"
-        aria-label="Filter"
-      >
-        <Filter aria-hidden="true" />
-      </Button>
-      <Button
-        variant="default"
-        className="w-12 h-12 flex items-center justify-center"
-        aria-label="Search"
-      >
-        <Search aria-hidden="true" />
-      </Button>
-      <Button
-        variant="default"
-        className="w-12 h-12 flex items-center justify-center"
-        aria-label="Notifications"
-      >
-        <Bell aria-hidden="true" />
-      </Button>
-      <Button
-        variant="default"
-        className="w-12 h-12 flex items-center justify-center"
-        aria-label="Help"
-      >
-        <HelpCircle aria-hidden="true" />
-      </Button>
-      <Button
-        variant="default"
-        className="w-12 h-12 flex items-center justify-center"
-        aria-label="Alerts"
-      >
-        <AlertCircle aria-hidden="true" />
-      </Button>
+      <TooltipProvider>
+        {actions.map(({ icon, label, onClick }) => (
+          <Tooltip key={label}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="default"
+                size="icon"
+                className="w-10 h-10" // Slightly smaller buttons for better vertical spacing
+                onClick={onClick}
+                aria-label={label}
+                data-testid={`quick-action-${label.toLowerCase()}`}
+              >
+                {icon}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side={position === 'right' ? 'left' : 'right'}>
+              {label}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </TooltipProvider>
     </div>
   );
 };
 
 export { QuickActionsToolbar };
+export type { QuickActionsToolbarProps, QuickAction };

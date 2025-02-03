@@ -5,6 +5,10 @@ export const shouldUseMocks = (): boolean => {
   return import.meta.env.VITE_REACT_APP_USE_MOCKS === 'true';
 };
 
+export const isDevelopment = (): boolean => {
+  return import.meta.env.DEV;
+};
+
 export const getApiBaseUrl = (): string => {
   return import.meta.env.VITE_REACT_APP_MY_API_BASE_URL;
 };

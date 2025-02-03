@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
+      "@erisfy/api-client": ["libs/api-client/src/index.ts"],
       "@erisfy/shadcnui": ["libs/shadcnui/src/index.ts"],
       "@erisfy/shadcnui/*": ["libs/shadcnui/src/*"],
       "@erisfy/shell": ["libs/shell/src/index.ts"],

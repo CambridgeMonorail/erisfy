@@ -195,5 +195,10 @@
   },
   "engines": {
     "pnpm": ">=9.15.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "apps\\client\\public"
+    ]
   }
 }

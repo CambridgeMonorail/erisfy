@@ -8,15 +8,28 @@ import {
 import { StockData } from '../../utils/mockData';
 import { InteractiveChart } from '@erisfy/shadcnui-blocks';
 
-interface AIPoweredMarketOverviewProps {
-  filteredStocks: StockData[];
+interface ChartDataPoint {
+  date: string;
+  value: number;
 }
 
-const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ filteredStocks }) => {
-  const chartData = filteredStocks.map((stock) => ({
+interface AIPoweredMarketOverviewProps {
+  filteredStocks: StockData[];
+  isLoading?: boolean;
+}
+
+const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ 
+  filteredStocks,
+  isLoading = false 
+}): JSX.Element => {
+  const chartData: ChartDataPoint[] = filteredStocks.map((stock) => ({
     date: stock.ticker,
     value: stock.marketCap ?? 0,
   }));
+
+  if (isLoading) {
+    return <div role="status" aria-busy="true">Loading market overview...</div>;
+  }
 
   return (
     <Card>
@@ -27,10 +40,10 @@ const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ filteredSto
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div>
-            <strong>Personalized AI Summary:</strong>
+          <section aria-label="Market Summary">
+            <h3 className="text-lg font-semibold">Personalized AI Summary</h3>
             <p>Tech stocks rebounded today as interest rate fears eased.</p>
-          </div>
+          </section>
           <div>
             <strong>Trending Stocks & Sectors:</strong>
             <ul className="list-disc list-inside">

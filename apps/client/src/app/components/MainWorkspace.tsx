@@ -1,15 +1,26 @@
 import { FC } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@erisfy/shadcnui';
 
-const MainWorkspace: FC = () => {
+interface MainWorkspaceProps {
+  className?: string;
+}
+
+const MainWorkspace: FC<MainWorkspaceProps> = ({ className }): JSX.Element => {
   return (
-    <Card>
+    <Card 
+      className={className}
+      role="region"
+      aria-label="Main workspace"
+    >
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold mb-2 text-primary">
+        <CardTitle 
+          className="text-2xl font-semibold mb-2 text-primary"
+          id="workspace-title"
+        >
           Main Workspace
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent aria-labelledby="workspace-title">
         <div className="space-y-4">
           <div>
             <strong>Dynamic "Get Started" Section:</strong>
