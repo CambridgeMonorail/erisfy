@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { Toaster } from '@erisfy/shadcnui';
 import { navigationConfig } from './constants/navigationConfig';
-import { ErrorBoundary } from '../../../../libs/shadcnui-blocks/src/lib/components/error-boundary';
+import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
 import { OnboardingFlow } from './pages/onboarding/OnboardingFlow';
 
 const App: FC = () => {
