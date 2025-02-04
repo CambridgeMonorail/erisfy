@@ -64,4 +64,22 @@ describe('Item Service', () => {
     expect(allItems[0].name).toBe('Item 1');
     expect(allItems[1].name).toBe('Item 2');
   });
+
+  it('should handle empty items list', async () => {
+    const items = await getAllItems();
+    expect(items).toEqual([]);
+  });
+
+  it('should handle non-existent item retrieval', async () => {
+    const item = await getItem(999);
+    expect(item).toBeUndefined();
+  });
+
+  it('should maintain data integrity with concurrent operations', async () => {
+    const operations = Array(5).fill(null).map(() => 
+      addItem({ name: 'Concurrent Item', description: 'Test' })
+    );
+    const ids = await Promise.all(operations);
+    expect(new Set(ids).size).toBe(5);
+  });
 });

@@ -1,18 +1,31 @@
-import { db} from './db.service';
+import { db } from './db.service';
 import { Onboarding } from './types/onboarding';
+
+export class OnboardingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'OnboardingError';
+  }
+}
 
 /**
  * Set or update onboarding data for a specific user.
  * If an entry already exists for this userId, Dexie will update it (because we're using 'put').
  */
 export async function setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Promise<number> {
-  // 'put' will insert a new record if none exists, or update if userId is matched. 
-  // Because userId is an index, you might do a lookup first. 
-  // But for simplicity, we'll rely on unique constraints or handle it logically later.
-  return db.onboarding.put({
-    ...onboarding,
-    // If you want 'userId' to be unique, you can check it before putting.
-  });
+  try {
+    const existing = await getOnboardingData(onboarding.userId);
+    if (existing) {
+      return db.onboarding.put({ ...existing, ...onboarding });
+    }
+    return db.onboarding.put(onboarding);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new OnboardingError(`Failed to set onboarding data: ${error.message}`);
+    } else {
+      throw new OnboardingError('Failed to set onboarding data: Unknown error');
+    }
+  }
 }
 
 /**
