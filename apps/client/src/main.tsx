@@ -6,7 +6,7 @@ import { HashRouter } from 'react-router-dom';
 import { ErrorFallback } from '@erisfy/shadcnui-blocks';
 
 import { App } from './app/app';
-import { ErrorBoundary } from '../../../libs/shadcnui-blocks/src/lib/components/error-boundary';
+import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
 import { ThemeProvider } from '@erisfy/shadcnui';
 
 if (typeof window !== 'undefined') {
