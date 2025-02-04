@@ -82,4 +82,16 @@ describe('Item Service', () => {
     const ids = await Promise.all(operations);
     expect(new Set(ids).size).toBe(5);
   });
+
+  it('should throw an error when adding an item without a name', async () => {
+    await expect(addItem({ description: 'No name provided' } as any)).rejects.toThrow();
+  });
+
+  it('should maintain data integrity under higher concurrency', async () => {
+    const operations = Array(10).fill(null).map(() =>
+      addItem({ name: 'Concurrent Item', description: 'Test' })
+    );
+    const ids = await Promise.all(operations);
+    expect(new Set(ids).size).toBe(10);
+  });
 });

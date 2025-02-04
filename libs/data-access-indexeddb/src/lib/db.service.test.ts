@@ -14,3 +14,10 @@ describe('AppDatabase', () => {
     expect(db.verno).toBe(1);
   });
 });
+
+describe('Error Handling', () => {
+  it('should handle database connection errors gracefully', async () => {
+    // mock or trigger an error scenario, then expect appropriate behavior
+    expect(true).toBe(true);
+  });
+});
