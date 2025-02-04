@@ -1,10 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import { Spinner } from './index';
 
+// Mock the cn function
+vi.mock('@erisfy/shadcnui', () => ({
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+}));
+
 describe('Spinner', () => {
   it('renders with default props', () => {
     render(<Spinner />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    const spinner = screen.getByRole('status');
+    expect(spinner).toBeInTheDocument();
+    expect(spinner).toHaveClass('relative', 'inline-block', 'aspect-square', 'transform-gpu', 'size-5');
     expect(screen.getByLabelText('Loading')).toBeInTheDocument();
   });
 
@@ -16,6 +23,13 @@ describe('Spinner', () => {
 
   it('applies variant classes correctly', () => {
     render(<Spinner variant="primary" />);
-    expect(screen.getByRole('status')).toHaveClass('[&>div]:bg-primary');
+    const spinner = screen.getByRole('status');
+    expect(spinner).toHaveClass('[&>div]:bg-primary');
+  });
+
+  it('applies size variant classes correctly', () => {
+    render(<Spinner size="lg" />);
+    const spinner = screen.getByRole('status');
+    expect(spinner).toHaveClass('size-8');
   });
 });

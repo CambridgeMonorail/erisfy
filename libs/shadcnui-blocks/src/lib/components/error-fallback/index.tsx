@@ -43,11 +43,12 @@ export const ErrorFallback = ({
           variant={variant}
           data-testid="error-alert"
         >
-          <AlertCircle 
-            className="h-5 w-5" 
-            aria-hidden="true"
-            data-testid="error-icon"
-          />
+          <span data-testid="error-icon">
+            <AlertCircle 
+              className="h-5 w-5" 
+              aria-hidden="true"
+            />
+          </span>
           <AlertTitle className="mb-2">{titleText}</AlertTitle>
           <AlertDescription className="mb-4">
             <div data-testid="error-message">
@@ -70,6 +71,7 @@ export const ErrorFallback = ({
               className="flex items-center gap-2"
               disabled={isLoading}
               data-testid="retry-button"
+              aria-label={retryButtonText}
             >
               <RefreshCw 
                 className={cn(
