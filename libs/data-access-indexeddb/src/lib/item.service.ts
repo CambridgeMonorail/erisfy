@@ -1,4 +1,6 @@
-import { db, Item } from './db.service';
+import { db} from './db.service';
+import { Item } from './types/item';
+
 
 // Add a new item
 export async function addItem(item: Omit<Item, 'id'>): Promise<number> {
