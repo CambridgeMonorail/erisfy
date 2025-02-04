@@ -3,6 +3,8 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": false,
     "jsx": "react-jsx",
     "strict": true,

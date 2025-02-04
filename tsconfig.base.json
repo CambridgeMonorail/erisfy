@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@erisfy": ["libs/data-access-indexeddb/src/index.ts"],
+      "@erisfy/data-access-indexeddb": ["libs/data-access-indexeddb/src/index.ts"],
       "@erisfy/api-client": ["libs/api-client/src/index.ts"],
       "@erisfy/landing": ["libs/landing/src/index.ts"],
       "@erisfy/shadcnui": ["libs/shadcnui/src/index.ts"],
