@@ -1,4 +1,4 @@
-import { MarketInsight, MarketInsightsResponse, InsightCategory, MarketTrend } from '../../types/market.types';
+import { MarketInsightsResponse, InsightCategory, MarketTrend } from '../../types/market.types';
 
 export const DEFAULT_MARKET_INSIGHTS: Omit<MarketInsightsResponse, 'lastUpdated'> = {
   insights: [
