@@ -1,8 +1,8 @@
-import { ApiClient, ApiResponse, ApiErrorCode } from './api-client.interface';
-import { ApiError } from './errors/ApiError';
-import axios, { AxiosError, AxiosInstance, CreateAxiosDefaults } from 'axios';
+import { ApiClient} from './api-client.interface';
+
 import { createAxiosInstance } from './axios-instance';
 import { MarketInsightsResponse } from '../types/market.types';
+import { ApiResponse } from '../types/api.types';
 
 export type RealAPIClientConfig = {
   baseURL?: string;

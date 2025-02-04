@@ -1,19 +1,5 @@
+import { ApiResponse } from '../types/api.types';
 import { MarketInsightsResponse } from '../types/market.types';
-import { ApiError } from './errors/ApiError';
-
-
-/** Base response type for API responses */
-export type ApiResponse<T> = {
-  data: T;
-  status: number;
-  message?: string;
-  metadata?: {
-    timestamp: string;
-    requestId?: string;
-  };
-};
-
-// Remove ApiError type definition as we'll use the class
 
 /** Error codes enum for consistent error handling */
 export enum ApiErrorCode {
