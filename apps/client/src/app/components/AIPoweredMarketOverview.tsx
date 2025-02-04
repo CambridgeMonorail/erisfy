@@ -2,10 +2,11 @@ import { FC } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, Badge } from '@erisfy/shadcnui';
 import { InteractiveChart, Spinner } from '@erisfy/shadcnui-blocks';
 import { TrendingUp, ArrowDown } from 'lucide-react';
-import { useMarketInsights } from '../hooks/useMarketInsights';
-import { MarketInsight } from '@erisfy/shared';
+import { MarketInsight, useMarketInsights } from '../hooks/useMarketInsights';
+
 import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
-import { StockData } from '../types/stock.types';
+import { StockData } from '../utils/mockData';
+
 
 export interface AIPoweredMarketOverviewProps {
   filteredStocks: StockData[];

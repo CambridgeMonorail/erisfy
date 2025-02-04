@@ -166,6 +166,7 @@ type MarketInsightsResponse = {
 To add new mock endpoints to the MockAPIClient:
 
 1. Define your mock data type:
+
 ```typescript
 type MockStock = {
   id: string;
@@ -175,6 +176,7 @@ type MockStock = {
 ```
 
 2. Add mock data to constants/mockData.ts:
+
 ```typescript
 export const MOCK_STOCKS: MockStock[] = [
   { id: '1', symbol: 'MOCK-AAPL', price: 150 },
@@ -183,6 +185,7 @@ export const MOCK_STOCKS: MockStock[] = [
 ```
 
 3. Implement the endpoint in MockAPIClient:
+
 ```typescript
 export class MockAPIClient implements ApiClient<MockStock> {
   async getStocks(): Promise<ApiResponse<MockStock[]>> {
@@ -229,4 +232,10 @@ nx test api-client
 ```env
 VITE_REACT_APP_USE_MOCKS=true  # Enable mock client
 API_BASE_URL=https://api.erisfy.com
+```
+
+## Installation
+We use pnpm exclusively for package management. To install dependencies, run:
+```bash
+pnpm install
 ```
