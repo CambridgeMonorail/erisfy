@@ -5,8 +5,9 @@ import { MarketInsightsResponse } from '../types/market.types';
 
 export abstract class BaseApiClient<T = unknown> {
   protected config: Required<ApiConfig>;
+  protected client?: AxiosInstance;
 
-  constructor(config: ApiConfig = {}) {
+  constructor(config: ApiConfig = {}, axiosClient?: AxiosInstance) {
     this.config = {
       delay: 200,
       timeout: 10000,
@@ -16,6 +17,7 @@ export abstract class BaseApiClient<T = unknown> {
       testMode: false,
       ...config
     };
+    this.client = axiosClient;
   }
 
   protected validateId(id: string): void {
@@ -56,19 +58,5 @@ export abstract class BaseApiClient<T = unknown> {
   abstract createResource(data: Partial<T>): Promise<ApiResponse<T>>;
   abstract updateResource(id: string, data: Partial<T>): Promise<ApiResponse<T>>;
   abstract deleteResource(id: string): Promise<ApiResponse<void>>;
-}
-
-export abstract class BaseAPIClient<T = unknown> extends BaseApiClient<T> {
-  constructor(protected client: AxiosInstance, config: ApiConfig = {}) {
-    super(config);
-  }
-
-  async getResource(id: string): Promise<ApiResponse<T>> {
-    this.validateId(id);
-    return this.handleResponse(() => this.client.get(`/resources/${id}`));
-  }
-
-  async getMarketInsights(): Promise<ApiResponse<MarketInsightsResponse>> {
-    return this.handleResponse(() => this.client.get<MarketInsightsResponse>('/market/insights'));
-  }
+  abstract getMarketInsights(): Promise<ApiResponse<MarketInsightsResponse>>;
 }
