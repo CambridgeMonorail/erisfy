@@ -1,61 +1,84 @@
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import { Button } from '@erisfy/shadcnui';
+
+import { Button, cn } from '@erisfy/shadcnui';
 import { Alert, AlertTitle, AlertDescription } from '@erisfy/shadcnui';
-import { ErrorFallbackProps } from '../../types/error-boundary';
+import { type ErrorFallbackProps } from '../../types/error-boundary';
 
+type ErrorFallbackVariant = 'default' | 'destructive';
 
-/**
- * A fallback component to display when an error occurs in the application.
- * Provides a user-friendly error message and a refresh button.
- */
-/**
- * ErrorFallback component is a UI component that displays an error message
- * and a button to reset the error boundary when an error occurs.
- *
- * @param {Error} error - The error object that contains information about the error.
- * @param {() => void} resetErrorBoundary - A function to reset the error boundary.
- * @returns {JSX.Element} The rendered error fallback UI.
- *
- * @example
- * <ErrorFallback error={new Error('Something went wrong')} resetErrorBoundary={() => {}} />
- *
- * @component
- * @name ErrorFallback
- * @description This component is used to display a user-friendly error message
- * and provide a way to recover from the error by resetting the error boundary.
- * It uses the Alert component to display the error message and a Button component
- * to allow the user to refresh the page.
- *
- * @see https://reactjs.org/docs/error-boundaries.html
- */
-export const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
+type ExtendedErrorFallbackProps = ErrorFallbackProps & {
+  className?: string;
+  variant?: ErrorFallbackVariant;
+  isLoading?: boolean;
+  containerClassName?: string;
+  retryButtonText?: string;
+  titleText?: string;
+};
+
+export const ErrorFallback = ({ 
+  error, 
+  onRecover,
+  className,
+  variant = 'destructive',
+  isLoading = false,
+  containerClassName,
+  retryButtonText = 'Try Again',
+  titleText = 'Something went wrong'
+}: ExtendedErrorFallbackProps) => {
   const errorMessage = error.message || 'An unexpected error occurred';
   const errorDetails = error.details ? `Details: ${JSON.stringify(error.details)}` : '';
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="max-w-md w-full">
+    <div 
+      className={cn(
+        "min-h-screen flex items-center justify-center p-4 bg-background",
+        containerClassName
+      )}
+      role="alert"
+      aria-live="assertive"
+      data-testid="error-fallback"
+    >
+      <div className={cn("max-w-md w-full", className)}>
         <Alert 
-          variant="destructive" 
-          aria-live="assertive"
+          variant={variant}
+          data-testid="error-alert"
         >
-          <AlertCircle className="h-5 w-5" aria-hidden="true" />
-          <AlertTitle className="mb-2">Something went wrong</AlertTitle>
+          <AlertCircle 
+            className="h-5 w-5" 
+            aria-hidden="true"
+            data-testid="error-icon"
+          />
+          <AlertTitle className="mb-2">{titleText}</AlertTitle>
           <AlertDescription className="mb-4">
-            {errorMessage}
+            <div data-testid="error-message">
+              {errorMessage}
+            </div>
             {errorDetails && (
-              <div className="mt-2 text-sm opacity-75">{errorDetails}</div>
+              <div 
+                className="mt-2 text-sm opacity-75"
+                data-testid="error-details"
+              >
+                {errorDetails}
+              </div>
             )}
           </AlertDescription>
           <div className="flex justify-end">
             <Button 
               variant="outline"
               size="sm"
-              onClick={resetErrorBoundary}
+              onClick={onRecover}
               className="flex items-center gap-2"
+              disabled={isLoading}
+              data-testid="retry-button"
             >
-              <RefreshCw className="h-4 w-4" aria-hidden="true" />
-              Try Again
+              <RefreshCw 
+                className={cn(
+                  "h-4 w-4",
+                  isLoading && "animate-spin"
+                )} 
+                aria-hidden="true" 
+              />
+              {retryButtonText}
             </Button>
           </div>
         </Alert>

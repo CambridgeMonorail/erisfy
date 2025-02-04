@@ -9,11 +9,11 @@ export type CustomError = Error & {
 
 export type ErrorFallbackProps = {
   error: CustomError;
-  resetErrorBoundary: () => void;
+  /** Primary handler to recover from the error state and reset the error boundary */
+  onRecover: () => void;
 };
 
 export type ErrorBoundaryProps = {
   children: ReactNode;
   fallback: (props: ErrorFallbackProps) => ReactNode;
-  onReset?: () => void;
 };
