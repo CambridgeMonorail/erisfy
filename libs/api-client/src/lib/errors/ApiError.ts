@@ -1,22 +1,26 @@
-export class ApiError extends Error {
-  code: string;
-  details?: unknown;
-  status?: number;
-  timestamp: string;
+import { ErrorDetails } from '../../types/api.types';
 
-  constructor(
-    message: string,
-    options: {
-      code?: string;
-      details?: unknown;
-      status?: number;
-    } = {}
-  ) {
+export class ApiError extends Error {
+  readonly code: string;
+  readonly details?: unknown;
+  readonly status?: number;
+  readonly timestamp: string;
+
+  constructor(message: string, options: Partial<ErrorDetails> = {}) {
     super(message);
     this.name = 'ApiError';
     this.code = options.code ?? 'UNKNOWN_ERROR';
     this.details = options.details;
     this.status = options.status;
-    this.timestamp = new Date().toISOString();
+    this.timestamp = options.timestamp ?? new Date().toISOString();
+  }
+
+  toJSON(): ErrorDetails {
+    return {
+      code: this.code,
+      status: this.status,
+      details: this.details,
+      timestamp: this.timestamp
+    };
   }
 }
