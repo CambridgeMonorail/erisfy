@@ -29,5 +29,5 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "src/**/*.d.ts"
-  ]
+, "../../libs/shadcnui-blocks/src/lib/components/error-boundary/ErrorBoundary.test.tsx"  ]
 }

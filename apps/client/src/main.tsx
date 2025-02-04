@@ -2,19 +2,12 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 
-import { ThemeProvider } from '@erisfy/shadcnui/lib/theme';
+
 import { ErrorFallback } from '@erisfy/shadcnui-blocks';
 
 import { App } from './app/app';
-import { ErrorBoundary } from './app/components/ErrorBoundary';
-import { initializeMockWorker } from './utils/mockWorker';
-import { shouldUseMocks } from './utils/environment';
-
-if (shouldUseMocks()) {
-  initializeMockWorker().catch((error) => {
-    console.error('Failed to initialize mock worker:', error);
-  });
-}
+import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
+import { ThemeProvider } from '@erisfy/shadcnui';
 
 if (typeof window !== 'undefined') {
   const rootElement = document.getElementById('root');
@@ -27,10 +20,10 @@ if (typeof window !== 'undefined') {
   root.render(
     <StrictMode>
       <ErrorBoundary 
-        fallback={(error: Error) => (
+        fallback={(error) => (
           <ErrorFallback 
             error={error}
-            onReset={() => window.location.reload()} 
+            onRecover={() => window.location.reload()} 
           />
         )}
       >

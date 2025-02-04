@@ -15,6 +15,17 @@ const getMockServiceWorkerPath = (): string => {
   return `${basePath}/mockServiceWorker.js`;
 };
 
+type MockWorker = {
+  worker: {
+    start: (config: {
+      onUnhandledRequest: 'bypass' | 'warn' | 'error';
+      serviceWorker: {
+        url: string;
+      };
+    }) => Promise<void>;
+  };
+};
+
 /**
  * Initializes the Mock Service Worker for development environment.
  * This function checks if mocks are enabled and starts the MSW worker if needed.
@@ -49,10 +60,11 @@ export const initializeMockWorker = async (): Promise<boolean> => {
       (window as any).process = { env: {} };
     }
 
-    const { worker } = await import('../mocks/browser');
+    const workerModule = await import('../mocks/browser') as MockWorker;
+    const { worker } = workerModule;
     
-    // Only start if we're in a browser environment
-    if (typeof worker.start === 'function') {
+    // Only start if we're in a browser environment and worker is valid
+    if (worker && typeof worker.start === 'function') {
       await worker.start({
         onUnhandledRequest: 'bypass',
         serviceWorker: {
