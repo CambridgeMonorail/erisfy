@@ -3,6 +3,7 @@ import { ApiClient} from './api-client.interface';
 import { createAxiosInstance } from './axios-instance';
 import { MarketInsightsResponse } from '../types/market.types';
 import { ApiResponse } from '../types/api.types';
+import { Onboarding } from '@erisfy/data-access-indexeddb';
 
 export type RealAPIClientConfig = {
   baseURL?: string;
@@ -65,6 +66,38 @@ export class RealAPIClient<T = unknown> implements ApiClient<T> {
     const response = await this.client.get<MarketInsightsResponse>('/market/insights');
     return {
       data: response.data,
+      status: response.status,
+    };
+  }
+
+  async setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Promise<ApiResponse<Onboarding>> {
+    const response = await this.client.post('/onboarding', onboarding);
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  }
+
+  async getOnboardingData(userId: string): Promise<ApiResponse<Onboarding>> {
+    const response = await this.client.get(`/onboarding/${userId}`);
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  }
+
+  async hasViewedOnboarding(userId: string): Promise<ApiResponse<boolean>> {
+    const response = await this.client.get(`/onboarding/${userId}/viewed`);
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  }
+
+  async deleteOnboardingData(userId: string): Promise<ApiResponse<void>> {
+    const response = await this.client.delete(`/onboarding/${userId}`);
+    return {
+      data: undefined,
       status: response.status,
     };
   }

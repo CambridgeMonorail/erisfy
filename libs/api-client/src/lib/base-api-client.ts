@@ -2,6 +2,7 @@ import { ApiConfig, ApiResponse } from '../types/api.types';
 import { ApiError } from './errors/ApiError';
 import { AxiosInstance } from 'axios';
 import { MarketInsightsResponse } from '../types/market.types';
+import { Onboarding } from '@erisfy/data-access-indexeddb';
 
 export abstract class BaseApiClient<T = unknown> {
   protected config: Required<ApiConfig>;
@@ -59,4 +60,10 @@ export abstract class BaseApiClient<T = unknown> {
   abstract updateResource(id: string, data: Partial<T>): Promise<ApiResponse<T>>;
   abstract deleteResource(id: string): Promise<ApiResponse<void>>;
   abstract getMarketInsights(): Promise<ApiResponse<MarketInsightsResponse>>;
+
+  // Add abstract onboarding methods
+  abstract setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Promise<ApiResponse<Onboarding>>;
+  abstract getOnboardingData(userId: string): Promise<ApiResponse<Onboarding>>;
+  abstract hasViewedOnboarding(userId: string): Promise<ApiResponse<boolean>>;
+  abstract deleteOnboardingData(userId: string): Promise<ApiResponse<void>>;
 }
