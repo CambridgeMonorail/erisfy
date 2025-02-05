@@ -42,7 +42,7 @@ const OnboardingFlow: FC = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (step === 5) {
+    if (step === 4) {
       navigate('/screener/results');
     }
   }, [step, navigate]);
@@ -90,7 +90,7 @@ const OnboardingFlow: FC = () => {
     {
       title: 'Start Screening',
       description: 'Go to results',
-      icon: () => <span>5</span>,
+      icon: () => <span>4</span>,
     },
   ];
 
