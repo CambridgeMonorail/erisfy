@@ -1,4 +1,4 @@
-import { type FC, useEffect, useCallback } from 'react';
+import { type FC, useEffect, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Github,
@@ -9,6 +9,7 @@ import {
   BarChart,
   ChartLine,
   Video,
+  type LucideProps, // Add this import
 } from 'lucide-react';
 
 import {
@@ -20,27 +21,51 @@ import {
   HeroSection,
 } from '@erisfy/landing';
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
+import { Button } from '@erisfy/shadcnui';
+import { ApiError, apiClient } from '@erisfy/api-client';
 import preReleaseImage from '../../../assets/images/pre-release.png';
-import { apiClient } from '@erisfy/api-client';
 
-const GITHUB_URL = 'https://github.com/CambridgeMonorail/erisfy';
-const DISCORD_URL = 'https://discord.com/invite/your-discord-invite';
-const TWITTER_URL = 'https://x.com/TimDMorris';
+type SocialUrls = {
+  GITHUB_URL: string;
+  DISCORD_URL: string;
+  TWITTER_URL: string;
+};
+
+const SOCIAL_URLS: SocialUrls = {
+  GITHUB_URL: 'https://github.com/CambridgeMonorail/erisfy',
+  DISCORD_URL: 'https://discord.com/invite/your-discord-invite',
+  TWITTER_URL: 'https://x.com/TimDMorris',
+} as const;
 
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleScrollToFeatures = useCallback(async () => {
-    const hasViewedOnboarding = await apiClient.hasViewedOnboarding('user-id'); // Replace 'user-id' with actual user ID
-    if (hasViewedOnboarding.data) {
-      navigate('/home');
-    } else {
-      navigate('/screener/onboarding-flow');
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await apiClient.hasViewedOnboarding('user-id');
+      if (response.data) {
+        navigate('/home');
+      } else {
+        navigate('/screener/onboarding-flow');
+      }
+    } catch (err) {
+      const message = err instanceof ApiError 
+        ? err.message 
+        : 'An unexpected error occurred';
+      setError(message);
+      console.error('Error checking onboarding status:', err);
+    } finally {
+      setIsLoading(false);
     }
   }, [navigate]);
 
   const handleGitHubRedirect = useCallback(() => {
-    window.open(GITHUB_URL, '_blank', 'noopener,noreferrer');
+    window.open(SOCIAL_URLS.GITHUB_URL, '_blank', 'noopener,noreferrer');
   }, []);
 
   useEffect(() => {
@@ -52,7 +77,16 @@ export const LandingPage: FC = () => {
       className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-primary text-foreground"
       data-testid="landing-page"
       role="main"
+      aria-live="polite"
     >
+      {error && (
+        <div 
+          role="alert" 
+          className="bg-destructive text-destructive-foreground p-4 rounded-md"
+        >
+          {error}
+        </div>
+      )}
       <div 
         className="relative bg-primary" 
         data-testid="hero-section-container"
@@ -206,8 +240,9 @@ export const LandingPage: FC = () => {
         variant="light"
         title="Experience It Yourself"
         description="See Erisfy in action—where AI helps you find, analyze, and track stocks faster than ever. Try the demo and discover how smart investing starts with the right insights."
-        buttonText="Try AI-Powered Stock Screening"
+        buttonText={isLoading ? "Loading..." : "Try AI-Powered Stock Screening"}
         buttonAction={handleScrollToFeatures}
+        disabled={isLoading}
         data-testid="demo-section"
         aria-label="Try demo section"
       />
@@ -251,21 +286,21 @@ export const LandingPage: FC = () => {
         navigationLinks={[
           { text: 'Home', url: '#' },
           { text: 'Features', url: '#features' },
-          { text: 'Documentation', url: GITHUB_URL },
-          { text: 'Community', url: DISCORD_URL },
-          { text: 'GitHub', url: GITHUB_URL },
+          { text: 'Documentation', url: SOCIAL_URLS.GITHUB_URL },
+          { text: 'Community', url: SOCIAL_URLS.DISCORD_URL },
+          { text: 'GitHub', url: SOCIAL_URLS.GITHUB_URL },
         ]}
         socialMediaIcons={[
           {
-            icon: (props) => <Github {...props} />,
-            url: GITHUB_URL,
+            icon: (props: LucideProps) => <Github {...props} />,
+            url: SOCIAL_URLS.GITHUB_URL,
             'aria-label': 'Visit Erisfy on GitHub',
             target: '_blank',
             rel: 'noopener noreferrer',
           },
           {
-            icon: (props) => <Twitter {...props} />,
-            url: TWITTER_URL,
+            icon: (props: LucideProps) => <Twitter {...props} />,
+            url: SOCIAL_URLS.TWITTER_URL,
             'aria-label': 'Follow Erisfy on Twitter',
             target: '_blank',
             rel: 'noopener noreferrer',

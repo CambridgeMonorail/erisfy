@@ -3,7 +3,7 @@ import { Stepper } from "./index"
 import { MapPin, Truck, CreditCard, ShoppingCart } from "lucide-react"
 
 const meta: Meta<typeof Stepper> = {
-  title: "Components/Stepper",
+  title: "Shadcnui Blocks/Stepper",
   component: Stepper,
   tags: ["autodocs"],
 }

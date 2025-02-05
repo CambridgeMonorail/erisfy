@@ -20,7 +20,7 @@ type StepperProps = {
 const StepIcon: FC<{ step: Step; isActive: boolean; isCompleted: boolean; onClick: () => void; className?: string }> = ({ step, isActive, isCompleted, onClick, className }) => (
   <div
     className={cn(
-      "relative flex h-10 w-10 items-center justify-center rounded-full border-2 bg-background",
+      "relative flex h-10 w-10 items-center justify-center rounded-full border-2 bg-background hover:bg-accent cursor-pointer transition-colors group",
       isCompleted ? "border-primary" : isActive ? "border-primary" : "border-muted-foreground/20",
       className
     )}
@@ -28,9 +28,9 @@ const StepIcon: FC<{ step: Step; isActive: boolean; isCompleted: boolean; onClic
     onClick={onClick}
   >
     {isCompleted ? (
-      <Check className="h-5 w-5 text-primary" />
+      <Check className="h-5 w-5 text-primary group-hover:text-accent-foreground" />
     ) : (
-      <step.icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground/40")} />
+      <step.icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground/40", "group-hover:text-accent-foreground")} />
     )}
   </div>
 );
@@ -63,7 +63,7 @@ export const Stepper: FC<StepperProps> = ({ currentStep = 1, className, steps, o
                   className={cn(
                     "h-[2px] w-full max-w-[100px] bg-muted-foreground/20",
                     isCompleted && "bg-primary"
-                  )}
+                  )} 
                 />
               )}
             </Fragment>
