@@ -21,6 +21,7 @@ import {
 } from '@erisfy/landing';
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
 import preReleaseImage from '../../../assets/images/pre-release.png';
+import { apiClient } from '@erisfy/api-client';
 
 const GITHUB_URL = 'https://github.com/CambridgeMonorail/erisfy';
 const DISCORD_URL = 'https://discord.com/invite/your-discord-invite';
@@ -29,10 +30,14 @@ const TWITTER_URL = 'https://x.com/TimDMorris';
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
 
-  const handleScrollToFeatures = useCallback(() => {
-    const featuresElement = document.getElementById('features');
-    featuresElement?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+  const handleScrollToFeatures = useCallback(async () => {
+    const hasViewedOnboarding = await apiClient.hasViewedOnboarding('user-id'); // Replace 'user-id' with actual user ID
+    if (hasViewedOnboarding.data) {
+      navigate('/home');
+    } else {
+      navigate('/screener/onboarding-flow');
+    }
+  }, [navigate]);
 
   const handleGitHubRedirect = useCallback(() => {
     window.open(GITHUB_URL, '_blank', 'noopener,noreferrer');
@@ -202,7 +207,7 @@ export const LandingPage: FC = () => {
         title="Experience It Yourself"
         description="See Erisfy in action—where AI helps you find, analyze, and track stocks faster than ever. Try the demo and discover how smart investing starts with the right insights."
         buttonText="Try AI-Powered Stock Screening"
-        buttonAction={() => navigate('/home')}
+        buttonAction={handleScrollToFeatures}
         data-testid="demo-section"
         aria-label="Try demo section"
       />
