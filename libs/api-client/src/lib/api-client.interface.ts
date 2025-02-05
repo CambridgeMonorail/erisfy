@@ -1,5 +1,6 @@
 import { ApiResponse } from '../types/api.types';
 import { MarketInsightsResponse } from '../types/market.types';
+import { Onboarding } from '@erisfy/data-access-indexeddb';
 
 /** Error codes enum for consistent error handling */
 export enum ApiErrorCode {
@@ -54,4 +55,10 @@ export interface ApiClient<T = unknown> {
    * @returns Market insights data
    */
   getMarketInsights(): Promise<ApiResponse<MarketInsightsResponse>>;
+
+  // Add onboarding methods
+  setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Promise<ApiResponse<Onboarding>>;
+  getOnboardingData(userId: string): Promise<ApiResponse<Onboarding>>;
+  hasViewedOnboarding(userId: string): Promise<ApiResponse<boolean>>;
+  deleteOnboardingData(userId: string): Promise<ApiResponse<void>>;
 }
