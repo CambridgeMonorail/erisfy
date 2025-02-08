@@ -1,5 +1,4 @@
-import { ApiConfig } from "@erisfy/api";
-
+import { ApiConfig, UsersEndpoint } from "@erisfy/api";
 
 const API_CONFIG: ApiConfig = {
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
@@ -8,6 +7,4 @@ const API_CONFIG: ApiConfig = {
   }
 };
 
-const baseClient = new BaseApiClient(API_CONFIG);
-
-export const usersApi = new UsersEndpoint(baseClient);
+export const usersApi = new UsersEndpoint(API_CONFIG);

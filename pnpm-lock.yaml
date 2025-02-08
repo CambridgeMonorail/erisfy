@@ -435,7 +435,7 @@ importers:
 
   libs/api: {}
 
-  libs/api-client: {}
+  libs/api: {}
 
   libs/data-access-indexeddb:
     dependencies:

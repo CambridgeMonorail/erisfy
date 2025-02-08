@@ -45,6 +45,6 @@ To add new mock endpoints, follow these steps:
 
 3. **Initialize Mock Worker**: Ensure that the mock worker is initialized in the `apps/client/src/main.tsx` file by calling the `initializeMockWorker` function if mocks are enabled.
 
-4. **Update Mock API Client**: Update the `libs/api-client/src/clients/mockApiClient.ts` file to include methods for the new API endpoints, ensuring that the mock client returns the appropriate mock data.
+4. **Update Mock API Client**: Update the `libs/api/src/clients/mockApiClient.ts` file to include methods for the new API endpoints, ensuring that the mock client returns the appropriate mock data.
 
 By following these steps, you can add specific mocks for new APIs using MSW in your project. This will help you test and develop your application without relying on real API endpoints.

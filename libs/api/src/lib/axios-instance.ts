@@ -1,9 +1,5 @@
-import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios';
-
-type ApiConfig = {
-  baseURL: string;
-  timeout?: number;
-};
+import axios, { AxiosInstance } from 'axios';
+import { ApiConfig } from './types/api.types';
 
 export const createAxiosInstance = (config: ApiConfig): AxiosInstance => {
   const instance = axios.create({
@@ -38,6 +34,3 @@ export const createAxiosInstance = (config: ApiConfig): AxiosInstance => {
 
   return instance;
 };
-
-// Export the type so consuming applications can use it
-export type { ApiConfig };
