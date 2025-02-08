@@ -373,7 +373,7 @@ importers:
         specifier: ^15.4.3
         version: 15.4.3
       msw:
-        specifier: ^2.7.0
+        specifier: ^2.6.0
         version: 2.7.0(@types/node@22.10.10)(typescript@5.7.3)
       nx:
         specifier: 20.3.3
@@ -9234,8 +9234,8 @@ packages:
   third-party-web@0.26.2:
     resolution: {integrity: sha512-taJ0Us0lKoYBqcbccMuDElSUPOxmBfwlHe1OkHQ3KFf+RwovvBHdXhbFk9XJVQE2vHzxbTwvwg5GFsT9hbDokQ==}
 
-  third-party-web@0.26.4:
-    resolution: {integrity: sha512-cH8Y2deNWtUan3u7DM8Z9aPIMll3ATwFBpuYFo7IXfz58X/hwz3Re+nUEpu6stViCeDvgkuR7RjeyNr495cULA==}
+  third-party-web@0.26.5:
+    resolution: {integrity: sha512-tDuKQJUTfjvi9Fcrs1s6YAQAB9mzhTSbBZMfNgtWNmJlHuoFeXO6dzBFdGeCWRvYL50jQGK0jPsBZYxqZQJ2SA==}
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
@@ -12558,7 +12558,7 @@ snapshots:
 
   '@paulirish/trace_engine@0.0.39':
     dependencies:
-      third-party-web: 0.26.4
+      third-party-web: 0.26.5
 
   '@phenomnomnominal/tsquery@5.0.1(typescript@5.7.3)':
     dependencies:
@@ -20731,7 +20731,7 @@ snapshots:
 
   third-party-web@0.26.2: {}
 
-  third-party-web@0.26.4: {}
+  third-party-web@0.26.5: {}
 
   through@2.3.8: {}
 
