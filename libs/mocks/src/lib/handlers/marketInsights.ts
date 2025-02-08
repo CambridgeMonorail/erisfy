@@ -15,8 +15,14 @@ export const marketInsightsHandlers = [
     const date = url.searchParams.get('date');
     const market_sector = url.searchParams.get('market_sector');
 
+    console.log('date', date);
+    console.log('market_sector', market_sector);
+    console.log('url', url);
+
     // Create an array of insights
-    const mockInsights: MarketDataInsights[] = [createMarketDataInsights()];
+    const mockInsights: MarketDataInsights[] = [createMarketDataInsights(date ? { date } : undefined)];
+
+    console.log('mockInsights', mockInsights);
     
     let filteredInsights = mockInsights;
 
@@ -29,6 +35,8 @@ export const marketInsightsHandlers = [
         insight.stories.some(story => story.market_sector === market_sector)
       );
     }
+
+    console.log('filteredInsights', filteredInsights);
 
     return HttpResponse.json(filteredInsights);
   }),

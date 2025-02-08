@@ -37,7 +37,13 @@ const generateNumber = (min: number, max: number, decimals = 1): number =>
 
 const generateDate = (): string => {
   const futureDate = faker.date.future();
-  return futureDate.toISOString().split('T')[0];
+  const year = futureDate.getFullYear();
+  const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+  const day = String(futureDate.getDate()).padStart(2, '0');
+  console.log('year', year);
+  console.log('month', month);
+  console.log('day', day);
+  return `${year}-${month}-${day}`;
 };
 
 const createMarketStory = (sector: MarketSector): MarketStory => {
