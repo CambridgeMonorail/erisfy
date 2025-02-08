@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { ApiConfig } from './types/api.types';
+import { ApiConfig } from './types/api';
 
 export const createAxiosInstance = (config: ApiConfig): AxiosInstance => {
   const instance = axios.create({

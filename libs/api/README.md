@@ -4,25 +4,32 @@ A strongly-typed API client library for Erisfy applications, providing type-safe
 
 ## Features
 
-- Type-safe API client implementations
+- Strongly-typed API endpoints extending BaseApiClient
 - Centralized error handling with custom `ApiError` class
 - Axios-based HTTP client with interceptors
-- Modular endpoint architecture
-- Configurable base client
+- Automatic response formatting with ApiResponse type
+- Configurable request timeouts and headers
 
 ## Installation
 
-This library is part of the Erisfy monorepo and is installed by default. If needed, you can rebuild it using:
+This library is part of the Erisfy monorepo. To build the library:
 
 ```bash
 nx build api
 ```
 
+## Architecture
+
+The library is structured around a base client class that handles common HTTP operations:
+
+- `BaseApiClient`: Core abstract class providing HTTP methods and error handling
+- Endpoint classes (like `UsersEndpoint`) extend BaseApiClient for specific API resources
+- `ApiError` class for standardized error handling
+- Type definitions for responses and configurations
+
 ## Usage
 
 ### Basic Setup
-
-1. Import and configure the API client:
 
 ```typescript
 import { ApiConfig, UsersEndpoint } from "@erisfy/api";
@@ -43,90 +50,86 @@ const usersApi = new UsersEndpoint(config);
 ```typescript
 // Get all users
 try {
-  const response = await usersApi.getUsers();
-  console.log(response.data); // Array of User objects
+  const { data: users, status } = await usersApi.getUsers();
+  console.log(users); // Array of User objects
 } catch (error) {
   if (error instanceof ApiError) {
-    console.error(`API Error: ${error.message}`);
+    console.error(`API Error (${error.status}): ${error.message}`);
+    // Access additional error data if available
+    console.error(error.data);
   }
 }
 
 // Create a new user
 try {
-  const newUser = await usersApi.createUser({
+  const { data: newUser } = await usersApi.createUser({
     name: "John Doe",
     email: "john@example.com",
     avatar: "https://example.com/avatar.jpg"
   });
-  console.log(newUser.data); // Created User object
+  console.log(newUser); // Created User object
 } catch (error) {
   // Handle error
 }
 ```
 
-## API Reference
-
-### Types
-
-```typescript
-type ApiConfig = {
-  baseURL: string;
-  timeout?: number;
-  headers?: Record<string, string>;
-};
-
-type ApiResponse<T> = {
-  data: T;
-  status: number;
-  message?: string;
-};
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-};
-```
-
-### Available Endpoints
-
-#### UsersEndpoint
-
-- `getUsers()`: Fetch all users
-- `getUserById(id: string)`: Fetch a specific user
-- `createUser(userData: Omit<User, 'id'>)`: Create a new user
-
 ## Error Handling
 
-The library provides a custom `ApiError` class for error handling:
+The library uses the `ApiError` class for standardized error handling:
 
 ```typescript
 try {
-  await usersApi.getUsers();
+  const response = await usersApi.getUsers();
 } catch (error) {
   if (error instanceof ApiError) {
-    console.log(error.status); // HTTP status code
-    console.log(error.message); // Error message
-    console.log(error.data); // Additional error data
+    switch (error.status) {
+      case 401:
+        // Handle unauthorized
+        break;
+      case 404:
+        // Handle not found
+        break;
+      default:
+        // Handle other errors
+        console.error(`${error.message} (${error.status})`);
+    }
   }
 }
 ```
 
+## Available Endpoints
+
+### UsersEndpoint
+
+Methods for managing user resources:
+
+```typescript
+getUsers(): Promise<ApiResponse<User[]>>
+getUserById(id: string): Promise<ApiResponse<User>>
+createUser(userData: Omit<User, 'id'>): Promise<ApiResponse<User>>
+```
+
 ## Testing
 
-Run the test suite using:
+Run the test suite:
 
 ```bash
 nx test api
 ```
 
+For development with mock data:
+
+```bash
+nx test api --watch
+```
+
 ## Contributing
 
-1. Follow the TypeScript strict mode guidelines
-2. Maintain type safety across the codebase
-3. Add tests for new features
-4. Update documentation as needed
+1. Follow TypeScript strict mode and project conventions
+2. Extend BaseApiClient for new endpoint classes
+3. Maintain comprehensive error handling
+4. Add unit tests for new features
+5. Update documentation for API changes
 
 ## License
 

@@ -435,8 +435,6 @@ importers:
 
   libs/api: {}
 
-  libs/api: {}
-
   libs/data-access-indexeddb:
     dependencies:
       dexie:

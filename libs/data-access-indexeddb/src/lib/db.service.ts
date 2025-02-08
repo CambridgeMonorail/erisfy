@@ -1,6 +1,8 @@
 import Dexie, { Table } from 'dexie';
 import { Item } from './types/item';
-import { Onboarding } from './types/onboarding';
+import { Onboarding } from '@erisfy/api';
+
+
 
 // 2) Extend Dexie to define your DB, tables, and version(s).
 export class AppDatabase extends Dexie {

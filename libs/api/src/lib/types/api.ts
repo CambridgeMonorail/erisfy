@@ -9,10 +9,3 @@ export type ApiResponse<T> = {
   status: number;
   message?: string;
 };
-
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-};

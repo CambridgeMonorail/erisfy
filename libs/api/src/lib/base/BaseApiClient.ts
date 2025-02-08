@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { ApiError } from '../errors/ApiError';
-import { ApiConfig, ApiResponse } from '../types/api.types';
+import { ApiConfig, ApiResponse } from '../types/api';
 
 export class BaseApiClient {
   protected client: AxiosInstance;
@@ -45,6 +45,33 @@ export class BaseApiClient {
 
   protected async post<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     const response = await this.client.post<T>(path, data, config);
+    return {
+      data: response.data,
+      status: response.status,
+      message: response.statusText
+    };
+  }
+
+  protected async patch<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.client.patch<T>(path, data, config);
+    return {
+      data: response.data,
+      status: response.status,
+      message: response.statusText
+    };
+  }
+
+  protected async put<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.client.put<T>(path, data, config);
+    return {
+      data: response.data,
+      status: response.status,
+      message: response.statusText
+    };
+  }
+
+  protected async delete<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.client.delete<T>(path, config);
     return {
       data: response.data,
       status: response.status,

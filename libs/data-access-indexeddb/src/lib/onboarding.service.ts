@@ -1,5 +1,7 @@
+
+import { Onboarding } from 'libs/api/src/lib/types';
 import { db } from './db.service';
-import { Onboarding } from './types/onboarding';
+
 
 export class OnboardingError extends Error {
   constructor(message: string) {
