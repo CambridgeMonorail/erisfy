@@ -5,10 +5,7 @@ import { createOnboarding } from '../factories/onboarding';
 const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'];
 
 export const onboardingHandlers = [
-
-  console.log('API_BASE_URL', API_BASE_URL),
-
-  http.get('/api/onboardings', ({ request }) => {
+  http.get(`${API_BASE_URL}/api/onboardings`, ({ request }) => {
     const url = new URL(request.url);
     const userId = url.searchParams.get('userId');
 
@@ -23,12 +20,12 @@ export const onboardingHandlers = [
     return Response.json(onboardings);
   }),
 
-  http.post('/api/onboardings', async ({ request }) => {
+  http.post(`${API_BASE_URL}/api/onboardings`, async ({ request }) => {
     const data = await request.json() as Partial<Onboarding>;
     return Response.json(createOnboarding(data));
   }),
 
-  http.patch('/api/onboardings/:id', async ({ params, request }) => {
+  http.patch(`${API_BASE_URL}/api/onboardings/:id`, async ({ params, request }) => {
     const data = await request.json() as Partial<Onboarding>;
     return Response.json(createOnboarding({ id: Number(params['id']), ...data }));
   })

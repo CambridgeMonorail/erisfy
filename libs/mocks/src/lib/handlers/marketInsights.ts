@@ -9,7 +9,7 @@ export const marketInsightsHandlers = [
 
   console.log('API_BASE_URL', API_BASE_URL),
 
-  http.get('/api/market-insights', ({ request }) => {
+  http.get(`${API_BASE_URL}/api/market-insights`, ({ request }) => {
     const url = new URL(request.url);
     const date = url.searchParams.get('date');
     const market_sector = url.searchParams.get('market_sector');
@@ -32,12 +32,12 @@ export const marketInsightsHandlers = [
     return Response.json(filteredInsights);
   }),
 
-  http.post('/api/market-insights', async ({ request }) => {
+  http.post(`${API_BASE_URL}/api/market-insights`, async ({ request }) => {
     const data = await request.json() as Partial<MarketDataInsights>;
     return Response.json(createMarketDataInsights(data));
   }),
 
-  http.patch('/api/market-insights/:date', async ({ params, request }) => {
+  http.patch(`${API_BASE_URL}/api/market-insights/:date`, async ({ params, request }) => {
     const data = await request.json() as Partial<MarketDataInsights>;
     return Response.json(createMarketDataInsights({ 
       date: params['date'] as string,

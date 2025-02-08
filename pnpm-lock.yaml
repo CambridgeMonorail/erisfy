@@ -433,8 +433,6 @@ importers:
         specifier: ^17.7.2
         version: 17.7.2
 
-  libs/mocks: {}
-
   libs/shadcnui: {}
 
   libs/shell: {}

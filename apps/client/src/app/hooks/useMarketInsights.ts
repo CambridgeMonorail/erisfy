@@ -1,44 +1,54 @@
+import { ApiError, MarketDataInsights, MarketInsightsEndpoint } from '@erisfy/api';
 import { useState, useEffect, useMemo } from 'react';
-import {
-  ApiError,
-  MarketDataInsights,
-  MarketDataInsightsFilter,
-  MarketInsightsEndpoint,
-} from '@erisfy/api';
 import { createApiConfig } from '../utils/apiConfig';
 
-export const useMarketInsights = (filter?: MarketDataInsightsFilter) => {
+export const useMarketInsights = (date?: string) => {
+  const [insights, setInsights] = useState<MarketDataInsights | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Memoize the API client to prevent recreation on each render
   const marketInsightsClient = useMemo(
     () => new MarketInsightsEndpoint(createApiConfig()),
     []
   );
-  const [insights, setInsights] = useState<MarketDataInsights[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadInsights = async () => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+
+    const fetchInsights = async () => {
       try {
         setIsLoading(true);
-        const { data } = await marketInsightsClient.getMarketInsights(filter);
-        setInsights(data);
         setError(null);
+
+        const { data } = await marketInsightsClient.getMarketInsights({ date });
+
+        if (isSubscribed) {
+          setInsights(data[0] || null);
+        }
       } catch (err) {
+        if (!isSubscribed) return;
+
         if (err instanceof ApiError) {
           setError(err.message);
         } else {
-          setError('Failed to load market insights');
+          setError('An unexpected error occurred');
         }
-        setInsights(null);
       } finally {
-        setIsLoading(false);
+        if (isSubscribed) {
+          setIsLoading(false);
+        }
       }
     };
 
-    loadInsights();
-  }, [filter, marketInsightsClient]);
+    fetchInsights();
+
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
+  }, [date, marketInsightsClient]);
 
   return { insights, isLoading, error };
 };
-
-export type { MarketDataInsights, MarketDataInsightsFilter };

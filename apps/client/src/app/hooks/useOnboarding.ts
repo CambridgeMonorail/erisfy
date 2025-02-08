@@ -4,17 +4,17 @@ import { createApiConfig } from '../utils/apiConfig';
 
 export const useOnboarding = (userId = 'guest') => {
   const [onboarding, setOnboarding] = useState<Onboarding | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const onboardingsClient = new OnboardingsEndpoint(createApiConfig());
-    
+
     const fetchOnboarding = async () => {
       try {
         setIsLoading(true);
         const { data } = await onboardingsClient.getOnboardings({ userId });
-        setOnboarding(data[0]); // Assume we want the first onboarding record
+        setOnboarding(data[0] || null); // Ensure null if no data
         setError(null);
       } catch (err) {
         if (err instanceof ApiError) {

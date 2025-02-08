@@ -1,111 +1,153 @@
 import { FC } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Badge } from '@erisfy/shadcnui';
-import { InteractiveChart, Spinner } from '@erisfy/shadcnui-blocks';
-import { TrendingUp, ArrowDown } from 'lucide-react';
-import { MarketInsight, useMarketInsights } from '../hooks/useMarketInsights';
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardContent, 
+  Badge,
+  Separator,
+  ScrollArea, 
+  cn
+} from '@erisfy/shadcnui';
+import { Spinner } from '@erisfy/shadcnui-blocks';
+import { AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
+import { MarketDataInsights, MarketStory } from '@erisfy/api';
+import { useMarketInsights } from '../hooks/useMarketInsights';
 
-import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
-import { StockData } from '../utils/mockData';
 
+type MarketStoryCardProps = {
+  story: MarketStory;
+};
+
+const MarketStoryCard: FC<MarketStoryCardProps> = ({ story }) => {
+  const { title, one_line_summary, whats_happening, market_impact, market_sector } = story;
+  
+  return (
+    <Card className="mb-4 border hover:border-primary/20 transition-colors duration-200 shadow-sm hover:shadow-md">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold leading-tight">{title}</CardTitle>
+          <Badge 
+            variant="outline" 
+            className="bg-background/50 hover:bg-background/80 transition-colors"
+          >
+            {market_sector}
+          </Badge>
+        </div>
+        <p className="text-sm text-muted-foreground mt-2 leading-normal">
+          {one_line_summary}
+        </p>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="space-y-4">
+          <div className="bg-background/50 rounded-lg p-3">
+            <h4 className="font-medium mb-2 text-sm uppercase tracking-wide">
+              What's Happening
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {whats_happening}
+            </p>
+          </div>
+          <Separator className="my-2" />
+          <div className="bg-background/50 rounded-lg p-3">
+            <h4 className="font-medium mb-2 text-sm uppercase tracking-wide">
+              Market Impact
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {market_impact}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 export interface AIPoweredMarketOverviewProps {
-  filteredStocks: StockData[];
-  isLoading?: boolean;
+  className?: string;
+  date?: string;
 }
 
-const InsightItem: FC<MarketInsight> = ({ category, trend, text }) => (
-  <div className="flex items-center space-x-2">
-    <Badge variant="outline">{category}</Badge>
-    {trend === 'positive' ? (
-      <TrendingUp
-        className="text-success h-4 w-4"
-        aria-label="Positive trend"
-      />
-    ) : (
-      <ArrowDown
-        className="text-destructive h-4 w-4"
-        aria-label="Negative trend"
-      />
-    )}
-    <p className="text-lg font-semibold">{text}</p>
-  </div>
-);
+const getDefaultDate = (): string => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
-export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
-  filteredStocks,
-  isLoading = false,
+export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ 
+  className,
+  date = getDefaultDate()
 }) => {
-  const { insights = [], error } = useMarketInsights(filteredStocks);
+  const { insights, isLoading, error } = useMarketInsights(date);
 
+  //console log insights
+  console.log('insights', insights);
+  
   if (isLoading) {
-    return <Spinner aria-label="Loading market insights" />;
-  }
-
-  if (error) {
     return (
-      <div role="alert" className="text-destructive">
-        Error loading market insights
+      <div className="flex justify-center items-center h-64 bg-background/50 rounded-lg">
+        <Spinner size="lg" aria-label="Loading market insights" />
       </div>
     );
   }
 
-  if (filteredStocks.length === 0) {
-    return <div role="status">No market data available</div>;
-  }
-
-  const chartData = filteredStocks.map((stock) => ({
-    date: stock.ticker,
-    value: stock.marketCap ?? 0,
-  }));
-
-  return (
-    <ErrorBoundary
-      fallback={(error, reset) => (
-        <div role="alert" className="p-4 border border-destructive rounded-md">
-          <h2 className="text-lg font-semibold text-destructive">Error in market overview</h2>
-          <p className="text-sm text-muted-foreground">{error.message}</p>
-          <button
-            onClick={reset}
-            className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-md"
-          >
-            Try again
-          </button>
-        </div>
-      )}
-    >
-      <Card className="p-6 rounded-xl shadow-md">
+  if (error) {
+    return (
+      <Card className={cn("border-destructive bg-destructive/5", className)}>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold mb-2 text-primary">
-            AI-Powered Market Overview
-          </CardTitle>
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <CardTitle className="text-destructive">Error Loading Market Insights</CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <section aria-label="Market Summary">
-              <h3 className="text-lg font-semibold">Personalized AI Summary</h3>
-              <p>Tech stocks rebounded today as interest rate fears eased.</p>
-            </section>
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              role="list"
-              aria-label="Market insights"
-            >
-              {Array.isArray(insights) && insights.map((insight, index) => (
-                <InsightItem 
-                  key={index}
-                  category={insight.category}
-                  trend={insight.trend}
-                  text={insight.text}
-                />
-              ))}
-            </div>
-            <section aria-label="Market chart">
-              <strong>Quick Chart Toggle:</strong>
-              <InteractiveChart data={chartData} />
-            </section>
-          </div>
+          <p className="text-sm text-destructive/80">{error}</p>
         </CardContent>
       </Card>
-    </ErrorBoundary>
+    );
+  }
+
+  if (!insights || !insights.stories) {
+    return (
+      <Card className={cn("border-muted bg-muted/5", className)}>
+        <CardContent className="p-6">
+          <p className="text-center text-muted-foreground">
+            No market insights available
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className={cn("bg-card border shadow-md", className)}>
+      <CardHeader className="border-b bg-muted/5">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-semibold">Market Insights</CardTitle>
+          <p className="text-sm text-muted-foreground font-medium">
+            {new Date(insights.date).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </p>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4">
+        <ScrollArea className="h-[800px] pr-4">
+          <div className="space-y-4">
+            {insights.stories.map((story, index) => (
+              <MarketStoryCard 
+                key={`${story.market_sector}-${index}`} 
+                story={story} 
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      </CardContent>
+    </Card>
   );
 };
