@@ -1,5 +1,6 @@
 import { BaseApiClient } from '../base/BaseApiClient';
-import { User, ApiResponse } from '../types/api';
+import { ApiResponse, User } from '../types';
+
 
 export class UsersEndpoint extends BaseApiClient {
   async getUsers(): Promise<ApiResponse<User[]>> {

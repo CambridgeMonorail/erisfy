@@ -8,15 +8,6 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/libs/mocks',
-  optimizeDeps: {
-    exclude: ['msw']
-  },
-  resolve: {
-    alias: {
-      stream: 'stream-browserify',
-    },
-    conditions: ['import'],
-  },
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -49,7 +40,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['_http_common', 'http', 'net', 'url', 'https', 'node:async_hooks'],
+      external: [],
     },
   },
   test: {

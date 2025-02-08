@@ -1,7 +1,5 @@
-
-import { Onboarding } from 'libs/api/src/lib/types';
+import { Onboarding } from '@erisfy/api';
 import { db } from './db.service';
-
 
 export class OnboardingError extends Error {
   constructor(message: string) {
@@ -14,7 +12,9 @@ export class OnboardingError extends Error {
  * Set or update onboarding data for a specific user.
  * If an entry already exists for this userId, Dexie will update it (because we're using 'put').
  */
-export async function setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Promise<number> {
+export async function setOnboardingData(
+  onboarding: Omit<Onboarding, 'id'>,
+): Promise<number> {
   try {
     const existing = await getOnboardingData(onboarding.userId);
     if (existing) {
@@ -23,7 +23,9 @@ export async function setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Pro
     return db.onboarding.put(onboarding);
   } catch (error) {
     if (error instanceof Error) {
-      throw new OnboardingError(`Failed to set onboarding data: ${error.message}`);
+      throw new OnboardingError(
+        `Failed to set onboarding data: ${error.message}`,
+      );
     } else {
       throw new OnboardingError('Failed to set onboarding data: Unknown error');
     }
@@ -33,7 +35,9 @@ export async function setOnboardingData(onboarding: Omit<Onboarding, 'id'>): Pro
 /**
  * Retrieve onboarding data by userId.
  */
-export async function getOnboardingData(userId: string): Promise<Onboarding | undefined> {
+export async function getOnboardingData(
+  userId: string,
+): Promise<Onboarding | undefined> {
   // Use Dexie queries to filter by userId index
   return db.onboarding.where('userId').equals(userId).first();
 }
