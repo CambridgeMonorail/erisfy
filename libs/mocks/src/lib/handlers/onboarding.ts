@@ -1,4 +1,4 @@
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { Onboarding } from '@erisfy/api';
 import { createOnboarding } from '../factories/onboarding';
 
@@ -14,19 +14,19 @@ export const onboardingHandlers = [
     );
 
     if (userId) {
-      return Response.json(onboardings.filter(o => o.userId === userId));
+      return HttpResponse.json(onboardings.filter(o => o.userId === userId));
     }
 
-    return Response.json(onboardings);
+    return HttpResponse.json(onboardings);
   }),
 
   http.post(`${API_BASE_URL}/api/onboardings`, async ({ request }) => {
     const data = await request.json() as Partial<Onboarding>;
-    return Response.json(createOnboarding(data));
+    return HttpResponse.json(createOnboarding(data));
   }),
 
   http.patch(`${API_BASE_URL}/api/onboardings/:id`, async ({ params, request }) => {
     const data = await request.json() as Partial<Onboarding>;
-    return Response.json(createOnboarding({ id: Number(params['id']), ...data }));
+    return HttpResponse.json(createOnboarding({ id: Number(params['id']), ...data }));
   })
 ];

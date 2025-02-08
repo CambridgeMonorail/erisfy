@@ -82,7 +82,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
 }) => {
   const { insights, isLoading, error } = useMarketInsights(date);
 
-  //console log insights
+
   console.log('insights', insights);
   
   if (isLoading) {

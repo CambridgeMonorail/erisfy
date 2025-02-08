@@ -14,6 +14,9 @@ export const useOnboarding = (userId = 'guest') => {
       try {
         setIsLoading(true);
         const { data } = await onboardingsClient.getOnboardings({ userId });
+
+        console.log('data', data);
+
         setOnboarding(data[0] || null); // Ensure null if no data
         setError(null);
       } catch (err) {

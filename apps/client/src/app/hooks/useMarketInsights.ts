@@ -1,4 +1,8 @@
-import { ApiError, MarketDataInsights, MarketInsightsEndpoint } from '@erisfy/api';
+import {
+  ApiError,
+  MarketDataInsights,
+  MarketInsightsEndpoint,
+} from '@erisfy/api';
 import { useState, useEffect, useMemo } from 'react';
 import { createApiConfig } from '../utils/apiConfig';
 
@@ -10,7 +14,7 @@ export const useMarketInsights = (date?: string) => {
   // Memoize the API client to prevent recreation on each render
   const marketInsightsClient = useMemo(
     () => new MarketInsightsEndpoint(createApiConfig()),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -23,6 +27,8 @@ export const useMarketInsights = (date?: string) => {
         setError(null);
 
         const { data } = await marketInsightsClient.getMarketInsights({ date });
+
+        console.log('data', data);
 
         if (isSubscribed) {
           setInsights(data[0] || null);

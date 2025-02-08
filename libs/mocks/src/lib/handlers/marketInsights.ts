@@ -1,9 +1,10 @@
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import { createMarketDataInsights } from '../factories/marketInsights';
 import { MarketDataInsights } from '@erisfy/api';
 
-const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'];
+// const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'];
+const API_BASE_URL = '/erisfy';
 
 export const marketInsightsHandlers = [
 
@@ -29,17 +30,17 @@ export const marketInsightsHandlers = [
       );
     }
 
-    return Response.json(filteredInsights);
+    return HttpResponse.json(filteredInsights);
   }),
 
   http.post(`${API_BASE_URL}/api/market-insights`, async ({ request }) => {
     const data = await request.json() as Partial<MarketDataInsights>;
-    return Response.json(createMarketDataInsights(data));
+    return HttpResponse.json(createMarketDataInsights(data));
   }),
 
   http.patch(`${API_BASE_URL}/api/market-insights/:date`, async ({ params, request }) => {
     const data = await request.json() as Partial<MarketDataInsights>;
-    return Response.json(createMarketDataInsights({ 
+    return HttpResponse.json(createMarketDataInsights({ 
       date: params['date'] as string,
       ...data 
     }));
