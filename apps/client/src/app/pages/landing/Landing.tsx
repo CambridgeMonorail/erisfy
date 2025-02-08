@@ -1,4 +1,4 @@
-import { type FC, useEffect, useCallback, useState } from 'react';
+import { type FC, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Github,
@@ -9,9 +9,10 @@ import {
   BarChart,
   ChartLine,
   Video,
-  type LucideProps, // Add this import
+  type LucideProps,
 } from 'lucide-react';
 
+import { useOnboarding } from '../../hooks/useOnboarding';
 import {
   AboutSection,
   CTASection,
@@ -21,9 +22,9 @@ import {
   HeroSection,
 } from '@erisfy/landing';
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
-import { Button } from '@erisfy/shadcnui';
 
 import preReleaseImage from '../../../assets/images/pre-release.png';
+import { ApiError, ApiResponse } from '@erisfy/api';
 
 type SocialUrls = {
   GITHUB_URL: string;
@@ -37,32 +38,23 @@ const SOCIAL_URLS: SocialUrls = {
   TWITTER_URL: 'https://x.com/TimDMorris',
 } as const;
 
+
+type OnboardingStatus = {
+  hasViewed: boolean;
+  lastViewedAt?: string;
+};
+
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { onboarding, isLoading, error } = useOnboarding();
 
-  const handleScrollToFeatures = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const response = await apiClient.hasViewedOnboarding('user-id');
-      if (response.data) {
-        navigate('/home');
-      } else {
-        navigate('/screener/onboarding-flow');
-      }
-    } catch (err) {
-      const message = err instanceof ApiError 
-        ? err.message 
-        : 'An unexpected error occurred';
-      setError(message);
-      console.error('Error checking onboarding status:', err);
-    } finally {
-      setIsLoading(false);
+  const handleScrollToFeatures = useCallback(() => {
+    if (onboarding?.hasViewed) {
+      navigate('/home');
+    } else {
+      navigate('/screener/onboarding-flow');
     }
-  }, [navigate]);
+  }, [navigate, onboarding]);
 
   const handleGitHubRedirect = useCallback(() => {
     window.open(SOCIAL_URLS.GITHUB_URL, '_blank', 'noopener,noreferrer');

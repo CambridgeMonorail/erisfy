@@ -32,24 +32,26 @@ if (typeof window !== 'undefined') {
 
   const root = ReactDOM.createRoot(rootElement);
 
-  enableMocking().then(() => {
-    root.render(
-      <StrictMode>
-        <ErrorBoundary
-          fallback={(error) => (
-            <ErrorFallback
-              error={error}
-              onRecover={() => window.location.reload()}
-            />
-          )}
-        >
-          <HashRouter>
-            <ThemeProvider>
-              <App />
-            </ThemeProvider>
-          </HashRouter>
-        </ErrorBoundary>
-      </StrictMode>,
-    );
-  });
+  enableMocking()
+    .then(() => {
+      root.render(
+        <StrictMode>
+          <ErrorBoundary
+            fallback={(error) => (
+              <ErrorFallback
+                error={error}
+                onRecover={() => window.location.reload()}
+              />
+            )}
+          >
+            <HashRouter>
+              <ThemeProvider>
+                <App />
+              </ThemeProvider>
+            </HashRouter>
+          </ErrorBoundary>
+        </StrictMode>,
+      );
+    })
+    .catch(console.error);
 }

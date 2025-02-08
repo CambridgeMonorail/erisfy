@@ -1,11 +1,16 @@
 import { BaseApiClient } from '../base/BaseApiClient';
 import { ApiResponse } from '../types/api';
-import { 
-    Onboarding, 
-    OnboardingFilter, 
-    CreateOnboardingDto, 
-    UpdateOnboardingDto 
+import {
+    Onboarding,
+    OnboardingFilter,
+    CreateOnboardingDto,
+    UpdateOnboardingDto
 } from '../types/onboarding';
+
+export type OnboardingStatus = {
+    hasViewed: boolean;
+    lastViewedAt?: string;
+};
 
 export class OnboardingsEndpoint extends BaseApiClient {
     async getOnboardings(filter?: OnboardingFilter): Promise<ApiResponse<Onboarding[]>> {

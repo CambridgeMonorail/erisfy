@@ -109,6 +109,19 @@ getUserById(id: string): Promise<ApiResponse<User>>
 createUser(userData: Omit<User, 'id'>): Promise<ApiResponse<User>>
 ```
 
+### OnboardingsEndpoint
+
+Methods for managing user onboarding records:
+
+```typescript
+getOnboardings(filter?: OnboardingFilter): Promise<ApiResponse<Onboarding[]>>
+getOnboardingById(id: number): Promise<ApiResponse<Onboarding>>
+createOnboarding(data: CreateOnboardingDto): Promise<ApiResponse<Onboarding>>
+updateOnboarding(id: number, data: UpdateOnboardingDto): Promise<ApiResponse<Onboarding>>
+replaceOnboarding(id: number, data: CreateOnboardingDto): Promise<ApiResponse<Onboarding>>
+deleteOnboarding(id: number): Promise<ApiResponse<void>>
+```
+
 ## Testing
 
 Run the test suite:
