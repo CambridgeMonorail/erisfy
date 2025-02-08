@@ -15,9 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@erisfy/data-access-indexeddb": ["libs/data-access-indexeddb/src/index.ts"],
+      "@erisfy/api": ["libs/api/src/index.ts"],
       "@erisfy/api-client": ["libs/api-client/src/index.ts"],
+      "@erisfy/data-access-indexeddb": [
+        "libs/data-access-indexeddb/src/index.ts"
+      ],
       "@erisfy/landing": ["libs/landing/src/index.ts"],
+      "@erisfy/mocks": ["libs/mocks/src/index.ts"],
       "@erisfy/shadcnui": ["libs/shadcnui/src/index.ts"],
       "@erisfy/shadcnui-blocks": ["libs/shadcnui-blocks/src/index.ts"],
       "@erisfy/shadcnui/*": ["libs/shadcnui/src/*"],
