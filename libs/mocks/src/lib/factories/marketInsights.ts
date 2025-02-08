@@ -84,7 +84,7 @@ const createMarketStory = (sector: MarketSector): MarketStory => {
       'positively impact',
       'negatively affect',
       'create opportunities in'
-    ])} the ${sector} sector, particularly regarding ${faker.lorem.sentence(10)}.`,
+    ])} the ${sector} sector, particularly regarding ${faker.company.catchPhraseAdjective()} ${faker.company.buzzAdjective()} ${faker.company.buzzPhrase()}  .`,
     market_sector: sector
   };
 };
