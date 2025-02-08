@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "paths": {
       "@erisfy/api": ["libs/api/src/index.ts"],
-      "@erisfy/api-client": ["libs/api-client/src/index.ts"],
       "@erisfy/data-access-indexeddb": [
         "libs/data-access-indexeddb/src/index.ts"
       ],
