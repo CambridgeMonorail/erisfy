@@ -8,7 +8,6 @@ import { ThemeProvider } from '@erisfy/shadcnui';
 
 async function enableMocking() {
   if (
-    import.meta.env.MODE !== 'development' ||
     import.meta.env.VITE_REACT_APP_USE_MOCKS !== 'true'
   ) {
     return;
