@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiClient } from '@erisfy/api-client';
+
 import { StockData } from '../utils/mockData';
 import { MarketInsight } from 'libs/api-client/src/types/market.types';
 

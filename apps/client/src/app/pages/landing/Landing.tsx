@@ -22,7 +22,7 @@ import {
 } from '@erisfy/landing';
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
 import { Button } from '@erisfy/shadcnui';
-import { ApiError, apiClient } from '@erisfy/api-client';
+
 import preReleaseImage from '../../../assets/images/pre-release.png';
 
 type SocialUrls = {
