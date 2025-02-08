@@ -28,9 +28,6 @@
   "files": [],
   "references": [
     {
-      "path": "../../libs/api-client/tsconfig.json"
-    },
-    {
       "path": "../../libs/common-tailwind/tsconfig.json"
     },
     {

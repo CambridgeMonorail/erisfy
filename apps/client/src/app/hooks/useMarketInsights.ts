@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { StockData } from '../utils/mockData';
-import { MarketInsight } from 'libs/api-client/src/types/market.types';
+
 
 
 export const useMarketInsights = (stocks: StockData[]) => {
