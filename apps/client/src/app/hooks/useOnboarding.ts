@@ -1,15 +1,15 @@
 import { ApiError, Onboarding, OnboardingsEndpoint } from '@erisfy/api';
-
 import { useState, useEffect } from 'react';
 import { createApiConfig } from '../utils/apiConfig';
 
-export const useOnboarding = (userId: string = 'guest') => {
-  const onboardingsClient = new OnboardingsEndpoint(createApiConfig());
+export const useOnboarding = (userId = 'guest') => {
   const [onboarding, setOnboarding] = useState<Onboarding | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const onboardingsClient = new OnboardingsEndpoint(createApiConfig());
+    
     const fetchOnboarding = async () => {
       try {
         setIsLoading(true);

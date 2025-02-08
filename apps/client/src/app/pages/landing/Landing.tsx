@@ -24,7 +24,6 @@ import {
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
 
 import preReleaseImage from '../../../assets/images/pre-release.png';
-import { ApiError, ApiResponse } from '@erisfy/api';
 
 type SocialUrls = {
   GITHUB_URL: string;
@@ -37,12 +36,6 @@ const SOCIAL_URLS: SocialUrls = {
   DISCORD_URL: 'https://discord.com/invite/your-discord-invite',
   TWITTER_URL: 'https://x.com/TimDMorris',
 } as const;
-
-
-type OnboardingStatus = {
-  hasViewed: boolean;
-  lastViewedAt?: string;
-};
 
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
@@ -72,15 +65,15 @@ export const LandingPage: FC = () => {
       aria-live="polite"
     >
       {error && (
-        <div 
-          role="alert" 
+        <div
+          role="alert"
           className="bg-destructive text-destructive-foreground p-4 rounded-md"
         >
           {error}
         </div>
       )}
-      <div 
-        className="relative bg-primary" 
+      <div
+        className="relative bg-primary"
         data-testid="hero-section-container"
         id="hero-title"
         aria-labelledby="hero-title"
@@ -232,7 +225,7 @@ export const LandingPage: FC = () => {
         variant="light"
         title="Experience It Yourself"
         description="See Erisfy in action—where AI helps you find, analyze, and track stocks faster than ever. Try the demo and discover how smart investing starts with the right insights."
-        buttonText={isLoading ? "Loading..." : "Try AI-Powered Stock Screening"}
+        buttonText={isLoading ? 'Loading...' : 'Try AI-Powered Stock Screening'}
         buttonAction={handleScrollToFeatures}
         disabled={isLoading}
         data-testid="demo-section"
@@ -256,7 +249,8 @@ export const LandingPage: FC = () => {
           },
           {
             title: 'Install Dependencies.',
-            description: 'Use your preferred package manager to set up the necessary components.',
+            description:
+              'Use your preferred package manager to set up the necessary components.',
           },
           {
             title: 'Run the Application.',
