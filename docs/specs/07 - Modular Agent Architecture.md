@@ -16,7 +16,7 @@ This module applies predefined rules and filters to incoming market data, enabli
 **Implementation**  
 Uses a rules engine (or a custom-built version in JavaScript/TypeScript). Each rule is a function that returns a Boolean (pass/fail) or a score based on various conditions such as valuation metrics, technical indicators, and sentiment thresholds.
 
-**Example Implementation**
+#### Example Implementation for Filtering & Rule Engine
 
 ```typescript
 interface FilterRule {
@@ -43,7 +43,7 @@ Each rule or filter is assigned a weight, reflecting its importance or reliabili
 **Implementation**  
 Uses a dynamic weight vector, updated via performance feedback. Can incorporate simple online learning algorithms or reinforcement learning techniques.
 
-**Example Implementation**
+#### Example Implementation for Weighting & Rating Module
 
 ```typescript
 interface RuleWeight {
@@ -71,7 +71,7 @@ This module aggregates individual rule scores, applying their weights to generat
 **Implementation**  
 Uses a weighted sum approach to combine rule scores. Applies threshold-based filtering to identify potential investment opportunities.
 
-**Example Implementation**
+#### Example Implementation
 
 ```typescript
 function aggregateSignal(
@@ -158,7 +158,7 @@ This modular agent architecture provides:
 
 This self-improving architecture ensures a scalable, adaptable, and intelligent stock screening system tailored to meet the needs of the Erisfy project.
 
-**Next Steps**
+## Next Steps
 
 - Prototype development to validate rule evaluation and weight adjustments.
 - Iterate on performance feedback models for improved accuracy.

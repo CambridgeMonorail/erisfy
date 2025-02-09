@@ -8,7 +8,7 @@ Erisfy is an AI-powered financial market analysis tool that helps traders and in
 
 ## 2. System Architecture Overview
 
-```
+```text
               ┌─────────────────────────────────────┐
               │            Frontend UI              │
               │  (React/Next.js, Charting Library)  │
@@ -18,10 +18,12 @@ Erisfy is an AI-powered financial market analysis tool that helps traders and in
                             │    ▼
               ┌─────────────────────────────────────┐
               │           Backend Server            │
-              │   (Node.js/Express in TypeScript)   │
-              │  • Data Aggregation & Processing    │
-              │  • Signal Generation & Decision AI  │
-              │  • User Action Logging              │
+              │  (Node.js/Express in TypeScript)    │
+              │   • Data Ingestion & Processing     │
+              │   • Scheduling (node-cron)          │
+              │   • AI Orchestration (LangChain.js) │
+              │   • Database Integration            │
+              │   • User Action Logging             │
               └─────────────────────────────────────┘
                             ▲    │
             API Integrations│    │ Database Queries
@@ -38,151 +40,196 @@ Erisfy is an AI-powered financial market analysis tool that helps traders and in
 
 **Framework:**
 
-- React (or Next.js for server-side rendering) in TypeScript.
+React (or Next.js for server-side rendering) using TypeScript.
 
 **Responsibilities:**
 
-- **Dashboard & Visualization:** Render real-time charts, trade signals, and detailed agent reasoning.
-- **User Interactions:** Enable operators to review, modify, and approve AI-generated trading decisions.
-- **Real-Time Updates:** Utilize WebSockets (or alternative event-driven architecture) to deliver live updates.
+- Dashboard & Visualization: Render real-time charts, trade signals, and detailed agent reasoning.
+- User Interactions: Enable operators to review, modify, and approve AI-generated trading decisions.
+- Real-Time Updates: Utilize WebSockets or a suitable mechanism (e.g., GraphQL subscriptions) for live data.
 
 **Managed Hosting Options:**
 
-- Vercel or Netlify for seamless deployments, auto-scaling, and GitHub integration.
+- Vercel or Netlify for deploying static frontends or Next.js applications, with built-in CI/CD from Git repos.
 
 **Outstanding Questions:**
 
-- Should we use GraphQL subscriptions instead of WebSockets for real-time updates?
+- Should we use GraphQL subscriptions instead of plain WebSockets for real-time data?
 - How do we handle UI performance optimizations for high-frequency real-time updates?
 
 ### 2.2 Middleware / Agent Orchestration (LangChain.js Layer)
 
 **Framework:**
 
-- LangChain.js in TypeScript.
+LangChain.js in TypeScript.
 
 **Responsibilities:**
 
-- **Agent Coordination:** Orchestrates specialized agents (technical, fundamental, sentiment analysis, etc.) using a chain-based modular design.
-- **Workflow Management:** Maintains conversation context and multi-step decision-making processes.
-- **External Integration:** Fetches data from financial APIs and issues simulated (or live) trading commands.
+- Agent Coordination: Orchestrates specialized agents (technical, fundamental, sentiment analysis, etc.) via chain-based modules.
+- Workflow Management: Maintains conversation context and multi-step decision-making for AI-driven logic.
+- External Integration: Fetches data from financial APIs (e.g., financialdatasets.ai) and issues simulated (or live) trading commands.
 
 **Persistent Memory Considerations:**
 
-- Use Redis or a vector database (e.g., Pinecone) for storing agent context and past decisions.
+- Use Redis or a vector database (Pinecone, pgvector, etc.) to store embeddings, conversation context, or agent memory.
 
 **Managed Hosting Options:**
 
-- Heroku or Render for easy Node.js deployments.
-- DigitalOcean App Platform or AWS Lightsail for additional control.
+- Render, Railway, or Fly.io can host Node.js services (LangChain.js tasks) with minimal configuration.
+- Possibly in the same service as the main backend or as a separate microservice.
 
 **Outstanding Questions:**
 
-- Do we need a stateful agent memory to track decision history over time?
-- What is the best strategy for handling long-running asynchronous agent workflows?
-- How do we explain agent decisions in a human-readable format?
+- Do we need a full “stateful memory” for each agent, or can we rely on ephemeral memory plus database logs?
+- How do we handle long-running asynchronous agent workflows and ensure idempotency if repeated?
 
-### 2.3 Backend (API Gateway and Data Management)
+### 2.3 Backend (API Gateway & Data Management)
 
 **Environment:**
 
-- Node.js with Express (or Next.js API routes) in TypeScript.
+Node.js/Express in TypeScript.
 
 **Responsibilities:**
 
-- **API Gateway:** Exposes RESTful or GraphQL endpoints for the frontend.
-- **Data Persistence:** Logs trading data, historical market information, and human decision feedback using a managed database.
-- **Security:** Enforces authentication (using JWT or OAuth) and secures API endpoints.
-- **Integration:** Bridges the frontend, LangChain.js orchestration, and external APIs.
+- API Gateway: Exposes RESTful (or GraphQL) endpoints for the frontend and agent services.
+- Data Persistence: Logs trading data, historical market info, and human decision feedback to a PostgreSQL database.
+- Security: Handles authentication (JWT or OAuth) and secures API endpoints.
+- Integration: Bridges the frontend, LangChain.js orchestration, external data, and scheduled tasks.
 
 **Data Pipeline & Storage Strategy:**
 
-- PostgreSQL (Heroku Postgres) for structured trading data.
-- MongoDB Atlas for AI-generated insights and unstructured metadata.
-- Kafka or Redis Streams for real-time market data processing.
+- PostgreSQL for structured trading data and user records.
+- Optional: MongoDB Atlas (or S3-like storage) for large, unstructured AI context logs if needed.
+- Redis or Kafka for real-time data streaming, if high frequency data ingestion becomes a bottleneck.
+- New: We plan to use node-cron (or a job queue like BullMQ if needed in the future) to schedule daily data ingestion tasks (e.g., fetch end-of-day closing prices).
 
 **Outstanding Questions:**
 
-- Should we use GraphQL instead of REST for API interactions?
-- What are the storage and retention policies for historical AI decisions?
-- How do we handle rate limits and API throttling for external data providers?
+- Should we adopt GraphQL for more flexible queries, or stick to REST for simplicity?
+- What is the best approach to handle large volumes of historical data (long-term archiving or data warehousing)?
+- Do we need a separate concurrency layer (e.g., queue system) to handle daily ingestion at scale?
 
 ### 2.4 External Data & Broker Integration
 
 **Data Providers:**
 
-- Financial Data APIs supply market data for analysis.
-- Primary data provider: Financial Datasets (selected for affordability and reliability).
+- Financial Datasets as the primary external data API.
+- Additional market data or news sentiment APIs may be integrated down the road.
 
 **Broker APIs:**
 
-- Optional integrations (e.g., Alpaca, Interactive Brokers) for executing trades (initially simulated).
+- Optional integrations (e.g., Alpaca, Interactive Brokers) for actual trade execution (initially simulated).
 
 **Role in Architecture:**
 
-- The LangChain.js layer pulls real-time data and feeds it into agent modules.
-- The backend facilitates communication between external services and internal workflows.
+- The LangChain.js agents (and the backend) call these external services to gather real-time or historical data.
+- Results are stored or cached in the backend’s database for quick retrieval and cost control.
 
 **Future Considerations:**
 
-- News sentiment analysis APIs (Alpha Vantage, Bloomberg NLP, etc.).
-- Alternative data sources (ESG ratings, Reddit sentiment, macroeconomic indicators).
-- User-uploaded data (CSV, Google Sheets, custom API feeds).
+- News Sentiment: Integrate Alpha Vantage or other sentiment-driven APIs.
+- Alternative Data: ESG ratings, macro indicators, Reddit sentiment, user-provided CSV data, etc.
 
 **Outstanding Questions:**
 
-- How do we handle data quality and verification for multiple data sources?
-- Should we cache financial data to reduce API costs?
+- What is the caching strategy to limit API costs from frequent queries?
+- Do we need data validation or cleansing steps to ensure data quality?
 
 ### 2.5 Human-in-the-Loop Interaction
 
 **Operator Controls:**
 
-- The React frontend provides interfaces for human operators to review AI-generated suggestions, override signals, and trigger backtests.
+- The React/Next.js frontend provides a control panel for reviewing AI-generated suggestions, overriding signals, or triggering backtests.
 
 **Feedback Loop:**
 
-- Operator inputs are fed back to the LangChain.js layer to adjust agent workflows.
-- All decisions and human modifications are logged in the backend.
+- Operator inputs (e.g., overrides, confirmations) feed back into the LangChain.js layer for AI workflow adjustments.
+- All decisions and user modifications are logged in PostgreSQL for auditing and iterative model improvements.
 
 **Audit Trail:**
 
-- Managed databases record every human interaction to ensure compliance and support continuous improvement.
+- The system logs every AI/human interaction for compliance and historical analysis.
 
 **Outstanding Questions:**
 
-- How do we structure explainability logs for AI-generated trading decisions?
-- Should human overrides be prioritized in future AI predictions?
+- Do we provide an “explainability” view for each decision? If so, how do we format it for non-technical users?
+- Should manual overrides feed into the model as training data, or remain separate?
+
+### 2.6 Data Ingestion & Scheduled Tasks (New)
+
+**Why This Section?**
+
+We need a clear plan for running daily or periodic tasks, such as fetching end-of-day market data and computing metrics.
+
+**Approach:**
+
+- node-cron: A lightweight scheduling library that runs inside the Node.js backend.
+- Example Use Case: At 4:00 PM (market close) on weekdays, fetch daily close data from financialdatasets.ai, compute derived metrics, and store them in PostgreSQL.
+- Future Scalability: If data ingestion tasks grow or require concurrency, we may adopt a job queue (e.g., BullMQ with Redis).
+
+**Implementation Sketch:**
+
+```typescript
+import cron from 'node-cron';
+import axios from 'axios';
+import { insertDailyClose } from './services/databaseService';
+
+cron.schedule('0 21 * * 1-5', async () => {
+  try {
+    const response = await axios.get('https://api.financialdatasets.ai/v1/daily-closing');
+    const data = response.data; // e.g., [{ symbol, closePrice, date }, ...]
+
+    for (const item of data) {
+      await insertDailyClose(item.symbol, item.closePrice, item.date);
+    }
+
+    console.log('Daily close data successfully ingested!');
+  } catch (error) {
+    console.error('Failed to fetch or store daily close data', error);
+  }
+}, {
+  scheduled: true,
+  timezone: 'America/New_York'
+});
+```
+
+**Outstanding Questions:**
+
+- Where do we store intermediate data or large datasets?
+- What if the ingestion job fails? Do we need retry logic or alerting?
 
 ## 3. Hosting & Scalability Strategy
 
 **Early-Stage Hosting (Development & MVP):**
 
-- Heroku (Node.js), Render (LangChain.js), Vercel (Frontend) for ease of deployment.
+- Docker Compose locally for Node.js (backend), PostgreSQL, and the React/Next.js frontend.
+- Render, Railway, or Fly.io for production, as each provides low-cost hosting tiers for Node and managed Postgres.
+- Vercel or Netlify for a separate React/Next.js frontend if needed.
 
 **Growth-Stage Scalability Plan:**
 
-- Move backend services to Kubernetes (AWS EKS or Google Kubernetes Engine) as traffic scales.
-- Serverless execution (AWS Lambda) for burstable workloads (e.g., infrequent but intensive AI queries).
-- Auto-scaling WebSockets for real-time updates with load balancing.
+- Containerize the Node.js services (backend, agent orchestration) and deploy to Kubernetes (AWS EKS, GKE) or continue using a PaaS with auto-scaling capabilities.
+- Offload large data ingest or compute-heavy tasks to serverless functions (AWS Lambda, GCP Cloud Functions) if it simplifies overhead or costs.
+- Evaluate a queue-based architecture (BullMQ, RabbitMQ, or Kafka) to handle concurrency and reliability for scheduled tasks.
 
 **Outstanding Questions:**
 
-- Should we use serverless or containerized architecture for long-term scalability?
-- How do we manage multi-region deployment for low-latency trading execution?
+- Do we need multi-region deployment to minimize latency for real-time trading?
+- Will a serverless approach (e.g., AWS Lambda) conflict with the need for persistent scheduling (node-cron)?
 
 ## 4. Supporting Diagram
 
 ```mermaid
 flowchart LR
     subgraph "Frontend"
-        A["Interactive React UI"]
+        A["Interactive React/Next.js UI"]
     end
 
-    subgraph "Backend"
-        B["API Gateway"]
+    subgraph "Backend (Node.js)"
+        B["API Gateway (Express)"]
         C["LangChain.js Agent Orchestration"]
-        D["Database"]
+        D["PostgreSQL Database"]
+        G["node-cron Schedules"]
     end
 
     subgraph "External"
@@ -196,18 +243,24 @@ flowchart LR
     C --"Fetch Market Data"--> E
     C --"Broker Commands"--> F
     C --"Log Decisions"--> D
+    G --"Scheduled Data Fetch"--> E
+    G --"Store & Process"--> D
 ```
 
 ## 5. Summary & Next Steps
 
-This document outlines the technical foundation for Erisfy. Outstanding questions remain in:
+This document outlines Erisfy’s technical foundation using Node.js/Express for the backend, LangChain.js for agent orchestration, a React/Next.js frontend, and PostgreSQL for data storage. Key additions include:
 
-- Data caching & API optimization
-- GraphQL vs REST considerations
-- Agent explainability & decision transparency
-- Long-term scalability choices (serverless vs containers)
+- Daily Data Ingestion with node-cron for end-of-day financial data.
+- Local Development with Docker Compose for easy setup of Node, Postgres, and the frontend.
+- Low-Cost Hosting on platforms like Render or Railway.
 
-Next, we should conduct internal discussions and feasibility tests on these areas before finalizing implementation strategies.
+**Outstanding items include:**
 
-**Next Document: [06 - Modular Agent Architecture](./06%20-%20Modular%20Agent%20Architecture.md)**
-````
+- Finalizing GraphQL vs REST approach.
+- Caching and scheduling strategies for large-scale data ingestion.
+- Detailed design of agent “explainability” and auditing.
+
+After finalizing these decisions, we can proceed with more in-depth implementation details (see next doc: 06 - Implementation Plan) to outline each AI agent’s role, memory management, and integration points.
+
+**Next Document: [06 - Implementation Plan](./06%20-%20Implementation%20Plan.md)**
