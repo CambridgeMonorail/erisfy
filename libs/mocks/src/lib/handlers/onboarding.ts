@@ -2,7 +2,8 @@ import { http, HttpResponse } from 'msw';
 import { Onboarding } from '@erisfy/api';
 import { createOnboarding } from '../factories/onboarding';
 
-const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'];
+// const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'];
+const API_BASE_URL = '/erisfy';
 
 export const onboardingHandlers = [
   http.get(`${API_BASE_URL}/api/onboardings`, ({ request }) => {
