@@ -98,19 +98,19 @@ Below is a high-level architecture diagram that includes managed hosting solutio
 
 ```mermaid
 graph LR
-    subgraph Frontend [Frontend: React SPA<br/>(Hosted on Vercel/Netlify)]
+    subgraph Frontend [Frontend: React SPA -Hosted on Vercel/Netlify]
         A[Interactive React UI]
     end
 
-    subgraph Backend [Backend: Node.js/Express API<br/>(Hosted on Heroku/Render)]
+    subgraph Backend [Backend: Node.js/Express API - Hosted on Heroku/Render]
         B[API Gateway]
         C[LangChain.js Agent Orchestration]
-        D[Managed Database<br/>(Heroku Postgres/MongoDB Atlas)]
+        D[Managed Database - Heroku Postgres/MongoDB Atlas]
     end
 
     subgraph External [External Services]
-        E[Financial Data APIs<br/>(Financial Datasets)]
-        F[Broker APIs (Simulated/Live)]
+        E[Financial Data APIs - Financial Datasets]
+        F[Broker APIs - Simulated/Live]
     end
 
     %% Communication Flow
