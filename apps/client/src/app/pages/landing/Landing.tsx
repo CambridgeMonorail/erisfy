@@ -1,4 +1,4 @@
-import { type FC, useEffect, useCallback, useState } from 'react';
+import { type FC, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Github,
@@ -9,9 +9,10 @@ import {
   BarChart,
   ChartLine,
   Video,
-  type LucideProps, // Add this import
+  type LucideProps,
 } from 'lucide-react';
 
+import { useOnboarding } from '../../hooks/useOnboarding';
 import {
   AboutSection,
   CTASection,
@@ -21,8 +22,7 @@ import {
   HeroSection,
 } from '@erisfy/landing';
 import { Logo, Tagline } from '@erisfy/shadcnui-blocks';
-import { Button } from '@erisfy/shadcnui';
-import { ApiError, apiClient } from '@erisfy/api-client';
+
 import preReleaseImage from '../../../assets/images/pre-release.png';
 
 type SocialUrls = {
@@ -39,30 +39,15 @@ const SOCIAL_URLS: SocialUrls = {
 
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { onboarding, isLoading, error } = useOnboarding();
 
-  const handleScrollToFeatures = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const response = await apiClient.hasViewedOnboarding('user-id');
-      if (response.data) {
-        navigate('/home');
-      } else {
-        navigate('/screener/onboarding-flow');
-      }
-    } catch (err) {
-      const message = err instanceof ApiError 
-        ? err.message 
-        : 'An unexpected error occurred';
-      setError(message);
-      console.error('Error checking onboarding status:', err);
-    } finally {
-      setIsLoading(false);
+  const handleScrollToFeatures = useCallback(() => {
+    if (onboarding?.hasViewed) {
+      navigate('/home');
+    } else {
+      navigate('/screener/onboarding-flow');
     }
-  }, [navigate]);
+  }, [navigate, onboarding]);
 
   const handleGitHubRedirect = useCallback(() => {
     window.open(SOCIAL_URLS.GITHUB_URL, '_blank', 'noopener,noreferrer');
@@ -80,15 +65,15 @@ export const LandingPage: FC = () => {
       aria-live="polite"
     >
       {error && (
-        <div 
-          role="alert" 
+        <div
+          role="alert"
           className="bg-destructive text-destructive-foreground p-4 rounded-md"
         >
           {error}
         </div>
       )}
-      <div 
-        className="relative bg-primary" 
+      <div
+        className="relative bg-primary"
         data-testid="hero-section-container"
         id="hero-title"
         aria-labelledby="hero-title"
@@ -240,7 +225,7 @@ export const LandingPage: FC = () => {
         variant="light"
         title="Experience It Yourself"
         description="See Erisfy in action—where AI helps you find, analyze, and track stocks faster than ever. Try the demo and discover how smart investing starts with the right insights."
-        buttonText={isLoading ? "Loading..." : "Try AI-Powered Stock Screening"}
+        buttonText={isLoading ? 'Loading...' : 'Try AI-Powered Stock Screening'}
         buttonAction={handleScrollToFeatures}
         disabled={isLoading}
         data-testid="demo-section"
@@ -264,7 +249,8 @@ export const LandingPage: FC = () => {
           },
           {
             title: 'Install Dependencies.',
-            description: 'Use your preferred package manager to set up the necessary components.',
+            description:
+              'Use your preferred package manager to set up the necessary components.',
           },
           {
             title: 'Run the Application.',

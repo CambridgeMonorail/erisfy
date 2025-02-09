@@ -67,7 +67,7 @@ if (useMocks) {
 
 Modify the Erisfy API Client to conditionally switch between the real API and the mock API.
 
-### libs/api-client/src/clients/apiClient.ts
+### libs/api/src/clients/apiClient.ts
 
 ```typescript
 import { ApiClient } from '../types';
@@ -82,7 +82,7 @@ const apiClient: ApiClient = isMock
 export default apiClient;
 ```
 
-### libs/api-client/src/clients/mockApiClient.ts
+### libs/api/src/clients/mockApiClient.ts
 
 ```typescript
 import { ApiClient } from '../types';
@@ -172,7 +172,7 @@ Example Vitest test case for verifying API mocking.
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import apiClient from '@erisfy/api-client';
+import apiClient from '@erisfy/api';
 
 describe('API Client Mock Tests', () => {
   it('should return mock stock data', async () => {
@@ -185,7 +185,7 @@ describe('API Client Mock Tests', () => {
 Run the test:
 
 ```bash
-pnpm test api-client
+pnpm test api
 ```
 
 If MSW is working correctly, it should return:
@@ -240,7 +240,7 @@ To add specific mocks for new APIs using MSW, follow these steps:
 1. Create mock data for the specific APIs in the `apps/client/src/mocks/data` directory. For example, you can add a new file like `apps/client/src/mocks/data/newApi.ts` to define the mock data for the new API.
 2. Update the `apps/client/src/mocks/browser.ts` file to include handlers for the new API endpoints. You can add new handlers using the `http` methods provided by MSW.
 3. Ensure that the mock worker is initialized in the `apps/client/src/main.tsx` file by calling the `initializeMockWorker` function if mocks are enabled.
-4. Update the `libs/api-client/src/clients/mockApiClient.ts` file to include methods for the new API endpoints, ensuring that the mock client returns the appropriate mock data.
+4. Update the `libs/api/src/clients/mockApiClient.ts` file to include methods for the new API endpoints, ensuring that the mock client returns the appropriate mock data.
 
 ## Instructions for Developers on Adding Mocks for New Endpoints
 
@@ -249,4 +249,4 @@ To add new API mocks using MSW in this project, follow these steps:
 1. Create mock data for the specific APIs in the `apps/client/src/mocks/data` directory. For example, you can add a new file like `apps/client/src/mocks/data/newApi.ts` to define the mock data for the new API.
 2. Update the `apps/client/src/mocks/browser.ts` file to include handlers for the new API endpoints. You can add new handlers using the `http` methods provided by MSW.
 3. Ensure that the mock worker is initialized in the `apps/client/src/main.tsx` file by calling the `initializeMockWorker` function if mocks are enabled.
-4. Update the `libs/api-client/src/clients/mockApiClient.ts` file to include methods for the new API endpoints, ensuring that the mock client returns the appropriate mock data.
+4. Update the `libs/api/src/clients/mockApiClient.ts` file to include methods for the new API endpoints, ensuring that the mock client returns the appropriate mock data.

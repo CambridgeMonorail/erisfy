@@ -116,7 +116,7 @@ apps/                   # Application projects
         └── utils/     # Helper functions
 
 libs/                  # Shared libraries
-├── api-client/       # API client library
+├── api/       # API client library
     ├── src/
         ├── clients/  # API client implementations
         ├── types/    # API types and interfaces
@@ -153,7 +153,7 @@ Structure components for maximum reusability and maintainability.
 
 Follow these guidelines for API integration:
 
-- Use typed API client from '@erisfy/api-client'
+- Use typed API client from '@erisfy/api'
 - Implement proper error handling using ApiError types
 - Use environment variables for API configuration
 - Handle loading and error states in components

@@ -1,28 +1,60 @@
-import { useState, useEffect } from 'react';
-import { apiClient } from '@erisfy/api-client';
-import { StockData } from '../utils/mockData';
-import { MarketInsight } from 'libs/api-client/src/types/market.types';
+import {
+  ApiError,
+  MarketDataInsights,
+  MarketInsightsEndpoint,
+} from '@erisfy/api';
+import { useState, useEffect, useMemo } from 'react';
+import { createApiConfig } from '../utils/apiConfig';
 
+export const useMarketInsights = (date?: string) => {
+  const [insights, setInsights] = useState<MarketDataInsights | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export const useMarketInsights = (stocks: StockData[]) => {
-  const [insights, setInsights] = useState<MarketInsight[]>([]);
-  const [error, setError] = useState<Error | null>(null);
+  // Memoize the API client to prevent recreation on each render
+  const marketInsightsClient = useMemo(
+    () => new MarketInsightsEndpoint(createApiConfig()),
+    [],
+  );
 
   useEffect(() => {
-    const loadInsights = async () => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+
+    const fetchInsights = async () => {
       try {
-        const response = await apiClient.getMarketInsights();
-        setInsights(response.data.insights);
+        setIsLoading(true);
+        setError(null);
+
+        const { data } = await marketInsightsClient.getMarketInsights({ date });
+
+        console.log('data', data);
+
+        if (isSubscribed) {
+          setInsights(data[0] || null);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to load insights'));
-        setInsights([]);
+        if (!isSubscribed) return;
+
+        if (err instanceof ApiError) {
+          setError(err.message);
+        } else {
+          setError('An unexpected error occurred');
+        }
+      } finally {
+        if (isSubscribed) {
+          setIsLoading(false);
+        }
       }
     };
 
-    loadInsights();
-  }, [stocks]);
+    fetchInsights();
 
-  return { insights, error };
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
+  }, [date, marketInsightsClient]);
+
+  return { insights, isLoading, error };
 };
-
-export type { MarketInsight };  // Re-export from shared

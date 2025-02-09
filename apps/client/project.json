@@ -4,7 +4,7 @@
   "sourceRoot": "apps/client/src",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["shadcnui", "shell", "landing", "api-client"],
+  "implicitDependencies": ["shadcnui", "shell", "landing", "api"],
   "targets": {
     "type-check": {
       "executor": "nx:run-commands",

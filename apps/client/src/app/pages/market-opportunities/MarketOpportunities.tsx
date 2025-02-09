@@ -2,7 +2,7 @@ import { FC, useState, useEffect, useMemo } from 'react';
 import { Button, cn, Alert, AlertTitle, AlertDescription } from '@erisfy/shadcnui';
 import { Download, AlertTriangle } from 'lucide-react';
 import { CalendarDateRangePicker } from '@erisfy/shadcnui-blocks';
-import { ApiError } from '@erisfy/api-client';
+
 import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
 
 import { generateMockData, StockData } from '../../utils/mockData';
@@ -10,6 +10,7 @@ import { AIPoweredMarketOverview } from '../../components/AIPoweredMarketOvervie
 import { MainWorkspace } from '../../components/MainWorkspace';
 import { MarketSentimentNewsFeed } from '../../components/MarketSentimentNewsFeed';
 import { type MarketOpportunitiesProps } from '../../types/market';
+import { ApiError } from '@erisfy/api';
 
 const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({ error, onRetry }) => (
   <Alert variant="destructive">
@@ -50,10 +51,7 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
       } catch (err) {
         const error = err instanceof ApiError 
           ? err 
-          : new ApiError('Failed to fetch data', {
-              code: 'FETCH_ERROR',
-              details: err
-            });
+          : new ApiError(500, 'Failed to fetch data');
         setError(error);
       } finally {
         setIsLoading(false);
