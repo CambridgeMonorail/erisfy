@@ -28,6 +28,7 @@ jobs:
           if [ "$AUTHOR" = "Monorail Updater" ]; then
             echo "Commit author is Monorail Updater. Exiting..."
             exit 0
+          fi
 
       # Set up Node.js
       - name: Setup Node.js
