@@ -264,7 +264,7 @@ export const LandingPage: FC = () => {
         data-testid="steps-section"
       />
       <Tagline
-        text="AI-Powered Insights. Confident Decisions."
+        text="Erisfy—Find the right stocks, faster."
         dataTestId="tagline"
       />
       <Footer
