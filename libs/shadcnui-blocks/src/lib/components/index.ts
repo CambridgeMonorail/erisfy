@@ -8,6 +8,7 @@ export * from './logo-carousel/index';
 export * from './logo/index';
 export * from './metrics-panel/index';
 export * from './news-events/index';
+export * from './news-story-card/index';
 export * from './number-and-secondary-stat/index';
 export * from './overview/index';
 export * from './peer-comparison/index';
