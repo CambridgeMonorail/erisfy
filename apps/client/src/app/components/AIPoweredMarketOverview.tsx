@@ -10,8 +10,8 @@ import {
   cn
 } from '@erisfy/shadcnui';
 import { Spinner } from '@erisfy/shadcnui-blocks';
-import { AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
-import { MarketDataInsights, MarketStory } from '@erisfy/api';
+import { AlertCircle, TrendingDown } from 'lucide-react';
+import { MarketStory } from '@erisfy/api';
 import { useMarketInsights } from '../hooks/useMarketInsights';
 
 

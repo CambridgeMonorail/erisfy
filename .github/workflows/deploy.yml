@@ -28,7 +28,6 @@ jobs:
           if [ "$AUTHOR" = "Monorail Updater" ]; then
             echo "Commit author is Monorail Updater. Exiting..."
             exit 0
-          fi
 
       # Set up Node.js
       - name: Setup Node.js
@@ -73,16 +72,22 @@ jobs:
 
       - name: Build project
         if: env.AUTHOR_NAME != 'Monorail Updater'
+        env:
+          BASE_URL: '/erisfy/'
+          VITE_API_BASE_URL: 'https://cambridgemonorail.github.io/erisfy/api'
+          VITE_API_TIMEOUT: '30000'
+          VITE_REACT_APP_MY_API_BASE_URL: 'https://api.financialdatasets.ai'
+          VITE_REACT_APP_MY_API_KEY: ${{ secrets.REACT_APP_MY_API_KEY }}
+          VITE_REACT_APP_USE_MOCKS: 'true'
         run: |
-          export BASE_URL='/erisfy/'
-          export DEBUG='true'
           pnpm exec nx build client --configuration=production --base=$BASE_URL
 
       - name: Build storybook
         if: env.AUTHOR_NAME != 'Monorail Updater'
+        env:
+          BASE_URL: '/erisfy/'
+          DEBUG: 'true'
         run: |
-          export BASE_URL='/erisfy/'
-          export DEBUG='true'
           pnpm exec nx build-storybook storybook-host
 
       # Upload artifact for deployment
