@@ -26,9 +26,23 @@ A comprehensive document outlining the product requirements for Erisfy. It inclu
 
 A technical requirements document that provides an in-depth look at the system architecture, including frontend, middleware, backend, and external integrations. It also addresses hosting and scalability strategies.
 
-### [06 - Modular Agent Architecture](./06%20-%20Modular%20Agent%20Architecture.md)
+### [06 - Implementation Plan](./06%20-%20Implementation%20Plan.md)
 
-This document describes the modular agent architecture for AI-powered stock screening. It covers the core components, including filtering and rule engine, weighting and rating module, and aggregation and decision module.
+A practical guide detailing how to set up, deploy, and integrate Erisfy’s components—covering backend, frontend, data ingestion, and hosting best practices.
+
+### [07 - Modular Agent Architecture](./07%20-%20Modular%20Agent%20Architecture.md)
+
+Describes Erisfy’s multi-agent approach to AI stock screening, with filtering, weighting, and decision modules designed for scalability and maintainability.
+
+## Current Specifications
+
+- [01 - Elevator Pitch](./01%20-%20elevator%20pitch.md)
+- [02 - Pitch](./02%20-%20pitch.md)
+- [03 - Competitor Analysis](./03%20-%20Competitor%20Analysis.md)
+- [04 - Product Requirements Document (PRD)](./04%20-%20PRD.md)
+- [05 - Technical Requirements Document (TRD)](./05%20-%20TRD.md)
+- [06 - Implementation Plan](./06%20-%20Implementation%20Plan.md)
+- [07 - Modular Agent Architecture](./07%20-%20Modular%20Agent%20Architecture.md)
 
 ## Next Steps
 
