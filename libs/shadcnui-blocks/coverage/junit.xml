@@ -1,65 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="27" failures="0" errors="0" time="0.224014">
-    <testsuite name="src/lib/components/error-fallback/ErrorFallback.test.tsx" timestamp="2025-02-04T13:17:36.427Z" hostname="WINDOWS-UH9N5GA" tests="10" failures="0" errors="0" skipped="0" time="0.0735613">
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render error title and message correctly" time="0.0197592">
+<testsuites name="vitest tests" tests="20" failures="0" errors="0" time="0.1476153">
+    <testsuite name="src/lib/components/news-carousel/news-carousel.spec.tsx" timestamp="2025-02-10T08:36:48.527Z" hostname="WINDOWS-UH9N5GA" tests="3" failures="0" errors="0" skipped="0" time="0">
+        <testcase classname="src/lib/components/news-carousel/news-carousel.spec.tsx" name="NewsCarousel &gt; renders all stories" time="0">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render default message when error message is empty" time="0.0024777">
+        <testcase classname="src/lib/components/news-carousel/news-carousel.spec.tsx" name="NewsCarousel &gt; renders navigation buttons" time="0">
         </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should handle error with status code" time="0.0018462">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should render error details when provided" time="0.0019898">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; rendering &gt; should use custom texts when provided" time="0.0021738">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; accessibility &gt; should have proper ARIA attributes" time="0.0015141">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; accessibility &gt; should have accessible retry button" time="0.0359292">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; interactions &gt; should call onRecover when retry button is clicked" time="0.0035141">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; interactions &gt; should disable retry button when loading" time="0.0017455">
-        </testcase>
-        <testcase classname="src/lib/components/error-fallback/ErrorFallback.test.tsx" name="ErrorFallback &gt; test ids &gt; should have all required test ids" time="0.0015206">
+        <testcase classname="src/lib/components/news-carousel/news-carousel.spec.tsx" name="NewsCarousel &gt; handles empty stories array" time="0">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/components/spinner/spinner.test.tsx" timestamp="2025-02-04T13:17:36.813Z" hostname="WINDOWS-UH9N5GA" tests="4" failures="0" errors="0" skipped="0" time="0.0482525">
-        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; renders with default props" time="0.0373799">
+    <testsuite name="src/lib/components/spinner/spinner.test.tsx" timestamp="2025-02-10T08:36:48.528Z" hostname="WINDOWS-UH9N5GA" tests="4" failures="0" errors="0" skipped="0" time="0.0468035">
+        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; renders with default props" time="0.0371388">
         </testcase>
-        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; applies custom size when number is provided" time="0.0037639">
+        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; applies custom size when number is provided" time="0.0035205">
         </testcase>
-        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; applies variant classes correctly" time="0.0037872">
+        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; applies variant classes correctly" time="0.0028405">
         </testcase>
-        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; applies size variant classes correctly" time="0.0024938">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/lib/components/steps/Steps.test.tsx" timestamp="2025-02-04T13:17:36.949Z" hostname="WINDOWS-UH9N5GA" tests="8" failures="0" errors="0" skipped="0" time="0.0602553">
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders nothing when steps array is empty" time="0.0116498">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders all steps with correct content" time="0.0113082">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders heading and subheading when provided" time="0.0023162">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders highlighted text in subheading correctly" time="0.0024178">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; applies custom className when provided" time="0.0020312">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders correct number of steps" time="0.0230666">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders steps with correct accessibility attributes" time="0.0043379">
-        </testcase>
-        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; handles multiple highlights in subheading" time="0.0022767">
+        <testcase classname="src/lib/components/spinner/spinner.test.tsx" name="Spinner &gt; applies size variant classes correctly" time="0.0024386">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/components/tagline/Tagline.spec.tsx" timestamp="2025-02-04T13:17:36.951Z" hostname="WINDOWS-UH9N5GA" tests="5" failures="0" errors="0" skipped="0" time="0.0419449">
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; renders with the correct text" time="0.0156686">
+    <testsuite name="src/lib/components/steps/Steps.test.tsx" timestamp="2025-02-10T08:36:48.528Z" hostname="WINDOWS-UH9N5GA" tests="8" failures="0" errors="0" skipped="0" time="0.062339">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders nothing when steps array is empty" time="0.0114564">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies additional class names" time="0.0017561">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders all steps with correct content" time="0.0109003">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies inline styles" time="0.0200526">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders heading and subheading when provided" time="0.0028139">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the id attribute" time="0.0017829">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders highlighted text in subheading correctly" time="0.0034102">
         </testcase>
-        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the data-testid attribute" time="0.0017725">
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; applies custom className when provided" time="0.0020418">
+        </testcase>
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders correct number of steps" time="0.0237062">
+        </testcase>
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; renders steps with correct accessibility attributes" time="0.0049806">
+        </testcase>
+        <testcase classname="src/lib/components/steps/Steps.test.tsx" name="Steps &gt; handles multiple highlights in subheading" time="0.0021812">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/components/tagline/Tagline.spec.tsx" timestamp="2025-02-10T08:36:48.529Z" hostname="WINDOWS-UH9N5GA" tests="5" failures="0" errors="0" skipped="0" time="0.0384728">
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; renders with the correct text" time="0.0142483">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies additional class names" time="0.0015762">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; applies inline styles" time="0.0187428">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the id attribute" time="0.0015698">
+        </testcase>
+        <testcase classname="src/lib/components/tagline/Tagline.spec.tsx" name="Tagline &gt; sets the data-testid attribute" time="0.0015462">
         </testcase>
     </testsuite>
 </testsuites>

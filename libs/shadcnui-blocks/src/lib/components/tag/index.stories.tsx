@@ -3,7 +3,7 @@ import { Tag, TagProps } from './index';
 
 
 const meta: Meta<TagProps> = {
-  title: 'Components/Tag',
+  title: 'Shadcnui Blocks/Tag',
   component: Tag,
   tags: ['autodocs'],
   argTypes: {
