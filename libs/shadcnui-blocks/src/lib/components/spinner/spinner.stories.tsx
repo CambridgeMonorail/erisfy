@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Spinner } from './index';
 
 const meta = {
-  title: 'Components/Spinner',
+  title: 'Shadcnui Blocks/Spinner',
   component: Spinner,
   tags: ['autodocs'],
   argTypes: {

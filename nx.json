@@ -82,5 +82,17 @@
     }
   },
   "packageManager": "pnpm",
-  "workspaceLayout": {}
+  "workspaceLayout": {},
+  "projects": {
+    "shadcnui-blocks": {
+      "targets": {
+        "test": {
+          "executor": "@nrwl/vite:test",
+          "options": {
+            "nodeOptions": ["--max-old-space-size=4096"]
+          }
+        }
+      }
+    }
+  }
 }
