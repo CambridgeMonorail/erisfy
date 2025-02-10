@@ -1,9 +1,16 @@
 import {
-  Newspaper,
-  ShoppingCart,
-  Briefcase,
-  LineChart,
-  Building2,
+  Building2, // Real Estate
+  Factory, // Industrials
+  Heart, // Healthcare
+  Landmark, // Financials
+  Laptop, // Information Technology
+  Mountain, // Materials
+  Newspaper, // Default
+  Plug, // Utilities
+  Radio, // Communication Services
+  ShoppingBasket, // Consumer Staples
+  ShoppingCart, // Consumer Discretionary
+  Zap, // Energy
   type LucideIcon,
 } from 'lucide-react';
 
@@ -16,14 +23,14 @@ import {
   Badge,
 } from '@erisfy/shadcnui';
 
-export type NewsCategory = 'Economy' | 'Employment' | 'Investments' | 'Business';
+import { type MarketSector } from '@erisfy/api';  // Import the shared type
 
 export type Story = {
   title: string;
   one_line_summary: string;
   whats_happening: string;
-  impact: string;
-  category: NewsCategory;
+  market_impact: string;
+  market_sector: MarketSector;  // Changed from market_category to market_sector
 };
 
 export interface NewsStoryCardProps {
@@ -31,26 +38,42 @@ export interface NewsStoryCardProps {
   className?: string;
 }
 
-const categoryIcons: Record<NewsCategory, LucideIcon> = {
-  Economy: LineChart,
-  Employment: Building2,
-  Investments: Briefcase,
-  Business: ShoppingCart,
+const categoryIcons: Record<MarketSector, LucideIcon> = {
+  Energy: Zap,
+  Materials: Mountain,
+  Industrials: Factory,
+  Utilities: Plug,
+  Healthcare: Heart,
+  Financials: Landmark,
+  "Consumer Discretionary": ShoppingCart,
+  "Consumer Staples": ShoppingBasket,
+  "Information Technology": Laptop,
+  "Communication Services": Radio,
+  "Real Estate": Building2,
 };
 
 export function NewsStoryCard({ story, className }: NewsStoryCardProps) {
-  const CategoryIcon = categoryIcons[story.category] || Newspaper;
+  const CategoryIcon = categoryIcons[story.market_sector] || Newspaper;  
+
+console.log('story', story);
+ // log story.market_sector
+ console.log('story.market_sector', story.market_sector);
+
 
   return (
     <Card className={`h-full flex flex-col transition-all duration-300 hover:shadow-lg overflow-hidden ${className ?? ''}`}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between mb-2">
-          <Badge variant="secondary" className="text-xs font-medium px-2 py-1">
-            {story.category}
+          <Badge 
+            variant="secondary" 
+            className="text-xs font-medium px-2 py-1"
+            data-testid="news-story-category-badge"
+          >
+            {story.market_sector}  
           </Badge>
           <CategoryIcon 
             className="w-5 h-5 text-blue-500" 
-            aria-label={`${story.category} category icon`}
+            aria-label={`${story.market_sector} sector icon`}  
           />
         </div>
         <CardTitle 
@@ -78,7 +101,7 @@ export function NewsStoryCard({ story, className }: NewsStoryCardProps) {
               Impact:
             </h4>
             <p className="text-sm text-gray-600 line-clamp-3 sm:line-clamp-4">
-              {story.impact}
+              {story.market_impact}  {/* Changed from impact to market_impact */}
             </p>
           </section>
         </div>
