@@ -6,10 +6,9 @@ import {
   CardContent, 
   Badge,
   Separator,
-  ScrollArea, 
   cn
 } from '@erisfy/shadcnui';
-import { Spinner } from '@erisfy/shadcnui-blocks';
+import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
 import { AlertCircle, TrendingDown } from 'lucide-react';
 import { MarketStory } from '@erisfy/api';
 import { useMarketInsights } from '../hooks/useMarketInsights';
@@ -137,16 +136,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <ScrollArea className="h-[800px] pr-4">
-          <div className="space-y-4">
-            {insights.stories.map((story, index) => (
-              <MarketStoryCard 
-                key={`${story.market_sector}-${index}`} 
-                story={story} 
-              />
-            ))}
-          </div>
-        </ScrollArea>
+        <NewsCarousel stories={insights.stories} />
       </CardContent>
     </Card>
   );
