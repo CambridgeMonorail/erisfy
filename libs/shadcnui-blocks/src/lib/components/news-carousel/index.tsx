@@ -5,22 +5,15 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { NewsStoryCard, type Story } from '../news-story-card';
 import { cn } from '@erisfy/shadcnui';
+import { DEFAULT_OPTIONS } from './constants';
+import type { CarouselOptions } from './types';
+
+export type { CarouselOptions };
+export { DEFAULT_OPTIONS };
 
 const BREAKPOINTS = {
   sm: '50%',
   lg: '33.33%',
-} as const;
-
-type CarouselOptions = {
-  loop: boolean;
-  align: 'start';
-  skipSnaps: boolean;
-};
-
-const DEFAULT_OPTIONS: CarouselOptions = {
-  loop: false,
-  align: 'start',
-  skipSnaps: false,
 } as const;
 
 export type NewsCarouselProps = {
@@ -99,7 +92,7 @@ export function NewsCarousel({
         aria-live="polite"
         data-testid="news-carousel-viewport"
       >
-        <div className="flex">
+        <div className="flex pb-2">
           {stories.map((story, index) => (
             <div
               key={`${story.title}-${index}`}
