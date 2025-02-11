@@ -4,7 +4,6 @@
 
 A Stock Screener searches through large amounts of stock data and returns a list of stocks that match one or more selected criteria - called filters.
 
-
 ## Filters
 
 The list of all criteria available for screening can be accessed through the filters expand-collapse button. For a faster workflow, various combinations of filters can be saved as a preset and can be accessed from the screener's menu afterwards.
@@ -17,53 +16,67 @@ The stock exchange on which a company is listed. All stocks listed on:
 - New York Stock Exchange (NYSE)
 - American Stock Exchange (AMEX)
 
-**Sorting:** No  
-**Export:** No  
-**Appearance:** Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | No |
+| Export | No |
+| Appearance | Stock Detail |
 
 ### Index
 
 A stock's membership in a major stock exchange index such as Dow Jones Industrial or S&P 500. The stock indices track the performance of various segments of the market.
 
-**Sorting:** No  
-**Export:** No  
-**Appearance:** Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | No |
+| Export | No |
+| Appearance | Stock Detail |
 
 ### Sector
 
 Companies are divided into several groups - sectors - according to their business activities.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Overview, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Overview, Snapshot, Stock Detail |
 
 ### Industry
 
 Companies in a common sector are further divided by products and services into smaller groups - industries.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Overview, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Overview, Snapshot, Stock Detail |
 
 ### Country
 
 The geographic location of a company (listed on U.S. markets). This filter includes continents, countries, or groups of countries such as Brazil + Russia + India + China (BRIC).
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Overview, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Overview, Snapshot, Stock Detail |
 
 ### Market Cap
 
 The total dollar value of all of a company's outstanding shares. Market capitalization is a measure of corporate size.
 
+#### Formulas
+
 **Market Capital = Current Market Price * Number Of Shares Outstanding**  
 **Shares Outstanding = Total Number Of Shares - Shares Held In Treasury**  
 **Float = Shares Outstanding - Insider Shares - Above 5% Owners - Rule 144 Shares**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Overview, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Overview, Snapshot, Stock Detail |
 
 ### P/E
 
@@ -73,9 +86,11 @@ A popular valuation ratio of a company's current share price compared to its per
 **P/E = Average Common Stock Price / Net Income Per Share**  
 **EPS = (Net Income - Dividends On Preferred Stock) / Average Outstanding Shares**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### Forward P/E
 
@@ -83,9 +98,11 @@ A measure of the price-to-earnings ratio using forecasted earnings for the P/E c
 
 **Forward P/E = Current Market Price / Forecasted Earnings Per Share**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### PEG
 
@@ -93,9 +110,11 @@ A ratio used to determine a stock's value while taking into account the earnings
 
 **PEG = (P/E) / Annual EPS Growth**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### P/S
 
@@ -103,9 +122,11 @@ A ratio that reflects the value placed on sales by the market. It is calculated 
 
 **P/S = Current Market Price / Total Revenues Per Share**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### P/B
 
@@ -115,9 +136,11 @@ A ratio used to compare a stock's market value to its book value. It is calculat
 **P/B = Current Market Price / (Total Common Equity / Total Common Shares Outstanding)**  
 **Book Value = (Total Assets - Total Liabilities) = Share Holder's Equity**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### Price/Cash
 
@@ -125,9 +148,11 @@ A ratio used to compare a stock's market value to its cash assets. It is calcula
 
 **P/C = Current Market Price / Cash per Share**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### Price/Free Cash Flow
 
@@ -135,9 +160,11 @@ A valuation metric that compares a company's market price to its level of annual
 
 **P/FCF = Current Market Price / Cash Flow per Share**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### EPS (ttm)
 
@@ -147,65 +174,81 @@ EPS is the portion of a company's profit allocated to each outstanding share of 
 **EPS = (Net Income - Dividends On Preferred Stock) / Average Outstanding Shares**  
 **EPS Growth This Year = (EPS This Year - EPS Previous Year) / EPS Previous Year**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### EPS growth this fiscal year (GAAP)
 
 EPS estimate for this fiscal year.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### EPS growth next fiscal year (GAAP)
 
 EPS estimate for the next fiscal year.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### EPS growth past 5 years
 
 EPS annual growth over the past 5 fiscal years.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### EPS growth next 5 years
 
 EPS annual long-term estimate.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### EPS growth qtr over qtr
 
 EPS growth in the last quarter compared on a year-over-year basis.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### Sales growth qtr over qtr
 
 Company's total revenues increase in the last quarter compared on a year-over-year basis.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Snapshot, Stock Detail |
 
 ### Sales growth past 5 years
 
 Annual sales increase over past 5 years.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Stock Detail |
 
 ### Dividend Yield (Fiscal Year Estimate)
 
@@ -215,9 +258,11 @@ If there is no forward dividend estimate available, trailing twelve month (TTM) 
 
 **Dividend Yield = Annual Dividend Per Share / Price Per Share**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Fundamental, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Fundamental, Snapshot, Stock Detail |
 
 ### Return on Assets
 
@@ -225,9 +270,11 @@ An indicator of how profitable a company is relative to its total assets. ROA gi
 
 **ROA = Annual Earnings / Total Assets**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Return on Equity
 
@@ -237,9 +284,11 @@ A measure of a corporation's profitability that reveals how much profit a compan
 **ROE = Annual Net Income / Book Value**  
 **ROE = Annual Net Income / (Total Assets - Total Liabilities)**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Return on Invested Capital
 
@@ -247,9 +296,11 @@ A financial metric used to measure a company's efficiency in allocating its capi
 
 **ROIC = EBIT / Invested Capital**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Current Ratio
 
@@ -257,9 +308,11 @@ A liquidity ratio that measures a company's ability to pay short-term obligation
 
 **Current Ratio = Current Assets / Current Liabilities**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Quick Ratio
 
@@ -267,9 +320,11 @@ An indicator of a company's short-term liquidity. The quick ratio measures a com
 
 **Quick Ratio = (Current Assets - Inventories) / Current Liabilities**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Long Term Debt/Equity
 
@@ -279,9 +334,11 @@ A measure of a company's financial leverage calculated by dividing its long-term
 **LT Debt/Equity = Long Term Debt / (Total Assets - Total Liabilities)**  
 **LT Debt/Equity = Long Term Debt / (Book Value)**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Debt/Equity
 
@@ -291,9 +348,11 @@ A measure of a company's financial leverage calculated by dividing its liabiliti
 **Debt/Equity = Current Liabilities / (Total Assets - Total Liabilities)**  
 **Debt/Equity = Current Liabilities / (Book Value)**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Gross Margin
 
@@ -301,9 +360,11 @@ A company's total sales revenue minus its cost of goods sold, divided by the tot
 
 **Gross Margin = (Total Sales - Costs) / Total Sales**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Operating Margin
 
@@ -311,9 +372,11 @@ Operating margin is a measurement of what proportion of a company's revenue is l
 
 **Operating Margin = Operating Income / Net Sales**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Net Profit Margin
 
@@ -322,9 +385,11 @@ A ratio of profitability calculated as net income divided by revenues, or net pr
 **Net Profit Margin = Net Income / Revenues**  
 **Net Profit Margin = Net Profits / Sales**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Payout Ratio
 
@@ -332,49 +397,61 @@ The percentage of earnings paid to shareholders in dividends.
 
 **Payout Ratio = Dividends / Earnings**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Stock Detail |
 
 ### Insider Ownership
 
 % of shares currently owned by company management.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Ownership, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Ownership, Snapshot, Stock Detail |
 
 ### Insider Transactions
 
 A company's shares being purchased or sold by its own management. Value represents % change in total insider ownership.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Ownership, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Ownership, Snapshot, Stock Detail |
 
 ### Institutional Ownership
 
 % of shares currently owned by institutional investors.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Ownership, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Ownership, Snapshot, Stock Detail |
 
 ### Institutional Transactions
 
 A company's shares being purchased or sold by financial institutions. Value represents % change in total institutional ownership.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Ownership, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Ownership, Snapshot, Stock Detail |
 
 ### Short Float
 
 The number of shares short divided by the total amount of shares float, expressed in %.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Ownership, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Ownership, Snapshot, Stock Detail |
 
 ### Analyst Recommendation
 
@@ -382,25 +459,31 @@ An outlook of a stock-market analyst on a stock.
 
 **Rating Scale: 1.0 Strong Buy, 2.0 Buy, 3.0 Hold, 4.0 Sell, 5.0 Strong Sell**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Snapshot, Stock Detail |
 
 ### Option/Short
 
 Stocks with options and/or available to sell short.
 
-**Sorting:** No  
-**Export:** No  
-**Appearance:** Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | No |
+| Export | No |
+| Appearance | Snapshot, Stock Detail |
 
 ### Earnings Date
 
 The company's nearest earnings-report date. The earnings reports of significant companies should also be watched carefully as they may have great influence on the stock market overall.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Financial, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Financial, Snapshot, Stock Detail |
 
 ### Performance
 
@@ -414,57 +497,71 @@ The company's nearest earnings-report date. The earnings reports of significant 
 - Performance 6 Months = Last 126 trading days
 - Performance 1 Year = Last 252 trading days
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Performance, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Performance, Snapshot, Stock Detail |
 
 ### Volatility
 
 A statistical measure of the dispersion of returns for a given stock. Represents average daily high/low % range.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Performance, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Performance, Snapshot, Stock Detail |
 
 ### RSI (14)
 
 The Relative Strength Index (RSI) is a technical analysis oscillator showing price strength by comparing upward and downward close-to-close movements. It indicates oversold (buy signal) and overbought (sell signal) price levels for a given stock.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### Gap
 
 The difference between yesterday's closing price and today's opening price. Gaps indicate either a lack of supply (gap-up) or demand (gap-down), and usually occur after major news events.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### Simple Moving Average
 
 Simple Moving Average calculated as an average of the last N-periods (20-Day, 50-Day, 200-Day).
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### Change
 
 The percentual difference between current close and previous close price.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### Change from Open
 
 The percentual difference between current close and today's open price.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### High/Low
 
@@ -473,25 +570,31 @@ The percentual difference between current close and today's open price.
 
 Filter options represent a percentual distance from the record high/low price.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### Pattern
 
 A chart pattern is a distinct formation on a stock chart that creates a trading signal, or a sign of future price movements. Chartists use these patterns to identify current trends and trend reversals and to trigger buy and sell signals.
 
-**Sorting:** No  
-**Export:** No  
-**Appearance:** Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | No |
+| Export | No |
+| Appearance | Stock Detail |
 
 ### Candle Stick
 
 A candlestick pattern is a distinct formation of the Open, High, Low, and Close prices for given periods of time on a stock chart that creates a trading signal, or a sign of future price movements.
 
-**Sorting:** No  
-**Export:** No  
-**Appearance:** Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | No |
+| Export | No |
+| Appearance | Stock Detail |
 
 ### Beta (5 Years)
 
@@ -499,9 +602,11 @@ A measure of a stock's price volatility relative to the market. An asset with a 
 
 It is calculated as the slope of the 60 month regression line of the percentage price change of the stock relative to the percentage price change of the index.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### ATR
 
@@ -509,17 +614,21 @@ A measure of stock volatility. The Average True Range is an exponential moving a
 
 **True Range = max(high,closeprev) - min(low,closeprev)**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Technical, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Technical, Stock Detail |
 
 ### Average Volume
 
 The average number of shares traded in a security per day, during the recent 3-month period.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Performance, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Performance, Snapshot, Stock Detail |
 
 ### Relative Volume
 
@@ -527,25 +636,31 @@ Ratio between current volume and 3-month average value, intraday adjusted.
 
 **Relative Volume = Current Volume / 3-month Average Volume**
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Performance, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Performance, Snapshot, Stock Detail |
 
 ### Current Volume
 
 Total number of shares traded for a given stock today, or during the last trading session.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Performance, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Performance, Snapshot, Stock Detail |
 
 ### Price
 
 The current stock price or the close price during the last trading session.
 
-**Sorting:** Yes  
-**Export:** Yes  
-**Appearance:** Performance, Snapshot, Stock Detail
+| Property | Value |
+|----------|--------|
+| Sorting | Yes |
+| Export | Yes |
+| Appearance | Performance, Snapshot, Stock Detail |
 
 ## Signals
 
