@@ -5,15 +5,7 @@ module.exports = [
   {
     files: ['**/*.json'],
     rules: {
-      '@nx/dependency-checks': [
-        'error',
-        {
-          ignoredFiles: [
-            '{projectRoot}/eslint.config.{js,cjs,mjs}',
-            '{projectRoot}/vite.config.{js,ts,mjs,mts}',
-          ],
-        },
-      ],
+      "@nrwl/nx/enforce-module-boundaries": "off"
     },
     languageOptions: {
       parser: require('jsonc-eslint-parser'),

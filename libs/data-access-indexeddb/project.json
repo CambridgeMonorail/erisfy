@@ -4,5 +4,5 @@
   "sourceRoot": "libs/data-access-indexeddb/src",
   "projectType": "library",
   "tags": [],
-  "targets": {  }
+  "targets": {}
 }
