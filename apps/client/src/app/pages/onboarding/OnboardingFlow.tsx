@@ -51,8 +51,8 @@ const InvestmentStyleSection: FC<{
         ))}
       </div>
       <div className="flex justify-between mt-8">
-        <Button onClick={onPrevious}>Previous</Button>
-        <Button onClick={onNext} disabled={!selectedStyle}>Next</Button>
+        <Button onClick={onPrevious}>← Previous</Button>
+        <Button onClick={onNext} disabled={!selectedStyle}>Next →</Button>
       </div>
     </div>
   );
@@ -92,8 +92,8 @@ const RiskToleranceSection: FC<{
         ))}
       </div>
       <div className="flex justify-between mt-8">
-        <Button onClick={onPrevious}>Previous</Button>
-        <Button onClick={onNext} disabled={!selectedRisk}>Next</Button>
+        <Button onClick={onPrevious}>← Previous</Button>
+        <Button onClick={onNext} disabled={!selectedRisk}>Next →</Button>
       </div>
     </div>
   );
@@ -118,7 +118,7 @@ const OnboardingFlow: FC = () => {
   useEffect(() => {
     if (step === 4) {
       savePreferences().then(() => {
-        navigate('/screener/results');
+        navigate('/screener/market-opportunities');
       });
     }
   }, [step, navigate, savePreferences]);
@@ -201,12 +201,14 @@ const OnboardingFlow: FC = () => {
                     <li key={index}>{point}</li>
                   ))}
                 </ul>
-                <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary-foreground hover:text-primary"
-                  onClick={handleNextStep}
-                >
-                  {welcomeContent.cta}
-                </Button>
+                <div className="flex justify-end">
+                  <Button
+                    className="bg-primary text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                    onClick={handleNextStep}
+                  >
+                    {welcomeContent.cta}
+                  </Button>
+                </div>
               </div>
               <FeatureCarousel api={api} setApi={setApi} />
             </div>
