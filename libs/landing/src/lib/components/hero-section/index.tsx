@@ -90,26 +90,26 @@ export const HeroSection: FC<HeroSectionProps> = ({
 
   return (
     <section
-      className={`${sectionClasses} w-full ${className}`}
+      className={`${sectionClasses} w-full overflow-hidden ${className}`}
       data-testid="hero-section"
     >
-      <div className="w-full container mx-auto flex flex-col-reverse md:flex-col lg:flex-row items-center gap-8 py-12 lg:py-24 px-4 sm:px-6 md:px-12">
+      <div className="w-full container mx-auto flex flex-col-reverse md:flex-col lg:flex-row items-center gap-4 sm:gap-8 py-8 sm:py-12 lg:py-24 px-4 sm:px-6 md:px-12">
         {/* Content Section */}
         <div
-          className={`flex-1 space-y-6 text-center lg:text-left ${
+          className={`flex-1 space-y-4 sm:space-y-6 text-center lg:text-left max-w-full ${
             isReversed ? 'order-last lg:order-first' : ''
           }`}
           data-testid="hero-content"
         >
           <h1
-            className={`text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight ${titleClasses}`}
+            className={`text-2xl sm:text-3xl lg:text-5xl font-bold tracking-tight leading-tight ${titleClasses}`}
             data-testid="hero-title"
           >
             {title}
           </h1>
           {subtitle && (
             <h2
-              className={`text-xl sm:text-2xl font-medium leading-snug ${subtitleClasses}`}
+              className={`text-lg sm:text-xl lg:text-2xl font-medium leading-snug ${subtitleClasses}`}
               data-testid="hero-subtitle"
             >
               {subtitle}
@@ -117,7 +117,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
           )}
           {description && (
             <p
-              className={`text-base sm:text-lg leading-relaxed ${descriptionClasses}`}
+              className={`text-sm sm:text-base lg:text-lg leading-relaxed ${descriptionClasses}`}
               data-testid="hero-description"
             >
               {description}
@@ -125,7 +125,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
           )}
           {highlights && (
             <ul
-              className="space-y-2"
+              className="space-y-2 text-sm sm:text-base"
               data-testid="hero-highlights"
             >
               {highlights.map((highlight, index) => (
@@ -134,19 +134,19 @@ export const HeroSection: FC<HeroSectionProps> = ({
                   className="flex items-center gap-2 justify-center lg:justify-start"
                   data-testid={`hero-highlight-${index}`}
                 >
-                  <CheckIcon className={`h-5 w-5 ${highlightIconClasses}`} />
+                  <CheckIcon className={`h-4 w-4 sm:h-5 sm:w-5 ${highlightIconClasses}`} />
                   {highlight}
                 </li>
               ))}
             </ul>
           )}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
             {ctaPrimary && (
               <Button
                 onClick={
                   ctaPrimary.onClick || (() => window.location.href = ctaPrimary.link || '#')
                 }
-                className={buttonPrimaryClasses}
+                className={`${buttonPrimaryClasses} text-sm sm:text-base w-full sm:w-auto whitespace-normal sm:whitespace-nowrap`}
                 data-testid="cta-primary"
               >
                 {ctaPrimary.text}
@@ -157,7 +157,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
                 onClick={
                   ctaSecondary.onClick || (() => window.location.href = ctaSecondary.link || '#')
                 }
-                className={buttonSecondaryClasses}
+                className={`${buttonSecondaryClasses} text-sm sm:text-base w-full sm:w-auto whitespace-normal sm:whitespace-nowrap`}
                 data-testid="cta-secondary"
               >
                 {ctaSecondary.text}
@@ -168,20 +168,22 @@ export const HeroSection: FC<HeroSectionProps> = ({
 
         {/* Media Section */}
         <div
-          className="flex-1 flex justify-center items-center"
+          className="flex-1 flex justify-center items-center w-full lg:w-auto"
           data-testid="hero-media"
         >
           {typeof image === 'string' ? (
             <img
               src={image}
               alt={imageAlt}
-              className="w-3/4 sm:w-2/3 lg:w-full max-w-md rounded-lg object-cover"
-              width="448" 
+              className="w-full px-4 sm:w-2/3 lg:w-full max-w-xs sm:max-w-sm lg:max-w-md rounded-lg object-contain mx-auto"
+              width="448"
               height="448"
               data-testid="hero-image"
             />
           ) : (
-            image
+            <div className="w-full px-4 sm:w-2/3 lg:w-full max-w-xs sm:max-w-sm lg:max-w-md flex justify-center">
+              {image}
+            </div>
           )}
         </div>
       </div>

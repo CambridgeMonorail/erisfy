@@ -8,7 +8,7 @@ interface LogoCarouselProps {
 
 /**
  * LogoCarousel component displays a horizontal scrolling carousel of logos.
- * 
+ *
  * This component is useful for showcasing partner logos, client logos, or any
  * other set of logos in a visually appealing and interactive manner.
  */
@@ -43,7 +43,7 @@ const LogoCarousel: FC<LogoCarouselProps> = ({ logos, header, subheader }) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center w-full">
       {/* Header Section */}
       {header && <h2 className="text-2xl font-bold text-primary">{header}</h2>}
       {subheader && <p className="text-lg">{subheader}</p>}
@@ -51,16 +51,18 @@ const LogoCarousel: FC<LogoCarouselProps> = ({ logos, header, subheader }) => {
       {/* Logo Carousel */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden mt-4 pt-6"
-        style={{ height: '100px', whiteSpace: 'nowrap' }}
+        className="relative w-full overflow-hidden mt-4 pt-4"
+        style={{ whiteSpace: 'nowrap' }}
       >
         <div className="flex">
           {carouselLogos.map((logo, index) => (
             <div
               key={`logo-${index}`}
-              className="flex-shrink-0 w-1/4 h-24 flex items-center justify-center"
+              className="flex-shrink-0 w-[50%] sm:w-[33.333%] md:w-[25%] lg:w-[20%] xl:w-[16.666%] h-16 sm:h-20 md:h-24 flex items-center justify-center px-2 sm:px-4"
             >
-              {logo}
+              <div className="w-full max-w-[100px] sm:max-w-[120px] mx-auto">
+                {logo}
+              </div>
             </div>
           ))}
         </div>
