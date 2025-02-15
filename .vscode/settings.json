@@ -2,7 +2,35 @@
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "text": "Adhere to the Conventional Commits specification for all commit messages. The format is:\n\n<type>(<scope>): <description>\n\nWhere:\n- **type**: One of 'feat', 'fix', 'docs', 'style', 'refactor', 'test', or 'chore'.\n- **scope**: The affected module or feature (e.g., 'auth', 'dashboard').\n- **description**: A concise summary of the change in the imperative mood.\n\nIf the current branch name includes a GitHub issue number in the format 'issue-<number>', append 'Closes #<number>' in the commit message footer to link the commit to the issue."
+      "text": "Follow Conventional Commits standard with format: <type>(<scope>): <subject>"
+    },
+    {
+      "text": "Valid types are: feat, fix, docs, style, refactor, perf, test, chore, ci, build"
+    },
+    {
+      "text": "Scope should be the affected module or component name"
+    },
+    {
+      "text": "Use all lowercase in subject line"
+    },
+    {
+      "text": "Start subject with appropriate gitmoji followed by a space"
+    },
+    {
+      "text": "Limit subject line to 50 characters (excluding type/scope)"
+    },
+    {
+      "text": "Separate subject from body with a blank line"
+    },
+    {
+      "text": "Wrap body at 72 characters"
+    },
+    {
+      "text": "Use imperative mood in subject line ('add' not 'adds')"
+    },
+    {
+      "text": "Add footer with BREAKING CHANGE or Closes #123 if applicable"
     }
-  ]
+  ],
+  "github.copilot.chat.edits.codesearch.enabled": true
 }

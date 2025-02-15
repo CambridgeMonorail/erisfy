@@ -1,377 +1,425 @@
+# Implementation Plan
+
 [Back to Documentation Overview](./readme.md)
 
-# Implementation Plan
+This implementation plan outlines the technical architecture and development approach for **Erisfy**, an AI-powered stock screening platform. The document provides a comprehensive guide for setting up the development environment, implementing core features, and deploying the application.
+
+The plan details how to build Erisfy using a modern tech stack within an Nx monorepo structure, with:
+- A React-based front end in `apps/client` for the user interface
+- A NestJS backend service with Prisma ORM for data management
+- Docker Compose for local development
+- Node-cron for scheduled tasks
+- Shared TypeScript libraries for type safety and code reuse
+
+Each section provides specific implementation steps, code examples, and best practices, enabling developers to understand and execute the technical vision effectively.
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Setting Up the Node.js API](#setting-up-the-nodejs-api)
-3. [Database (Postgres) & ORM (Sequelize Example)](#database-postgres--orm-sequelize-example)
-4. [Scheduling Jobs with node-cron](#scheduling-jobs-with-node-cron)
-5. [Front-End (React) Integration](#front-end-react-integration)
-6. [Local Development with Docker Compose](#local-development-with-docker-compose)
-7. [Deployment to Low-Cost Platforms](#deployment-to-low-cost-platforms)
-8. [Future Expansion & Considerations](#future-expansion--considerations)
+1. [Overview](#overview)  
+2. [Setting Up the Node.js API (NestJS + Nx)](#setting-up-the-nodejs-api-nestjs--nx)  
+3. [Database (Postgres) & ORM (Prisma)](#database-postgres--orm-prisma)  
+4. [Scheduling Jobs with node-cron](#scheduling-jobs-with-node-cron)  
+5. [Front-End (React) Integration & Shared Types](#front-end-react-integration--shared-types)  
+6. [Local Development with Docker Compose](#local-development-with-docker-compose)  
+7. [Deployment to Low-Cost Platforms](#deployment-to-low-cost-platforms)  
+8. [Future Expansion & Considerations](#future-expansion--considerations)  
 9. [Summary](#summary)
 
-## Overview
+## 1. Overview
 
-This document outlines the implementation plan for Erisfy, an AI-powered stock screener. The plan includes setting up the front-end using React, the middle layer using Node.js, and the database using PostgreSQL. It also covers local development setup with Docker Compose, deployment strategies, and future expansion considerations.
+**Erisfy** is an AI-powered application that combines a **React** front end with a **NestJS** middle layer, **PostgreSQL** (managed via **Prisma**), scheduling (with **node-cron**), local-first development (with **Docker Compose**), and deployment to low-cost or free-tier platforms.
 
-### React Front End
+Within your **ERISFY** Nx monorepo, you currently have:
 
-- Create a single-page application (SPA) using React (e.g., Create React App or Vite).
-- Handles user interactions, renders UI, and makes requests to the Node.js API.
+- A React front end in `apps/client`
+- A plan to create a new NestJS API in `apps/api` (or a similar name of your choosing)
+- A shared library structure in `libs/` for cross-cutting code (e.g., TypeScript interfaces)
 
-### Node.js Middle Layer
+Simplified architecture diagram:
 
-- Express (or Fastify) for REST APIs.
-- Integrates with third-party APIs (OpenAI, FinancialDatasets.ai).
-- Schedules and runs background jobs (end-of-day financial data retrieval, etc.).
-- Manages authentication, security, and business logic.
-
-### PostgreSQL Database
-
-- Stores user accounts, financial data (closing prices, metrics), and any AI results.
-- Accessible via an ORM (e.g., Sequelize, TypeORM, or Prisma).
-
-### Local Development & Deployment
-
-- Docker Compose for easy local development with a single command.
-- Deployment on a low-cost/free tier platform (Railway, Render, Fly.io, etc.).
-
-A simplified architecture diagram:
-
-```text
- ┌─────────────┐         ┌────────────────┐       ┌─────────────────────┐
- │ React       │  <–––>  │ Express Server │ <–––> │ PostgreSQL Database │
- │ (Frontend)  │         │ (Node.js API)  │       └─────────────────────┘
- └─────────────┘         └────────────────┘
+```
+ ┌─────────────────┐         ┌───────────────────┐       ┌─────────────────────┐
+ │ React (client)  │  <–––>  │ NestJS (api)      │ <–––> │ PostgreSQL Database │
+ └─────────────────┘         └───────────────────┘       └─────────────────────┘
      ▲                          │
      │                          │
      ▼                          ▼
-    External APIs (OpenAI, financialdatasets.ai)
+   External APIs (OpenAI, financial datasets, etc.)
 ```
 
-## Setting Up the Node.js API
+## 2. Setting Up the Node.js API (NestJS + Nx)
 
-### Directory Structure (example):
+### 2.1. Nx Monorepo Structure for Erisfy
 
-```text
-project-root/
-  ├─ frontend/               // React app
-  ├─ server/
-  │   ├─ src/
-  │   │   ├─ app.js          // Express app
-  │   │   ├─ routes/
-  │   │   │   ├─ finance.js  // Finance routes
-  │   │   │   ├─ openai.js   // OpenAI routes
-  │   │   │   └─ ...
-  │   │   ├─ controllers/    // Logic for each route
-  │   │   ├─ services/       // Utility / service logic (API calls, DB queries)
-  │   │   ├─ models/         // ORM definitions
-  │   │   ├─ cron/           // Cron job definitions
-  │   │   └─ ...
-  │   ├─ package.json
-  │   └─ ...
-  ├─ docker-compose.yml
-  └─ ...
+A typical folder layout in **ERISFY** might now look like this:
+
+```
+ERISFY/
+ ├─ apps/
+ │   ├─ client              // React front end
+ │   └─ api                 // NestJS application
+ ├─ libs/
+ │   └─ shared-types        // Shared TypeScript interfaces/types
+ ├─ tools/
+ ├─ nx.json
+ ├─ package.json
+ └─ tsconfig.base.json
 ```
 
-### Express Setup
+### 2.2 Generating a NestJS App
 
-Install dependencies:
+1. **Install Nx Nest Plugin** (if not installed yet):
 
-```bash
-cd server
-npm init -y
-npm install express cors axios node-cron dotenv pg sequelize
-```
+   ```bash
+   cd ERISFY
+   npm install -D @nrwl/nest
+   ```
 
-(pg + sequelize for Postgres & ORM, axios for external API calls, node-cron for scheduling, dotenv for env vars.)
+2. **Generate the NestJS app**:
 
-#### app.js example:
+   ```bash
+   npx nx g @nrwl/nest:app api
+   ```
 
-```js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+   - This creates a new NestJS application in `apps/api`, with a default structure (e.g., `main.ts`, `app.module.ts`, etc.).
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+### 2.3 Basic NestJS Setup
 
-// Import route modules
-const financeRoutes = require('./routes/finance');
-const openAIRoutes = require('./routes/openai');
+- **`apps/api/src/main.ts`**:
 
-// Register routes
-app.use('/api/finance', financeRoutes);
-app.use('/api/openai', openAIRoutes);
+  ```ts
+  import { NestFactory } from '@nestjs/core';
+  import { AppModule } from './app.module';
 
-module.exports = app;
-```
-
-#### server.js example (to start the server):
-
-```js
-const app = require('./src/app');
-const { sequelize } = require('./src/models'); // if using Sequelize
-
-const PORT = process.env.PORT || 3001;
-
-// Sync DB (only in dev, adjust for production migrations)
-sequelize.sync({ force: false }).then(() => {
-  console.log('Database connected.');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}).catch(err => console.error('DB Connection Error:', err));
-```
-
-### Finance Route (Example)
-
-```js
-// routes/finance.js
-const express = require('express');
-const router = express.Router();
-const axios = require('axios');
-
-// Example controller/handler for retrieving financial data
-router.get('/closing-prices', async (req, res) => {
-  try {
-    // Suppose financialdatasets.ai has an endpoint for daily close
-    // Check docs for exact URL or parameters:
-    const apiResponse = await axios.get('https://api.financialdatasets.ai/v1/daily-closing');
-    // Process or store data in DB here
-    res.json(apiResponse.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error fetching closing prices' });
+  async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
+    app.enableCors(); // if needed
+    await app.listen(3001);
+    console.log(`Nest API is running on http://localhost:3001`);
   }
-});
+  bootstrap();
+  ```
 
-module.exports = router;
+- **`apps/api/src/app.module.ts`**:
+
+  ```ts
+  import { Module } from '@nestjs/common';
+  import { FinanceModule } from './modules/finance/finance.module';
+  import { OpenAIModule } from './modules/openai/openai.module';
+
+  @Module({
+    imports: [FinanceModule, OpenAIModule],
+  })
+  export class AppModule {}
+  ```
+
+### 2.4 Example Finance Module
+
+Create a folder `apps/api/src/modules/finance/`. Then:
+
+```ts
+// apps/api/src/modules/finance/finance.module.ts
+import { Module } from '@nestjs/common';
+import { FinanceService } from './finance.service';
+import { FinanceController } from './finance.controller';
+
+@Module({
+  controllers: [FinanceController],
+  providers: [FinanceService],
+})
+export class FinanceModule {}
 ```
 
-### OpenAI Route (Example)
+```ts
+// finance.controller.ts
+import { Controller, Get } from '@nestjs/common';
+import { FinanceService } from './finance.service';
 
-```js
-// routes/openai.js
-const express = require('express');
-const router = express.Router();
-const { Configuration, OpenAIApi } = require('openai');
+@Controller('finance')
+export class FinanceController {
+  constructor(private readonly financeService: FinanceService) {}
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
-router.post('/generate', async (req, res) => {
-  try {
-    const { userPrompt } = req.body;
-    const response = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt: userPrompt,
-      max_tokens: 100,
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'OpenAI API error' });
+  @Get('closing-prices')
+  getClosingPrices() {
+    return this.financeService.fetchClosingPrices();
   }
-});
-
-module.exports = router;
+}
 ```
 
-## Database (Postgres) & ORM (Sequelize Example)
+```ts
+// finance.service.ts
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 
-Install:
-
-```bash
-npm install sequelize pg pg-hstore
-```
-
-Initialize Sequelize:
-
-Create a models/index.js file to initialize Sequelize:
-
-```js
-const { Sequelize } = require('sequelize');
-
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
-  host: process.env.DB_HOST,
-  dialect: 'postgres',
-});
-
-// Load models here...
-// Example: const User = require('./User')(sequelize);
-// module.exports = { sequelize, User, ... };
-
-module.exports = { sequelize };
-```
-
-Adjust environment variables DB_NAME, DB_USER, DB_PASS, and DB_HOST.
-
-Defining a Model (example for storing daily closes):
-
-```js
-// models/DailyClose.js
-const { DataTypes } = require('sequelize');
-
-module.exports = (sequelize) => {
-  return sequelize.define('DailyClose', {
-    symbol: { type: DataTypes.STRING, allowNull: false },
-    closePrice: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    date: { type: DataTypes.DATEONLY, allowNull: false },
-  }, {
-    tableName: 'daily_closes',
-    timestamps: false,
-  });
-};
-```
-
-Usage:
-
-```js
-// models/DailyClose.js
-const { DataTypes } = require('sequelize');
-
-module.exports = (sequelize) => {
-  return sequelize.define('DailyClose', {
-    symbol: { type: DataTypes.STRING, allowNull: false },
-    closePrice: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    date: { type: DataTypes.DATEONLY, allowNull: false },
-  }, {
-    tableName: 'daily_closes',
-    timestamps: false,
-  });
-};
-```
-
-## Scheduling Jobs with node-cron
-
-Install:
-
-```bash
-npm install node-cron
-```
-
-Define cron job in something like src/cron/financeCron.js:
-
-```js
-const cron = require('node-cron');
-const axios = require('axios');
-const { DailyClose } = require('../models');
-
-// Run every weekday at 4:00 PM EST => 21:00 UTC (Mon-Fri: 1-5)
-cron.schedule('0 21 * * 1-5', async () => {
-  try {
-    // 1. Fetch end-of-day data
+@Injectable()
+export class FinanceService {
+  async fetchClosingPrices() {
+    // Example external API call
     const response = await axios.get('https://api.financialdatasets.ai/v1/daily-closing');
-    // 2. Parse data (assuming response.data = [ { symbol, closePrice, ... } ])
-    const dataArray = response.data;
-    // 3. Store in DB
-    for (const item of dataArray) {
-      await DailyClose.create({
-        symbol: item.symbol,
-        closePrice: item.closePrice,
-        date: new Date().toISOString().slice(0, 10), // or however you manage date
-      });
-    }
-    console.log('Daily close data saved successfully!');
-  } catch (error) {
-    console.error('Failed to fetch/store daily close data:', error);
+    return response.data;
   }
-}, {
-  scheduled: true,
-  timezone: 'America/New_York',
-});
+}
 ```
 
-Import or require that cron definition in your main server.js or app.js to initialize it.
+## 3. Database (Postgres) & ORM (Prisma)
 
-## Front-End (React) Integration
+### 3.1 Installing & Initializing Prisma
 
-### Fetch Data (example snippet in a React component):
+1. **Install Prisma**:
 
-```js
-import React, { useState, useEffect } from 'react';
+   ```bash
+   cd ERISFY
+   npm install -D prisma
+   npm install @prisma/client
+   ```
 
-function FinanceData() {
-  const [data, setData] = useState([]);
+2. **Initialize**:
+
+   ```bash
+   npx prisma init
+   ```
+
+   This typically creates a `prisma/` folder at the root or within `apps/api`. Decide where you want it. A common approach is `apps/api/prisma/`.
+
+3. **Schema Configuration** (`schema.prisma` example):
+
+   ```prisma
+   datasource db {
+     provider = "postgresql"
+     url      = env("DATABASE_URL")
+   }
+
+   generator client {
+     provider = "prisma-client-js"
+   }
+
+   model DailyClose {
+     id         Int     @id @default(autoincrement())
+     symbol     String
+     closePrice Decimal
+     date       DateTime
+   }
+   ```
+
+4. **Migrate & Generate**:
+
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma generate
+   ```
+
+### 3.2 Using Prisma in NestJS
+
+Create a **PrismaService**:
+
+```ts
+// apps/api/src/prisma.service.ts
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  async onModuleInit() {
+    await this.$connect();
+  }
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+}
+```
+
+Provide it in a **DatabaseModule**:
+
+```ts
+// apps/api/src/modules/database/database.module.ts
+import { Module } from '@nestjs/common';
+import { PrismaService } from '../../prisma.service';
+
+@Module({
+  providers: [PrismaService],
+  exports: [PrismaService],
+})
+export class DatabaseModule {}
+```
+
+Then import **DatabaseModule** in your feature modules:
+
+```ts
+// apps/api/src/modules/finance/finance.module.ts
+import { Module } from '@nestjs/common';
+import { FinanceService } from './finance.service';
+import { FinanceController } from './finance.controller';
+import { DatabaseModule } from '../database/database.module';
+
+@Module({
+  imports: [DatabaseModule],
+  controllers: [FinanceController],
+  providers: [FinanceService],
+})
+export class FinanceModule {}
+```
+
+And use **PrismaService**:
+
+```ts
+// finance.service.ts
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma.service';
+
+@Injectable()
+export class FinanceService {
+  constructor(private prisma: PrismaService) {}
+
+  async fetchClosingPrices() {
+    // e.g., read from DB or external API
+    const closes = await this.prisma.dailyClose.findMany();
+    return closes;
+  }
+}
+```
+
+## 4. Scheduling Jobs with node-cron
+
+You have two main approaches:
+
+1. **Use @nestjs/schedule** (recommended for Nest).
+2. **Use node-cron** directly.
+
+### Example with NestJS Schedule
+
+```bash
+npm install @nestjs/schedule
+```
+
+```ts
+// apps/api/src/modules/finance/finance.module.ts
+import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
+import { FinanceService } from './finance.service';
+import { FinanceController } from './finance.controller';
+
+@Module({
+  imports: [ScheduleModule.forRoot()],
+  providers: [FinanceService],
+  controllers: [FinanceController],
+})
+export class FinanceModule {}
+```
+
+```ts
+// finance.service.ts
+import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+
+@Injectable()
+export class FinanceService {
+  @Cron('0 21 * * 1-5', { timeZone: 'America/New_York' })
+  async handleDailyCloseData() {
+    // 1. Fetch data from external API
+    // 2. Store in DB via Prisma
+    console.log('Running scheduled job for daily close data...');
+  }
+}
+```
+
+## 5. Front-End (React) Integration & Shared Types
+
+### 5.1 Nx Libraries for Shared Types
+
+Generate a **shared-types** library:
+
+```bash
+npx nx g @nrwl/workspace:lib shared-types
+```
+
+Add your interfaces in `libs/shared-types/src/index.ts`:
+
+```ts
+// libs/shared-types/src/index.ts
+export interface DailyCloseDTO {
+  id: number;
+  symbol: string;
+  closePrice: string;
+  date: string;
+}
+
+// add more as needed...
+```
+
+Import in **NestJS** or **React**:
+
+```ts
+// In NestJS (apps/api)
+import { DailyCloseDTO } from '@erisfy/shared-types';
+```
+
+```ts
+// In React (apps/client)
+import { DailyCloseDTO } from '@erisfy/shared-types';
+```
+
+### 5.2 React Integration (apps/client)
+
+1. **Serve** your front end with:
+
+   ```bash
+   npx nx serve client
+   ```
+
+   Usually runs on `http://localhost:4200`.
+2. **NestJS** typically runs on port `3001`, so the client can fetch data from `http://localhost:3001/finance/closing-prices`.
+
+Example snippet:
+
+```tsx
+// apps/client/src/components/FinanceData.tsx
+import React, { useEffect, useState } from 'react';
+import { DailyCloseDTO } from '@erisfy/shared-types';
+
+export function FinanceData() {
+  const [data, setData] = useState<DailyCloseDTO[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/finance/closing-prices');
-        const jsonData = await response.json();
-        setData(jsonData);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
+    fetch('http://localhost:3001/finance/closing-prices')
+      .then((res) => res.json())
+      .then((json: DailyCloseDTO[]) => setData(json))
+      .catch(console.error);
   }, []);
 
   return (
     <div>
       <h2>Finance Data</h2>
-      {/* Render table or chart with data */}
+      <ul>
+        {data.map((item) => (
+          <li key={item.id}>
+            {item.symbol}: ${item.closePrice} on {item.date}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-export default FinanceData;
 ```
 
-### OpenAI usage (e.g., a form that sends a user prompt):
+## 6. Local Development with Docker Compose
 
-```js
-import React, { useState } from 'react';
+You can still keep a **local-first** strategy using Docker Compose. For instance:
 
-function OpenAIForm() {
-  const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch('/api/openai/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userPrompt: prompt }),
-      });
-      const data = await res.json();
-      setResponse(data.choices?.[0].text || '');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
-        <button type="submit">Submit</button>
-      </form>
-      {response && <div>{response}</div>}
-    </div>
-  );
-}
-
-export default OpenAIForm;
+```
+ERISFY/
+ ├─ docker-compose.yml
+ ├─ apps/
+ │   ├─ api
+ │   │   ├─ Dockerfile
+ │   └─ client
+ │       ├─ Dockerfile
+ ├─ libs/
+ ├─ nx.json
+ ├─ package.json
+ └─ ...
 ```
 
-## Local Development with Docker Compose
-
-Use Docker Compose for a smoother local dev experience. Create a docker-compose.yml at the project root:
+### 6.1 docker-compose.yml (Example)
 
 ```yaml
 version: '3'
@@ -381,123 +429,117 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=mydb
+      - POSTGRES_DB=erisfydb
     ports:
       - "5432:5432"
-  
+
   api:
-    build: 
-      context: ./server
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
     volumes:
-      - ./server:/usr/src/app
+      - ./:/workspace
     ports:
       - "3001:3001"
     depends_on:
       - db
     environment:
-      - DB_HOST=db
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - DB_NAME=mydb
-      - OPENAI_API_KEY=your-openai-key-here
-    command: ["npm", "run", "dev"]  # or your start script
-  
-  frontend:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/erisfydb
+    command: ["npx", "nx", "serve", "api", "--host=0.0.0.0"]
+
+  client:
     build:
-      context: ./frontend
+      context: .
+      dockerfile: ./apps/client/Dockerfile
     volumes:
-      - ./frontend:/usr/src/app
+      - ./:/workspace
     ports:
-      - "3000:3000"
+      - "4200:4200"
     depends_on:
       - api
-    command: ["npm", "start"]  # or "npm run dev" for CRA/Vite
+    command: ["npx", "nx", "serve", "client", "--host=0.0.0.0"]
 ```
 
-In server/Dockerfile (simplified):
+### 6.2 Dockerfiles
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3001
-```
+- **`apps/api/Dockerfile`**:
 
-In frontend/Dockerfile (simplified):
+  ```dockerfile
+  FROM node:18-alpine
+  WORKDIR /workspace
+  COPY package*.json ./
+  RUN npm install
+  COPY . .
+  EXPOSE 3001
+  ```
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-```
+- **`apps/client/Dockerfile`**:
 
-Then run:
+  ```dockerfile
+  FROM node:18-alpine
+  WORKDIR /workspace
+  COPY package*.json ./
+  RUN npm install
+  COPY . .
+  EXPOSE 4200
+  ```
+
+### 6.3 Running Locally
 
 ```bash
 docker-compose up --build
 ```
 
-- db starts (Postgres)
-- api starts (Node Express)
-- frontend starts (React)
+This spins up:
 
-## Deployment to Low-Cost Platforms
+1. **Postgres** on port **5432**
+2. **NestJS API** on **3001**
+3. **React Client** on **4200**
 
-### Render / Railway / Fly.io
+## 7. Deployment to Low-Cost Platforms
 
-- Each typically allows you to create a service from your GitHub repo.
-- Provide environment variables (DB credentials, OPENAI_API_KEY) in their dashboard.
-- Spin up a managed Postgres instance or connect to an external Postgres (like ElephantSQL).
+For **Erisfy** deployment, the general steps are:
 
-### Frontend
+1. **Build** each app with Nx:
 
-- Build the React app into static files and host them on Vercel, Netlify, or even the same Node server behind an / route or a separate CDN.
+   ```bash
+   npx nx build api
+   npx nx build client
+   ```
 
-### Cron Jobs
+2. **Dockerize** or push build artifacts to your chosen platform.  
+3. **Configure environment variables** (like `DATABASE_URL`, `OPENAI_API_KEY`) via the platform’s dashboard.  
+4. **Set up Postgres** (through the platform’s managed DB service or your own container).  
+5. **Cron Jobs**: If you rely on `@nestjs/schedule` or `node-cron`, ensure the platform supports persistent containers; otherwise, use a third-party scheduler.
 
-- Verify your hosting platform supports persistent processes if you rely on node-cron.
-- If not, consider an external scheduler that pings a special endpoint at scheduled times.
+Common platforms: **Railway**, **Render**, **Fly.io**, or you can use **AWS** or **Azure** if you need more control.
 
-## Future Expansion & Considerations
+## 8. Future Expansion & Considerations
 
-### LangChain.js
+1. **LangChain**  
+   - Integrate advanced prompt chaining or retrieval augmentation in your NestJS modules.  
+   - Possibly store embeddings in a vector DB or use `pgvector` in Postgres.
+2. **Queues & Scalability**  
+   - If scheduling tasks becomes heavy, consider a queue like **BullMQ** with Redis, or Nest’s built-in queue module.  
+3. **Authentication**  
+   - Use [@nestjs/passport](https://docs.nestjs.com/security/authentication) or other Nest auth strategies.  
+4. **Testing**  
+   - Nx sets up Jest for both the client and Nest. Use `nx test api` or `nx test client`.  
+5. **Logging & Monitoring**  
+   - Tools like `@nestjs/pino` or `winston` for logs; APM services for performance monitoring.  
+6. **Prisma Migrations**  
+   - Continue to manage DB migrations with `prisma migrate`, which can be hooked into Nx using custom targets.
 
-- If you want advanced prompt chaining or retrieval augmentation with embeddings, you can integrate LangChain.js.
+## 9. Summary
 
-### Message Queue
+The **Erisfy** project can now be structured within an **Nx** monorepo, with:
 
-- If scheduled tasks become large or you need concurrency, use a job queue like BullMQ (Redis-based).
+- **apps/client**: The React front end  
+- **apps/api**: The NestJS + Prisma back end  
+- **libs/shared-types**: Shared TypeScript interfaces and DTOs  
 
-### Security / Auth
+**Docker Compose** provides a simple, local-first strategy for running the entire stack (Postgres, API, and Client). **Deployment** remains straightforward on low-cost providers, especially if you containerize or build your apps via Nx. This updated approach ensures better **type safety**, improved **modularity**, and a clean path for future expansions such as **LangChain**, advanced scheduling, or additional AI integrations.
 
-- Use libraries like jsonwebtoken to add JWT-based authentication to your routes.
+---
 
-### Database Migrations
-
-- For production, set up migrations (e.g., sequelize-cli or Umzug for Sequelize).
-
-### Logging & Monitoring
-
-- Integrate logging libraries (e.g., winston or pino) and set up basic app monitoring.
-
-## Summary
-
-### The Node.js Stack Approach
-
-- React handles UI and direct calls to the Node.js API.
-- Express (or Fastify) provides a clean REST-layer for routes:
-  - Finance route to fetch data from external APIs (FinancialDatasets.ai, etc.)
-  - OpenAI route to handle GPT completions
-- Postgres (Sequelize) for relational data storage of user, financial, and AI-related data.
-- node-cron for scheduled tasks (e.g., daily close data retrieval).
-- Docker Compose for local dev, making it simpler to spin up the entire stack with a single command.
-- Deploy to a low-cost or free tier hosting platform, ensuring environment variables and cron job support are set up correctly.
-
-Following this plan, should give us have a stable foundation that’s easy to run locally and straightforward to deploy in a cost-effective way. Later, we can add advanced AI features (e.g., LangChain, embeddings, vector databases) or scale out with more robust job scheduling/queuing solutions as our application grows.
-
-**Next Document: [07 - Modular Agent Architecture](./07%20-%20Modular%20Agent%20Architecture.md)**
+**Next Document**: [07 - Modular Agent Architecture](./07%20-%20Modular%20Agent%20Architecture.md)
