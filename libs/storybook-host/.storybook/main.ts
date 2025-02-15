@@ -15,6 +15,7 @@ const config: StorybookConfig = {
     'storybook-dark-mode',
     '@storybook/addon-themes',
     '@storybook/addon-backgrounds',
+    '@storybook/addon-viewport',
     {
       name: '@storybook/addon-styling-webpack',
       options: {

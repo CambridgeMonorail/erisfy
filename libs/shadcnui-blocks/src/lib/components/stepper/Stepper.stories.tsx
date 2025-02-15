@@ -6,6 +6,12 @@ const meta: Meta<typeof Stepper> = {
   title: "Shadcnui Blocks/Stepper",
   component: Stepper,
   tags: ["autodocs"],
+  parameters: {
+    viewport: {
+      defaultViewport: 'responsive'
+    },
+    layout: 'centered'
+  }
 }
 
 export default meta
@@ -25,7 +31,7 @@ const steps = [
   },
   {
     title: "Payment",
-    description: "Add any payment information you have",
+    description: "Add any payment information",
     icon: CreditCard,
   },
   {
@@ -37,12 +43,20 @@ const steps = [
 
 /**
  * Default Stepper story demonstrating the initial step.
+ * View in different viewport sizes to see responsive behavior.
  */
 export const Default: Story = {
   args: {
     currentStep: 1,
     steps,
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'The stepper adapts to different screen sizes by:\n- Hiding descriptions on tablet screens\n- Showing only icons and active step label on mobile\n- Reducing icon sizes on smaller screens'
+      }
+    }
+  }
 }
 
 /**
