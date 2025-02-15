@@ -38,30 +38,52 @@ Erisfy is an AI-powered stock screener that simplifies investing by transforming
 
 ## Project Goals
 
-- **Simplified Setup**: Provide a ready-to-use boilerplate for developers looking to build SPAs using modern tools without SSR or Next.js.
-- **Seamless Integration**: Combine Nx for monorepo management, Tailwind CSS for utility-first styling, and Shadcn UI for cohesive, customizable UI components.
-- **Scalability and Modularity**: Offer a scalable architecture with reusable libraries and clear boundaries between projects.
-- **Enhanced Developer Experience**: Deliver a well-documented, intuitive, and maintainable codebase to boost productivity and reduce onboarding time.
-- **Community Collaboration**: Foster an open-source community to innovate, improve, and expand the project.
-- **Experimentation**: Explore and test new UI/UX concepts and design patterns for FinTech applications.
+- **Learning Through Building**: Create a practical application that serves as a learning platform for integrating Large Language Models (LLM) and Agentic AI into modern web applications.
+- **AI-Powered Stock Screening**: Build an intelligent system that transforms complex market data into clear, actionable insights for investors at all levels.
+- **Modular AI Architecture**: Implement a flexible, modular agent architecture with weighted filters and rule sets that can evolve through feedback loops.
+- **Developer Education**: Document the journey of building AI-powered features, sharing insights and lessons learned with the developer community.
+- **Accessible Investment Intelligence**: Democratize financial analysis by making AI-driven insights available and understandable to everyday investors.
+- **User-Centric Design**: Create an interface that simplifies complex financial data without overwhelming users, focusing on clear explanations and guided experiences.
+- **Transparent AI Decision-Making**: Implement explainable AI features that help users understand the reasoning behind investment recommendations.
+- **Adaptive Learning System**: Develop AI filters that adjust based on user preferences and investment styles, creating a more personalized experience.
 
-For a detailed breakdown of the project goals, see [Project Goals](./docs/project-goals.md).
+For a detailed breakdown of the project's features and roadmap, see the [Implementation Plan](./docs/specs/06%20-%20Implementation%20Plan.md) and [Modular Agent Architecture](./docs/specs/07%20-%20Modular%20Agent%20Architecture.md) documentation.
 
 ## Features
 
-- 🏗 **Nx Monorepo**: Modular and scalable workspace for managing multiple projects and libraries.
-- 🎨 **Tailwind CSS**: Utility-first CSS framework for rapid and responsive UI development.
-- 🖌 **Shadcn UI**: A customizable component library for consistent and reusable design patterns.
-- ⚡ **Vite**: Fast and efficient development server and build tool.
-- 🚀 **CI/CD Integration**: Preconfigured workflows for automated builds and testing.
+- 🤖 **AI-Powered Analysis**: Transforms complex market data into clear, actionable insights using LLMs and Agentic AI
+- 🎯 **Modular Agent Architecture**: Flexible AI agents with weighted filters and rule sets that evolve through feedback
+- 🔍 **Smart Stock Screening**: Intelligent system for discovering investment opportunities based on customizable criteria
+- 📊 **Natural Language Insights**: Plain-language explanations of market trends and investment recommendations
+- 🎓 **Learning-Focused Design**: Educational components that help users understand investment concepts and AI decisions
+- ⚡ **Adaptive Filtering**: Dynamic filters that adjust based on user preferences and investment styles
+- 🛠 **Modern Tech Stack**: Built with React, TypeScript, and Nx in a scalable monorepo architecture
+- 🎨 **User-Centric UI**: Clean interface using Tailwind CSS and shadcn/ui for consistent design patterns
+- 🧪 **Comprehensive Testing**: End-to-end and unit testing with Playwright and Vitest
+- 📱 **Responsive Design**: Mobile-first approach ensuring accessibility across all devices
+- 🔄 **Continuous Integration**: Automated builds and testing through GitHub Actions
+- 📚 **Extensive Documentation**: Detailed documentation of architecture, features, and development practices
 
 ## Why This Project Was Built
 
-While tools like Nx, Tailwind CSS, and Shadcn UI are incredibly powerful and offer numerous benefits for modern front-end development, the process of configuring them can still be time-consuming, error-prone, and frustrating, even for experienced developers. This is because setting up such architectures from scratch is an infrequent task, and each setup can have its own unique challenges and nuances.
+Large Language Models (LLMs) and Agentic AI represent powerful technologies that are transforming software development and user experiences. However, the best way to truly understand and harness these technologies is through hands-on application to real-world problems. This project was born from that philosophy of learning by doing.
 
-This project was built to address these challenges by providing a pre-configured, ready-to-use boilerplate that simplifies the initial setup process. By leveraging this boilerplate, developers can quickly start building their applications without worrying about the complexities of configuration, allowing them to focus on writing code and delivering features.
+Erisfy serves as a practical learning platform where we're actively exploring and implementing:
 
-For more details on why a React SPA boilerplate may still have some value in a Next.js world, see [Why a React SPA Boilerplate in a Next.js World?](./docs/why-spa-why.md)
+- Integration of LLMs for natural language processing and user interactions
+- Development of modular AI agents with specific, focused capabilities
+- Creation of weighted filtering systems that learn and adapt from user feedback
+- Implementation of transparent, explainable AI decision-making processes
+- Building AI-driven features that solve real user problems in the investment space
+
+Rather than just experimenting with AI in isolation, we're building a functional, user-centric application that demonstrates how these technologies can make complex financial data more accessible and actionable for everyday investors. This approach allows us to:
+
+- Learn through practical implementation challenges
+- Document and share insights about integrating AI into modern web applications
+- Create reusable patterns for AI-driven features
+- Build something genuinely useful while advancing our understanding of AI technologies
+
+By focusing on a real-world application in the FinTech space, we ensure our learning is grounded in practical problems and user needs, rather than theoretical exercises. The project aims to be both a learning journey and a useful tool, demonstrating how AI can democratize financial analysis and decision-making.
 
 ## Technologies Used
 
