@@ -18,7 +18,7 @@ Erisfy is an AI-powered financial market analysis tool that helps traders and in
                             │    ▼
               ┌─────────────────────────────────────┐
               │           Backend Server            │
-              │  (Node.js/Express in TypeScript)    │
+              │  (NestJS in TypeScript on Nx)       │
               │   • Data Ingestion & Processing     │
               │   • Scheduling (node-cron)          │
               │   • AI Orchestration (LangChain.js) │
@@ -83,11 +83,11 @@ LangChain.js in TypeScript.
 - Do we need a full “stateful memory” for each agent, or can we rely on ephemeral memory plus database logs?
 - How do we handle long-running asynchronous agent workflows and ensure idempotency if repeated?
 
-### 2.3 Backend (API Gateway & Data Management)
+### 2.3 Backend (API & Data Management)
 
 **Environment:**
 
-Node.js/Express in TypeScript.
+NestJS in TypeScript on Nx, using pnpm for packages.
 
 **Responsibilities:**
 
@@ -101,7 +101,9 @@ Node.js/Express in TypeScript.
 - PostgreSQL for structured trading data and user records.
 - Optional: MongoDB Atlas (or S3-like storage) for large, unstructured AI context logs if needed.
 - Redis or Kafka for real-time data streaming, if high frequency data ingestion becomes a bottleneck.
-- New: We plan to use node-cron (or a job queue like BullMQ if needed in the future) to schedule daily data ingestion tasks (e.g., fetch end-of-day closing prices).
+- Node-cron (or @nestjs/schedule) for daily tasks (end-of-day market data ingestion).
+- Docker Compose for local development (managing Postgres, NestJS API, and React client).
+- Prisma ORM for database operations.
 
 **Outstanding Questions:**
 
@@ -249,7 +251,7 @@ flowchart LR
 
 ## 5. Summary & Next Steps
 
-This document outlines Erisfy’s technical foundation using Node.js/Express for the backend, LangChain.js for agent orchestration, a React/Next.js frontend, and PostgreSQL for data storage. Key additions include:
+This document outlines Erisfy’s technical foundation using NestJS for the backend, LangChain.js for agent orchestration, a React/Next.js frontend, and PostgreSQL for data storage. Key additions include:
 
 - Daily Data Ingestion with node-cron for end-of-day financial data.
 - Local Development with Docker Compose for easy setup of Node, Postgres, and the frontend.
