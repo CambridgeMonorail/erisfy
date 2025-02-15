@@ -4,6 +4,8 @@
 
 # Erisfy
 
+I'm learning LLMs and Agentic AI by building something
+
 ![Project Status](https://img.shields.io/badge/status-alpha-orange?style=for-the-badge)
 ![Version](https://img.shields.io/github/package-json/v/CambridgeMonorail/erisfy?style=for-the-badge)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/CambridgeMonorail/erisfy/ci.yml?style=for-the-badge)
@@ -11,15 +13,6 @@
 ![Last Commit](https://img.shields.io/github/last-commit/CambridgeMonorail/erisfy?style=for-the-badge)
 
 **NOTE: This project is currently in alpha. In fact, it's very alpha. This means it is still under active development and may undergo significant changes. Features may be incomplete or unstable. Got suggestions on what you would like to see or how to make it better? Add an issue and let us know!**
-
-![Performance](./lighthouse-badges/lighthouse_performance.svg)
-![Accessibility](./lighthouse-badges/lighthouse_accessibility.svg)
-![Best Practices](./lighthouse-badges/lighthouse_best-practices.svg)
-![SEO](./lighthouse-badges/lighthouse_seo.svg)
-
-These badges represent the results of Lighthouse audits, which are run to ensure the application meets high standards in performance, accessibility, best practices, and SEO. Note that these audits are conducted for the desktop version of the application, as its primary use case is on desktop, although it is fully responsive.
-
-[View Detailed Lighthouse Report](https://htmlpreview.github.io/?https://github.com/CambridgeMonorail/erisfy/blob/main/lighthouse-badges/cambridgemonorail_github_io_erisfy.html)
 
 ## Table of Contents
 
@@ -32,8 +25,7 @@ These badges represent the results of Lighthouse audits, which are run to ensure
 - [Usage](#usage)
 - [Run tasks](#run-tasks)
 - [Install Nx Console](#install-nx-console)
-- [Make This Your Own](#make-this-your-own)
-- [Add new projects](#add-new-projects)
+- [Projects](#projects)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
@@ -42,9 +34,7 @@ These badges represent the results of Lighthouse audits, which are run to ensure
 
 ## Overview
 
-Erisfy is a fantasy island playground for experimenting with UI and UX for FinTech applications. This repository is a fork of [React Weapons Of Choice](https://cambridgemonorail.github.io/react-weapons-of-choice/) and focuses on building prototype UIs with shadcn/ui components as their foundation. It serves as a sandbox for testing UI/UX concepts and design patterns.
-
-The name "Erisfy" is derived from combining "Eris," the Greek goddess of chaos, strife, and discord, with "fy," which stands for finance. Eris was known as Discordia in Roman mythology. Some texts hold her to be one of the eldest goddesses, the daughter of Nyx, the goddess of night, while others say she is the sister of the war god Ares. The combination of "Eris" and "fy" reflects the project's focus on experimenting with UI and UX for FinTech applications, embracing the dynamic and innovative nature of the field.
+Erisfy is an AI-powered stock screener that simplifies investing by transforming raw market data into clear, actionable insights, enabling investors to discover opportunities, analyze trends, and make confident decisions faster. The project aims to integrate Large Language Models (LLM) and Agentic AI into modern TypeScript-based web products. The project is in its early alpha stage and is a work in progress. The goal is to learn by doing, creating a functional application that showcases the potential of LLM and Agentic AI in FinTech.
 
 ## Project Goals
 
@@ -206,159 +196,25 @@ Nx Console is an editor extension that enriches your developer experience. It le
 
 [Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-# Make This Your Own
+## Projects
 
-Follow these steps to fork and customize the boilerplate for your own project.
+### Current Projects
 
----
+- **Erisfy**: The main project integrating LLM and Agentic AI into a modern TypeScript-based web product.
+- **Shadcn UI**: A customizable component library for consistent and reusable design patterns.
+- **Nx Monorepo**: Modular and scalable workspace for managing multiple projects and libraries.
 
-## 1. Fork the Repository
+### Supporting Documentation
 
-1. Navigate to the **original** repository on GitHub.  
-2. Click the **Fork** button in the upper-right corner to create a personal copy under your GitHub account.  
-3. For detailed instructions, refer to GitHub’s [Fork a repo documentation](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+For detailed information on the projects, refer to the supporting documentation in the `docs/specs` directory:
 
----
-
-## 2. Clone the Forked Repository
-
-1. Locate the **forked** repository on your GitHub account.  
-2. Click the **Code** button and copy the repository’s URL.  
-3. Open your terminal and run:
-
-    ```bash
-    git clone https://github.com/<your-username>/<your-forked-repo>.git
-    ```
-
-   Replace `<your-username>` with your GitHub username and `<your-forked-repo>` with the repository name.
-
----
-
-## 3. Update Project Identifiers
-
-You can update project identifiers either **manually** or by using the **setup script** included in this boilerplate.
-
-### 3.1 Manual Update
-
-1. Perform a global **search and replace** across the codebase to update:
-   - Project name  
-   - URLs  
-   - Branding elements  
-   - Any other relevant identifiers  
-   - **Images**: Replace the following images with ones suitable for your use case:
-     - `apps\client\src\assets\images\app-logo.webp`
-     - `docs/images/logos/app-logo.svg`
-
-2. Ensure **all** instances of the original project name are replaced with your new project name.
-
-### 3.2 Using the Setup Script
-
-1. **Install project dependencies**:
-
-    ```bash
-    pnpm install
-    ```
-
-2. **Run the setup script**:
-
-    ```bash
-    pnpm run setup
-    ```
-
-   The script will prompt you to replace:
-   - **Organization**: e.g., “CambridgeMonorail” → “YourOrgName”  
-
-   - **Machine-Readable App Name**: e.g., “erisfy” → “my-awesome-app”  
-   - **Human-Readable App Name**: e.g., “Erisfy” → “My Awesome App”  
-   - **Machine-Readable App Name**: e.g., “react-weapons-of-choice” → “my-awesome-app”  
-   - **Human-Readable App Name**: e.g., “React Weapons of Choice” → “My Awesome App”  
-   - **Abbreviation**: e.g., “erisfy” → “maa”  
-
-   You will also have the option to set a **new Git remote** URL.
-
----
-
-## 4. Modify Configuration Files
-
-1. Review and update configuration files—such as `package.json` and `.env`—to align them with your project’s requirements.  
-2. Adjust metadata, dependencies, environment variables, and other project-specific settings as needed.
-
----
-
-## 5. Review Documentation
-
-1. **Replace** references to the original project with your new project details.  
-2. Update any relevant documentation (e.g., README, wiki pages) to reflect your project’s context and branding.
-
----
-
-## 6. Set Up a New Remote Repository
-
-1. Create a **new repository** on GitHub for your customized project.  
-2. In your terminal, **navigate** to your project’s directory and run:
-
-    ```bash
-    git remote remove origin
-    git remote add origin https://github.com/<your-username>/<your-new-repo>.git
-    ```
-
-   Replace `<your-username>` with your GitHub username and `<your-new-repo>` with the new repository name.
-
----
-
-## 7. Push Changes to the New Repository
-
-1. Push your local changes to the new remote repository:
-
-    ```bash
-    git push -u origin main
-    ```
-
-   Make sure your local branch is named `main`. If not, replace `main` with the correct branch name.
-
----
-
-## 8. Install Dependencies and Initialize Git Hooks
-
-1. **Install** any required dependencies (if you haven’t already):
-
-    ```bash
-    pnpm install
-    ```
-
-2. **Set up Git hooks** or other initialization scripts:
-
-    ```bash
-    pnpm run prepare
-    ```
-
-   This typically configures hooks like pre-commit or lint-staged checks.
-
----
-
-By following these steps, you can fully customize the boilerplate to fit your project’s needs while maintaining a clean, organized codebase.
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/react:app client
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/react:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [01 - Elevator Pitch](./docs/specs/01%20-%20elevator%20pitch.md)
+- [02 - Pitch](./docs/specs/02%20-%20pitch.md)
+- [03 - Competitor Analysis](./docs/specs/03%20-%20Competitor%20Analysis.md)
+- [04 - Product Requirements Document (PRD)](./docs/specs/04%20-%20PRD.md)
+- [05 - Technical Requirements Document (TRD)](./docs/specs/05%20-%20TRD.md)
+- [06 - Implementation Plan](./docs/specs/06%20-%20Implementation%20Plan.md)
+- [07 - Modular Agent Architecture](./docs/specs/07%20-%20Modular%20Agent%20Architecture.md)
 
 ## Theming Your App
 
