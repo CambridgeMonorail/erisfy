@@ -72,13 +72,13 @@ ERISFY/
 
    ```bash
    cd ERISFY
-   npm install -D @nrwl/nest
+   pnpm add -D @nrwl/nest
    ```
 
 2. **Generate the NestJS app**:
 
    ```bash
-   npx nx g @nrwl/nest:app api
+   pnpm exec nx g @nrwl/nest:app api
    ```
 
    - This creates a new NestJS application in `apps/api`, with a default structure (e.g., `main.ts`, `app.module.ts`, etc.).
@@ -169,14 +169,14 @@ export class FinanceService {
 
    ```bash
    cd ERISFY
-   npm install -D prisma
-   npm install @prisma/client
+   pnpm add -D prisma
+   pnpm add @prisma/client
    ```
 
 2. **Initialize**:
 
    ```bash
-   npx prisma init
+   pnpm exec prisma init
    ```
 
    This typically creates a `prisma/` folder at the root or within `apps/api`. Decide where you want it. A common approach is `apps/api/prisma/`.
@@ -204,8 +204,8 @@ export class FinanceService {
 4. **Migrate & Generate**:
 
    ```bash
-   npx prisma migrate dev --name init
-   npx prisma generate
+   pnpm exec prisma migrate dev --name init
+   pnpm exec prisma generate
    ```
 
 ### 3.2 Using Prisma in NestJS
@@ -288,7 +288,7 @@ You have two main approaches:
 ### Example with NestJS Schedule
 
 ```bash
-npm install @nestjs/schedule
+pnpm add @nestjs/schedule
 ```
 
 ```ts
@@ -445,7 +445,7 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/erisfydb
-    command: ["npx", "nx", "serve", "api", "--host=0.0.0.0"]
+    command: ["pnpm", "exec", "nx", "serve", "api", "--host=0.0.0.0"]
 
   client:
     build:
@@ -457,7 +457,7 @@ services:
       - "4200:4200"
     depends_on:
       - api
-    command: ["npx", "nx", "serve", "client", "--host=0.0.0.0"]
+    command: ["pnpm", "exec", "nx", "serve", "client", "--host=0.0.0.0"]
 ```
 
 ### 6.2 Dockerfiles
@@ -468,7 +468,7 @@ services:
   FROM node:18-alpine
   WORKDIR /workspace
   COPY package*.json ./
-  RUN npm install
+  RUN pnpm install
   COPY . .
   EXPOSE 3001
   ```
@@ -479,7 +479,7 @@ services:
   FROM node:18-alpine
   WORKDIR /workspace
   COPY package*.json ./
-  RUN npm install
+  RUN pnpm install
   COPY . .
   EXPOSE 4200
   ```
@@ -503,8 +503,8 @@ For **Erisfy** deployment, the general steps are:
 1. **Build** each app with Nx:
 
    ```bash
-   npx nx build api
-   npx nx build client
+   pnpm exec nx build api
+   pnpm exec nx build client
    ```
 
 2. **Dockerize** or push build artifacts to your chosen platform.  
