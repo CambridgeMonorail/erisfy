@@ -439,7 +439,7 @@ ERISFY/
 ### 6.1 docker-compose.yml (Example)
 
 ```yaml
-version: '3'
+version: '3.9'
 services:
   db:
     image: postgres:15
