@@ -5,6 +5,7 @@
 This implementation plan outlines the technical architecture and development approach for **Erisfy**, an AI-powered stock screening platform. The document provides a comprehensive guide for setting up the development environment, implementing core features, and deploying the application.
 
 The plan details how to build Erisfy using a modern tech stack within an Nx monorepo structure, with:
+
 - A React-based front end in `apps/client` for the user interface
 - A NestJS backend service with Prisma ORM for data management
 - Docker Compose for local development
@@ -25,6 +26,8 @@ Each section provides specific implementation steps, code examples, and best pra
 8. [Future Expansion & Considerations](#future-expansion--considerations)  
 9. [Summary](#summary)
 
+---
+
 ## 1. Overview
 
 **Erisfy** is an AI-powered application that combines a **React** front end with a **NestJS** middle layer, **PostgreSQL** (managed via **Prisma**), scheduling (with **node-cron**), local-first development (with **Docker Compose**), and deployment to low-cost or free-tier platforms.
@@ -37,7 +40,7 @@ Within your **ERISFY** Nx monorepo, you currently have:
 
 Simplified architecture diagram:
 
-```
+```yaml
  ┌─────────────────┐         ┌───────────────────┐       ┌─────────────────────┐
  │ React (client)  │  <–––>  │ NestJS (api)      │ <–––> │ PostgreSQL Database │
  └─────────────────┘         └───────────────────┘       └─────────────────────┘
@@ -47,13 +50,15 @@ Simplified architecture diagram:
    External APIs (OpenAI, financial datasets, etc.)
 ```
 
+---
+
 ## 2. Setting Up the Node.js API (NestJS + Nx)
 
 ### 2.1. Nx Monorepo Structure for Erisfy
 
 A typical folder layout in **ERISFY** might now look like this:
 
-```
+```text
 ERISFY/
  ├─ apps/
  │   ├─ client              // React front end
@@ -72,16 +77,16 @@ ERISFY/
 
    ```bash
    cd ERISFY
-   pnpm add -D @nrwl/nest
+   pnpm add -D @nx/nest
    ```
 
-2. **Generate the NestJS app**:
+2. **Generate the NestJS App**:
 
    ```bash
-   pnpm exec nx g @nrwl/nest:app api
+   pnpm exec nx g @nx/nest:app api
    ```
 
-   - This creates a new NestJS application in `apps/api`, with a default structure (e.g., `main.ts`, `app.module.ts`, etc.).
+   This creates a new NestJS application in `apps/api` with a default structure (e.g., `main.ts`, `app.module.ts`, etc.).
 
 ### 2.3 Basic NestJS Setup
 
@@ -115,7 +120,7 @@ ERISFY/
 
 ### 2.4 Example Finance Module
 
-Create a folder `apps/api/src/modules/finance/`. Then:
+Create a folder `apps/api/src/modules/finance/` and then add:
 
 ```ts
 // apps/api/src/modules/finance/finance.module.ts
@@ -131,7 +136,7 @@ export class FinanceModule {}
 ```
 
 ```ts
-// finance.controller.ts
+// apps/api/src/modules/finance/finance.controller.ts
 import { Controller, Get } from '@nestjs/common';
 import { FinanceService } from './finance.service';
 
@@ -147,7 +152,7 @@ export class FinanceController {
 ```
 
 ```ts
-// finance.service.ts
+// apps/api/src/modules/finance/finance.service.ts
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
@@ -161,6 +166,8 @@ export class FinanceService {
 }
 ```
 
+---
+
 ## 3. Database (Postgres) & ORM (Prisma)
 
 ### 3.1 Installing & Initializing Prisma
@@ -173,13 +180,13 @@ export class FinanceService {
    pnpm add @prisma/client
    ```
 
-2. **Initialize**:
+2. **Initialize Prisma**:
 
    ```bash
    pnpm exec prisma init
    ```
 
-   This typically creates a `prisma/` folder at the root or within `apps/api`. Decide where you want it. A common approach is `apps/api/prisma/`.
+   This creates a `prisma/` folder. A common approach is to move this folder to `apps/api/prisma/`.
 
 3. **Schema Configuration** (`schema.prisma` example):
 
@@ -242,7 +249,7 @@ import { PrismaService } from '../../prisma.service';
 export class DatabaseModule {}
 ```
 
-Then import **DatabaseModule** in your feature modules:
+Then import **DatabaseModule** in your feature modules (e.g., FinanceModule):
 
 ```ts
 // apps/api/src/modules/finance/finance.module.ts
@@ -259,10 +266,10 @@ import { DatabaseModule } from '../database/database.module';
 export class FinanceModule {}
 ```
 
-And use **PrismaService**:
+And use **PrismaService** in your service:
 
 ```ts
-// finance.service.ts
+// apps/api/src/modules/finance/finance.service.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 
@@ -271,25 +278,30 @@ export class FinanceService {
   constructor(private prisma: PrismaService) {}
 
   async fetchClosingPrices() {
-    // e.g., read from DB or external API
     const closes = await this.prisma.dailyClose.findMany();
     return closes;
   }
 }
 ```
 
+---
+
 ## 4. Scheduling Jobs with node-cron
 
 You have two main approaches:
 
-1. **Use @nestjs/schedule** (recommended for Nest).
-2. **Use node-cron** directly.
+1. **Use @nestjs/schedule** (recommended for Nest)
+2. **Use node-cron directly**
 
 ### Example with NestJS Schedule
+
+Install the schedule package:
 
 ```bash
 pnpm add @nestjs/schedule
 ```
+
+Update your FinanceModule to import the schedule module:
 
 ```ts
 // apps/api/src/modules/finance/finance.module.ts
@@ -306,8 +318,10 @@ import { FinanceController } from './finance.controller';
 export class FinanceModule {}
 ```
 
+In your FinanceService, use the Cron decorator:
+
 ```ts
-// finance.service.ts
+// apps/api/src/modules/finance/finance.service.ts
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
@@ -322,14 +336,16 @@ export class FinanceService {
 }
 ```
 
+---
+
 ## 5. Front-End (React) Integration & Shared Types
 
 ### 5.1 Nx Libraries for Shared Types
 
-Generate a **shared-types** library:
+Generate a **shared-types** library using the updated Nx command:
 
 ```bash
-npx nx g @nrwl/workspace:lib shared-types
+npx nx g lib shared-types
 ```
 
 Add your interfaces in `libs/shared-types/src/index.ts`:
@@ -346,7 +362,7 @@ export interface DailyCloseDTO {
 // add more as needed...
 ```
 
-Import in **NestJS** or **React**:
+Import these shared types in both your NestJS and React apps:
 
 ```ts
 // In NestJS (apps/api)
@@ -360,16 +376,15 @@ import { DailyCloseDTO } from '@erisfy/shared-types';
 
 ### 5.2 React Integration (apps/client)
 
-1. **Serve** your front end with:
+Serve your React front end:
 
-   ```bash
-   npx nx serve client
-   ```
+```bash
+npx nx serve client
+```
 
-   Usually runs on `http://localhost:4200`.
-2. **NestJS** typically runs on port `3001`, so the client can fetch data from `http://localhost:3001/finance/closing-prices`.
+Assuming your NestJS API runs on port 3001, the client can fetch data from `http://localhost:3001/finance/closing-prices`.
 
-Example snippet:
+Example component:
 
 ```tsx
 // apps/client/src/components/FinanceData.tsx
@@ -401,9 +416,11 @@ export function FinanceData() {
 }
 ```
 
+---
+
 ## 6. Local Development with Docker Compose
 
-You can still keep a **local-first** strategy using Docker Compose. For instance:
+Maintain a local-first strategy using Docker Compose:
 
 ```
 ERISFY/
@@ -486,59 +503,79 @@ services:
 
 ### 6.3 Running Locally
 
+Run the following command to build and start the services:
+
 ```bash
 docker-compose up --build
 ```
 
-This spins up:
+This command spins up:
 
 1. **Postgres** on port **5432**
 2. **NestJS API** on **3001**
 3. **React Client** on **4200**
 
+---
+
 ## 7. Deployment to Low-Cost Platforms
 
-For **Erisfy** deployment, the general steps are:
+For deployment of **Erisfy**:
 
-1. **Build** each app with Nx:
+1. **Build the Applications**:
 
    ```bash
    pnpm exec nx build api
    pnpm exec nx build client
    ```
 
-2. **Dockerize** or push build artifacts to your chosen platform.  
-3. **Configure environment variables** (like `DATABASE_URL`, `OPENAI_API_KEY`) via the platform’s dashboard.  
-4. **Set up Postgres** (through the platform’s managed DB service or your own container).  
-5. **Cron Jobs**: If you rely on `@nestjs/schedule` or `node-cron`, ensure the platform supports persistent containers; otherwise, use a third-party scheduler.
+2. **Dockerize or Deploy Artifacts**:  
+   Containerize your apps or push build artifacts to your chosen provider.
 
-Common platforms: **Railway**, **Render**, **Fly.io**, or you can use **AWS** or **Azure** if you need more control.
+3. **Configure Environment Variables**:  
+   Set variables such as `DATABASE_URL` and `OPENAI_API_KEY` via the platform’s dashboard.
+
+4. **Database Setup**:  
+   Use the platform’s managed PostgreSQL service or deploy your own container.
+
+5. **Scheduling Jobs**:  
+   Ensure your platform supports persistent containers (for using `@nestjs/schedule` or node-cron) or opt for a third-party scheduler.
+
+Common deployment platforms include **Railway**, **Render**, **Fly.io**, or cloud providers like **AWS** and **Azure** for more control.
+
+---
 
 ## 8. Future Expansion & Considerations
 
 1. **LangChain**  
-   - Integrate advanced prompt chaining or retrieval augmentation in your NestJS modules.  
-   - Possibly store embeddings in a vector DB or use `pgvector` in Postgres.
+   - Integrate advanced prompt chaining or retrieval augmentation in your NestJS modules.
+   - Consider storing embeddings in a vector DB or using `pgvector` in PostgreSQL.
+
 2. **Queues & Scalability**  
-   - If scheduling tasks becomes heavy, consider a queue like **BullMQ** with Redis, or Nest’s built-in queue module.  
+   - If scheduled tasks increase in load, explore a queue system like **BullMQ** with Redis or use Nest’s built-in queue module.
+
 3. **Authentication**  
-   - Use [@nestjs/passport](https://docs.nestjs.com/security/authentication) or other Nest auth strategies.  
+   - Implement authentication strategies using [@nestjs/passport](https://docs.nestjs.com/security/authentication) or other Nest auth modules.
+
 4. **Testing**  
-   - Nx sets up Jest for both the client and Nest. Use `nx test api` or `nx test client`.  
+   - Nx sets up Jest for both client and API. Run tests with `nx test api` or `nx test client`.
+
 5. **Logging & Monitoring**  
-   - Tools like `@nestjs/pino` or `winston` for logs; APM services for performance monitoring.  
+   - Integrate logging libraries such as `@nestjs/pino` or `winston` and consider using APM services for monitoring performance.
+
 6. **Prisma Migrations**  
-   - Continue to manage DB migrations with `prisma migrate`, which can be hooked into Nx using custom targets.
+   - Continue managing migrations with `prisma migrate`, and consider integrating these steps as custom Nx targets.
+
+---
 
 ## 9. Summary
 
-The **Erisfy** project can now be structured within an **Nx** monorepo, with:
+The **Erisfy** project is structured within an **Nx** monorepo using:
 
 - **apps/client**: The React front end  
 - **apps/api**: The NestJS + Prisma back end  
 - **libs/shared-types**: Shared TypeScript interfaces and DTOs  
 
-**Docker Compose** provides a simple, local-first strategy for running the entire stack (Postgres, API, and Client). **Deployment** remains straightforward on low-cost providers, especially if you containerize or build your apps via Nx. This updated approach ensures better **type safety**, improved **modularity**, and a clean path for future expansions such as **LangChain**, advanced scheduling, or additional AI integrations.
+Docker Compose provides a local-first approach for running the entire stack (Postgres, API, and Client). Deployment remains straightforward on low-cost providers, especially when containerizing or building the apps via Nx. These updates—particularly replacing the deprecated `@nrwl/nest` package with `@nx/nest`—ensure better type safety, improved modularity, and a clean path for future expansions such as LangChain integrations, advanced scheduling, or additional AI functionalities.
 
 ---
 
