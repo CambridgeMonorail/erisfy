@@ -21,9 +21,10 @@ I'm learning LLMs and Agentic AI by building something
 - [Features](#features)
 - [Why This Project Was Built](#why-this-project-was-built)
 - [Technologies Used](#technologies-used)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Run tasks](#run-tasks)
+- [Running Locally](#running-locally)
+- [Development Tasks](#development-tasks)
 - [Install Nx Console](#install-nx-console)
 - [Projects](#projects)
 - [Contributing](#contributing)
@@ -121,6 +122,14 @@ By focusing on a real-world application in the FinTech space, we ensure our lear
 - **Visual Studio Code**: [A source-code editor made by Microsoft for Windows, Linux, and macOS.](https://code.visualstudio.com/)
 - **GitHub Copilot**: [An AI pair programmer that helps you write code faster and with less work.](https://github.com/features/copilot)
 
+## Prerequisites
+
+To use Erisfy, make sure you have the following installed and configured:
+
+- Node.js v20.14.0 (or higher)
+- pnpm v9.15.0 (or higher)
+- Docker Desktop (required for certain services)
+
 ## Installation
 
 To install the project, follow these steps:
@@ -143,7 +152,7 @@ To install the project, follow these steps:
     pnpm install
     ```
 
-## Usage
+## Running Locally
 
 To run the dev server for your app, use:
 
@@ -167,7 +176,7 @@ These targets are either [inferred automatically](https://nx.dev/concepts/inferr
 
 [More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-## Run Tasks
+## Development Tasks
 
 The following scripts are available to manage and build the project:
 

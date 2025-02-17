@@ -8,3 +8,28 @@ generator client {
 }
 
 
+model MarketDataRecord {
+  id       String        @id @default(uuid()) 
+  date     String        // Store the date as a string or ISO date
+  stories  MarketStory[] // Relation to MarketStory
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model MarketStory {
+  id               String           @id @default(uuid())
+  title            String
+  one_line_summary String
+  whats_happening  String
+  market_impact    String
+  // store sector as an enum or just string
+  market_sector    String
+
+  // foreign key
+  marketDataRecordId String
+  marketDataRecord   MarketDataRecord @relation(fields: [marketDataRecordId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
