@@ -174,7 +174,7 @@ When running the database for the first time:
 
 2. Run database migrations:
    ```sh
-   pnpm run prisma:migrate
+   nx run server:prisma-migrate
    ```
 
 This will create the necessary database schema and apply any pending migrations.

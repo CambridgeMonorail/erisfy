@@ -40,7 +40,7 @@
     "lint:shadcnui": "nx lint shadcnui",
     "precommit": "pnpm run lint:all && pnpm run type-check:all && pnpm run build:all && pnpm run test:all ",
     "prepare": "husky",
-    "prisma:migrate": "pnpm exec prisma migrate dev --schema apps/server/prisma/schema.prisma",
+    "prisma:migrate": "nx run server:prisma-migrate",
     "serve:client": "nx serve client",
     "serve:docker": "docker-compose up --build",
     "serve:server": "nx serve server",
