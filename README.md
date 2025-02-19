@@ -1,8 +1,6 @@
-<p align="center">
-  <img src="docs/images/logos/app-logo.svg" alt="Erisfy Logo" width="25%" height="25%">
-</p>
-
 # Erisfy
+
+![Erisfy Logo](docs/images/logos/app-logo.svg)
 
 I'm learning LLMs and Agentic AI by building something
 
@@ -130,27 +128,56 @@ To use Erisfy, make sure you have the following installed and configured:
 - pnpm v9.15.0 (or higher)
 - Docker Desktop (required for certain services)
 
+### Environment Configuration
+
+The [server application](./apps/server) requires environment variables to be configured. We use different environment files for development and production:
+
+- `.env.development`: Local development environment (not committed to source control)
+- `.env.production`: Production environment with placeholders (populated by CI pipeline)
+- `.env.example`: Example configuration template
+
+Follow these steps for local development:
+
+1. Navigate to the server application directory:
+
+   ```sh
+   cd apps/server
+   ```
+
+2. Copy the example environment file to create your development environment:
+
+   ```sh
+   cp .env.example .env.development
+   ```
+
+3. Edit `.env.development` and set your environment variables:
+   - `PORT`: The server port (defaults to 3001)
+   - `NODE_ENV`: The environment (development/production/test)
+   - `OPENAI_API_KEY`: Your OpenAI API key (required)
+
+**Note**: The `.env.development` file contains sensitive information and is not committed to the repository. Each developer needs to maintain their own `.env.development` file locally.
+
 ## Installation
 
 To install the project, follow these steps:
 
 1. Clone the repository:
 
-    ```sh
-    git clone https://github.com/CambridgeMonorail/erisfy.git
-    ```
+   ```sh
+   git clone https://github.com/CambridgeMonorail/erisfy.git
+   ```
 
 2. Navigate to the project directory:
 
-    ```sh
-    cd erisfy
-    ```
+   ```sh
+   cd erisfy
+   ```
 
 3. Install dependencies:
 
-    ```sh
-    pnpm install
-    ```
+   ```sh
+   pnpm install
+   ```
 
 ## Running Locally
 
@@ -270,10 +297,11 @@ VITE_REACT_APP_USE_MOCKS=true
 
 ## Running Tests with MSW
 
-To run tests with MSW, follow these steps:
+To run tests with MSW:
 
-1. Ensure that the mock server is set up in the `apps/client/src/mocks/server.ts` file.
-2. Import and start the mock server in your test setup file (`apps/client/src/test/setup.ts`).
+First, ensure that the mock server is set up in the `apps/client/src/mocks/server.ts` file.
+
+Next, import and start the mock server in your test setup file (`apps/client/src/test/setup.ts`):
 
 ```typescript
 import { server } from '../mocks/server';
@@ -283,7 +311,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 ```
 
-3. Write your tests as usual, and MSW will intercept the API requests and return the mock responses.
+Finally, write your tests as usual, and MSW will intercept the API requests and return the mock responses.
 
 ## Reference Documentation
 
