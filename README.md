@@ -207,6 +207,20 @@ If you encounter errors:
 - Check logs: `docker-compose logs db`
 - Confirm environment variables match Docker settings
 
+> Note: Nx runs Prisma commands in a non-interactive shell, so you may not be prompted for a migration name. You can work around this by:
+>
+> - Running Prisma directly in an interactive shell:
+>
+>   ```sh
+>   npx prisma migrate dev --name your_migration
+>   ```
+>
+> - Passing the `--name` argument via Nx:
+>
+>   ```sh
+>   nx run server:prisma-migrate -- --name your_migration
+>   ```
+
 ## Installation
 
 To install the project, follow these steps:
@@ -259,7 +273,7 @@ To run Erisfy locally, you'll need to start multiple services in the following o
 
 ### Docker Configuration
 
-The project uses Docker Compose to manage the PostgreSQL database service and pgAdmin for database management. The configuration is defined in `docker-compose.yml`:
+The project uses Docker Compose to manage the PostgreSQL database service and Adminer for database management. The configuration is defined in `docker-compose.yml`:
 
 ```yaml
 version: '3'
@@ -272,13 +286,10 @@ services:
       - POSTGRES_DB=erisfydb
     ports:
       - "5432:5432"
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@example.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
+  adminer:
+    image: adminer
     ports:
-      - "80:80"
+      - "8080:8080"
     depends_on:
       - db
 ```
@@ -289,18 +300,16 @@ This configuration:
 - Creates a database named 'erisfydb'
 - Sets up default credentials (username: postgres, password: postgres)
 - Maps port 5432 on your host machine to port 5432 in the container
-- Includes pgAdmin 4 for database management
-  - Access pgAdmin at <http://localhost:80>
-  - Login with email: <admin@example.com>, password: admin
-  - To connect to the database:
-    1. Right click "Servers" → "Register" → "Server"
-    2. General tab: Name the connection (e.g., "Local PostgreSQL")
-    3. Connection tab:
-       - Host: db (the service name in docker-compose)
-       - Port: 5432
-       - Database: erisfydb
-       - Username: postgres
-       - Password: postgres
+- Includes Adminer for database management
+
+Adminer:
+
+- Runs at <http://localhost:8080>
+- System: PostgreSQL
+- Server: db
+- Username: postgres
+- Password: postgres
+- Database: erisfydb
 
 #### Managing the Docker Container
 
