@@ -4,90 +4,26 @@ import {
   CardHeader, 
   CardTitle, 
   CardContent, 
-  Badge,
-  Separator,
-  cn
+  cn,
+  Button
 } from '@erisfy/shadcnui';
 import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
-import { AlertCircle, TrendingDown } from 'lucide-react';
-import { MarketStory } from '@erisfy/api';
-import { useMarketInsights } from '../hooks/useMarketInsights';
-
-
-type MarketStoryCardProps = {
-  story: MarketStory;
-};
-
-const MarketStoryCard: FC<MarketStoryCardProps> = ({ story }) => {
-  const { title, one_line_summary, whats_happening, market_impact, market_sector } = story;
-  
-  return (
-    <Card className="mb-4 border hover:border-primary/20 transition-colors duration-200 shadow-sm hover:shadow-md">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold leading-tight">{title}</CardTitle>
-          <Badge 
-            variant="outline" 
-            className="bg-background/50 hover:bg-background/80 transition-colors"
-          >
-            {market_sector}
-          </Badge>
-        </div>
-        <p className="text-sm text-muted-foreground mt-2 leading-normal">
-          {one_line_summary}
-        </p>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-4">
-          <div className="bg-background/50 rounded-lg p-3">
-            <h4 className="font-medium mb-2 text-sm uppercase tracking-wide">
-              What's Happening
-            </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {whats_happening}
-            </p>
-          </div>
-          <Separator className="my-2" />
-          <div className="bg-background/50 rounded-lg p-3">
-            <h4 className="font-medium mb-2 text-sm uppercase tracking-wide">
-              Market Impact
-            </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {market_impact}
-            </p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+import { AlertCircle, RefreshCw } from 'lucide-react';
+import { useMarketNews } from '../hooks/useMarketNews';
 
 export interface AIPoweredMarketOverviewProps {
   className?: string;
-  date?: string;
 }
 
-const getDefaultDate = (): string => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ 
-  className,
-  date = getDefaultDate()
+  className
 }) => {
-  const { insights, isLoading, error } = useMarketInsights(date);
-
-
-  console.log('insights', insights);
+  const { news, isLoading, error, isUpdating, triggerUpdate } = useMarketNews();
   
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64 bg-background/50 rounded-lg">
-        <Spinner size="lg" aria-label="Loading market insights" />
+        <Spinner size="lg" aria-label="Loading market news" />
       </div>
     );
   }
@@ -98,7 +34,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
         <CardHeader>
           <div className="flex items-center space-x-2">
             <AlertCircle className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-destructive">Error Loading Market Insights</CardTitle>
+            <CardTitle className="text-destructive">Error Loading Market News</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -108,12 +44,12 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
     );
   }
 
-  if (!insights || !insights.stories) {
+  if (!news || !news.stories) {
     return (
       <Card className={cn("border-muted bg-muted/5", className)}>
         <CardContent className="p-6">
           <p className="text-center text-muted-foreground">
-            No market insights available
+            No market news available
           </p>
         </CardContent>
       </Card>
@@ -124,9 +60,21 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
     <Card className={cn("bg-card border shadow-md", className)}>
       <CardHeader className="border-b bg-muted/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold">Market Insights</CardTitle>
+          <div className="flex items-center gap-4">
+            <CardTitle className="text-xl font-semibold">Market News</CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={triggerUpdate}
+              disabled={isUpdating}
+              className="gap-2"
+            >
+              <RefreshCw className={cn("h-4 w-4", isUpdating && "animate-spin")} />
+              {isUpdating ? "Updating..." : "Update News"}
+            </Button>
+          </div>
           <p className="text-sm text-muted-foreground font-medium">
-            {new Date(insights.date).toLocaleDateString('en-US', {
+            {new Date(news.date).toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
@@ -136,7 +84,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <NewsCarousel stories={insights.stories} />
+        <NewsCarousel stories={news.stories} />
       </CardContent>
     </Card>
   );

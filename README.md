@@ -5,10 +5,10 @@
 I'm learning LLMs and Agentic AI by building something
 
 ![Project Status](https://img.shields.io/badge/status-alpha-orange?style=for-the-badge)
-![Version](https://img.shields.io/github/package-json/v/CambridgeMonorail/erisfy?style=for-the-badge)
-![Build Status](https://img.shields.io/github/actions/workflow/status/CambridgeMonorail/erisfy/ci.yml?style=for-the-badge)
-![License](https://img.shields.io/github/license/CambridgeMonorail/erisfy?style=for-the-badge)
-![Last Commit](https://img.shields.io/github/last-commit/CambridgeMonorail/erisfy?style=for-the-badge)
+![Version](https://img.shields.io/github/package-json/v/CambridgeMonorail/erisfy)
+![Build Status](https://img.shields.io/github/actions/workflow/status/CambridgeMonorail/erisfy/ci.yml)
+![License](https://img.shields.io/github/license/CambridgeMonorail/erisfy)
+![Last Commit](https://img.shields.io/github/last-commit/CambridgeMonorail/erisfy)
 
 **NOTE: This project is currently in alpha. In fact, it's very alpha. This means it is still under active development and may undergo significant changes. Features may be incomplete or unstable. Got suggestions on what you would like to see or how to make it better? Add an issue and let us know!**
 
@@ -168,16 +168,44 @@ These environment variables should match the values in `docker-compose.yml`. If 
 When running the database for the first time:
 
 1. Start the Docker container:
+
    ```sh
    pnpm run serve:docker
    ```
 
 2. Run database migrations:
+
    ```sh
    nx run server:prisma-migrate
    ```
 
 This will create the necessary database schema and apply any pending migrations.
+
+#### Updating the Database & Troubleshooting
+
+If you modify the Prisma schema, create and apply a new migration:
+
+```sh
+pnpm run prisma:migrate
+```
+
+If you have changes pending in the DB (e.g., from another branch), pull them into your local schema:
+
+```sh
+npx prisma db pull
+```
+
+Then update the generated Prisma client:
+
+```sh
+npx prisma generate
+```
+
+If you encounter errors:
+
+- Verify Docker is running and ports are not in use
+- Check logs: `docker-compose logs db`
+- Confirm environment variables match Docker settings
 
 ## Installation
 
@@ -231,7 +259,7 @@ To run Erisfy locally, you'll need to start multiple services in the following o
 
 ### Docker Configuration
 
-The project uses Docker Compose to manage the PostgreSQL database service. The configuration is defined in `docker-compose.yml`:
+The project uses Docker Compose to manage the PostgreSQL database service and pgAdmin for database management. The configuration is defined in `docker-compose.yml`:
 
 ```yaml
 version: '3'
@@ -244,13 +272,35 @@ services:
       - POSTGRES_DB=erisfydb
     ports:
       - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "80:80"
+    depends_on:
+      - db
 ```
 
 This configuration:
+
 - Uses PostgreSQL version 15
 - Creates a database named 'erisfydb'
 - Sets up default credentials (username: postgres, password: postgres)
 - Maps port 5432 on your host machine to port 5432 in the container
+- Includes pgAdmin 4 for database management
+  - Access pgAdmin at <http://localhost:80>
+  - Login with email: <admin@example.com>, password: admin
+  - To connect to the database:
+    1. Right click "Servers" → "Register" → "Server"
+    2. General tab: Name the connection (e.g., "Local PostgreSQL")
+    3. Connection tab:
+       - Host: db (the service name in docker-compose)
+       - Port: 5432
+       - Database: erisfydb
+       - Username: postgres
+       - Password: postgres
 
 #### Managing the Docker Container
 
@@ -387,6 +437,7 @@ The API mocking configuration is specific to the client application located in `
 
 1. Open the `.env` file in the `apps/client` directory
 2. Set the `VITE_REACT_APP_USE_MOCKS` environment variable:
+
    ```ini
    # Enable mocks for GitHub Pages deployment or local frontend-only development
    VITE_REACT_APP_USE_MOCKS=true
@@ -396,6 +447,7 @@ The API mocking configuration is specific to the client application located in `
    ```
 
 When mocks are enabled, the client application will intercept API requests and return mock data instead of attempting to communicate with the backend server. This is particularly useful for:
+
 - GitHub Pages deployments where no backend is available
 - Frontend development and testing
 - Creating demonstrations and previews
@@ -404,6 +456,7 @@ When mocks are enabled, the client application will intercept API requests and r
 ### Mock Implementation Details
 
 The mock service implementation for the client is located in:
+
 - `apps/client/src/mocks/` - Main mocking setup and handlers
 - `apps/client/src/mocks/handlers/` - API endpoint mock implementations
 - `apps/client/src/mocks/data/` - Mock data responses
@@ -415,6 +468,7 @@ To add or modify mock endpoints:
 3. Register handlers in `apps/client/src/mocks/browser.ts`
 
 Example mock handler:
+
 ```typescript
 // apps/client/src/mocks/handlers/stockHandler.ts
 rest.get('/api/stocks', (req, res, ctx) => {
@@ -423,6 +477,7 @@ rest.get('/api/stocks', (req, res, ctx) => {
 ```
 
 When deploying to GitHub Pages, these mocks ensure that:
+
 - The application remains functional without a backend
 - Features can be demonstrated to stakeholders
 - UI/UX can be reviewed in a production-like environment
@@ -449,10 +504,12 @@ Finally, write your tests as usual, and MSW will intercept the API requests and 
 When working on frontend features, you can choose between using mocked or real API endpoints:
 
 1. **Local Development with Mocks** (No Backend Required):
+
    ```env
    # apps/client/.env.development
    VITE_REACT_APP_USE_MOCKS=true
    ```
+
    Perfect for:
    - Initial UI development
    - Prototyping new features
@@ -460,27 +517,33 @@ When working on frontend features, you can choose between using mocked or real A
    - Frontend-only changes
 
 2. **Full Stack Development** (Backend Required):
+
    ```env
    # apps/client/.env.development
    VITE_REACT_APP_USE_MOCKS=false
    ```
+
    Used when:
    - Testing real API integration
    - Developing backend features
    - Validating end-to-end functionality
 
 3. **Production Deployment**:
+
    ```env
    # apps/client/.env.production
    VITE_REACT_APP_USE_MOCKS=false
    ```
+
    Always use real API endpoints in production.
 
 4. **GitHub Pages Deployment**:
+
    ```env
    # apps/client/.env.production
    VITE_REACT_APP_USE_MOCKS=true
    ```
+
    Enables demonstration of frontend features without backend deployment.
 
 ## Reference Documentation
