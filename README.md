@@ -1,16 +1,14 @@
-<p align="center">
-  <img src="docs/images/logos/app-logo.svg" alt="Erisfy Logo" width="25%" height="25%">
-</p>
-
 # Erisfy
+
+![Erisfy Logo](docs/images/logos/app-logo.svg)
 
 I'm learning LLMs and Agentic AI by building something
 
 ![Project Status](https://img.shields.io/badge/status-alpha-orange?style=for-the-badge)
-![Version](https://img.shields.io/github/package-json/v/CambridgeMonorail/erisfy?style=for-the-badge)
-![Build Status](https://img.shields.io/github/actions/workflow/status/CambridgeMonorail/erisfy/ci.yml?style=for-the-badge)
-![License](https://img.shields.io/github/license/CambridgeMonorail/erisfy?style=for-the-badge)
-![Last Commit](https://img.shields.io/github/last-commit/CambridgeMonorail/erisfy?style=for-the-badge)
+![Version](https://img.shields.io/github/package-json/v/CambridgeMonorail/erisfy)
+![Build Status](https://img.shields.io/github/actions/workflow/status/CambridgeMonorail/erisfy/ci.yml)
+![License](https://img.shields.io/github/license/CambridgeMonorail/erisfy)
+![Last Commit](https://img.shields.io/github/last-commit/CambridgeMonorail/erisfy)
 
 **NOTE: This project is currently in alpha. In fact, it's very alpha. This means it is still under active development and may undergo significant changes. Features may be incomplete or unstable. Got suggestions on what you would like to see or how to make it better? Add an issue and let us know!**
 
@@ -21,9 +19,10 @@ I'm learning LLMs and Agentic AI by building something
 - [Features](#features)
 - [Why This Project Was Built](#why-this-project-was-built)
 - [Technologies Used](#technologies-used)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Run tasks](#run-tasks)
+- [Running Locally](#running-locally)
+- [Development Tasks](#development-tasks)
 - [Install Nx Console](#install-nx-console)
 - [Projects](#projects)
 - [Contributing](#contributing)
@@ -90,6 +89,10 @@ By focusing on a real-world application in the FinTech space, we ensure our lear
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Nx](https://img.shields.io/badge/Nx-143055?style=for-the-badge&logo=nx&logoColor=white)](https://nx.dev/)
 [![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)](https://www.markdownguide.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io/)
@@ -101,25 +104,122 @@ By focusing on a real-world application in the FinTech space, we ensure our lear
 [![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)](https://reactrouter.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
+[![Storybook](https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white)](https://storybook.js.org/)
+[![Jest](https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white)](https://jestjs.io/)
+[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/)
 [![Visual Studio Code](https://img.shields.io/badge/Visual_Studio_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
 [![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-000000?style=for-the-badge&logo=github-copilot&logoColor=white)](https://github.com/features/copilot)
 
-- **React**: [A JavaScript library for building user interfaces.](https://reactjs.org/)
-- **TypeScript**: [A typed superset of JavaScript that compiles to plain JavaScript.](https://www.typescriptlang.org/)
-- **Node.js**: [A JavaScript runtime built on Chrome's V8 JavaScript engine.](https://nodejs.org/)
-- **Nx**: [A set of extensible dev tools for monorepos, which helps in managing and scaling the project.](https://nx.dev/)
-- **Markdown**: [A lightweight markup language for creating formatted text using a plain-text editor.](https://www.markdownguide.org/)
-- **pnpm**: [A fast, disk space-efficient package manager.](https://pnpm.io/)
-- **Vite**: [A build tool that provides a faster and leaner development experience for modern web projects.](https://vitejs.dev/)
-- **GitHub**: [A platform for version control and collaboration.](https://github.com/)
-- **GitHub Actions**: [A CI/CD service that allows you to automate your build, test, and deployment pipeline.](https://github.com/features/actions)
-- **Tailwind CSS**: [A utility-first CSS framework for styling the components.](https://tailwindcss.com/)
-- **shadcn/ui**: [A set of reusable UI components for consistent design.](https://ui.shadcn.dev/)
-- **React Router**: [A library for routing in React applications.](https://reactrouter.com/)
-- **Vitest**: [A Vite-native unit testing framework.](https://vitest.dev/)
-- **Playwright**: [An end-to-end testing framework.](https://playwright.dev/)
-- **Visual Studio Code**: [A source-code editor made by Microsoft for Windows, Linux, and macOS.](https://code.visualstudio.com/)
-- **GitHub Copilot**: [An AI pair programmer that helps you write code faster and with less work.](https://github.com/features/copilot)
+## Prerequisites
+
+To use Erisfy, make sure you have the following installed and configured:
+
+- Node.js v20.14.0 (or higher)
+- pnpm v9.15.0 (or higher)
+- Docker Desktop (required for certain services)
+
+### Environment Configuration
+
+The [server application](./apps/server) requires environment variables to be configured. We use different environment files for development and production:
+
+- `.env.development`: Local development environment (not committed to source control)
+- `.env.production`: Production environment with placeholders (populated by CI pipeline)
+- `.env.example`: Example configuration template
+
+Follow these steps for local development:
+
+1. Navigate to the server application directory:
+
+   ```sh
+   cd apps/server
+   ```
+
+2. Copy the example environment file to create your development environment:
+
+   ```sh
+   cp .env.example .env.development
+   ```
+
+3. Edit `.env.development` and set your environment variables:
+   - `PORT`: The server port (defaults to 3001)
+   - `NODE_ENV`: The environment (development/production/test)
+   - `OPENAI_API_KEY`: Your OpenAI API key (required)
+
+**Note**: The `.env.development` file contains sensitive information and is not committed to the repository. Each developer needs to maintain their own `.env.development` file locally.
+
+#### Database Connection Settings
+
+When running the application locally with Docker, ensure your server's database configuration matches the Docker settings:
+
+```env
+# Database connection settings in .env.development
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/erisfydb?schema=public"
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=erisfydb
+POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+```
+
+These environment variables should match the values in `docker-compose.yml`. If you modify the Docker configuration, update your environment variables accordingly.
+
+#### First-Time Database Setup
+
+When running the database for the first time:
+
+1. Start the Docker container:
+
+   ```sh
+   pnpm run serve:docker
+   ```
+
+2. Run database migrations:
+
+   ```sh
+   nx run server:prisma-migrate
+   ```
+
+This will create the necessary database schema and apply any pending migrations.
+
+#### Updating the Database & Troubleshooting
+
+If you modify the Prisma schema, create and apply a new migration:
+
+```sh
+pnpm run prisma:migrate
+```
+
+If you have changes pending in the DB (e.g., from another branch), pull them into your local schema:
+
+```sh
+npx prisma db pull
+```
+
+Then update the generated Prisma client:
+
+```sh
+npx prisma generate
+```
+
+If you encounter errors:
+
+- Verify Docker is running and ports are not in use
+- Check logs: `docker-compose logs db`
+- Confirm environment variables match Docker settings
+
+> Note: Nx runs Prisma commands in a non-interactive shell, so you may not be prompted for a migration name. You can work around this by:
+>
+> - Running Prisma directly in an interactive shell:
+>
+>   ```sh
+>   npx prisma migrate dev --name your_migration
+>   ```
+>
+> - Passing the `--name` argument via Nx:
+>
+>   ```sh
+>   nx run server:prisma-migrate -- --name your_migration
+>   ```
 
 ## Installation
 
@@ -127,37 +227,122 @@ To install the project, follow these steps:
 
 1. Clone the repository:
 
-    ```sh
-    git clone https://github.com/CambridgeMonorail/erisfy.git
-    ```
+   ```sh
+   git clone https://github.com/CambridgeMonorail/erisfy.git
+   ```
 
 2. Navigate to the project directory:
 
-    ```sh
-    cd erisfy
-    ```
+   ```sh
+   cd erisfy
+   ```
 
 3. Install dependencies:
 
-    ```sh
-    pnpm install
-    ```
+   ```sh
+   pnpm install
+   ```
 
-## Usage
+## Running Locally
 
-To run the dev server for your app, use:
+To run Erisfy locally, you'll need to start multiple services in the following order:
 
-```sh
-npx nx serve client
+1. Start the PostgreSQL database using Docker:
+
+   ```sh
+   pnpm run serve:docker
+   ```
+
+   This will spin up the PostgreSQL database container. Wait until you see the database is ready to accept connections.
+
+2. Start the server application:
+
+   ```sh
+   pnpm run serve:server
+   ```
+
+   The server will run on port 3001 by default. Wait until you see the message indicating the server is running.
+
+3. Start the client application:
+
+   ```sh
+   pnpm run serve:client
+   ```
+
+   The client will run on port 4200 by default and should automatically open in your default browser.
+
+### Docker Configuration
+
+The project uses Docker Compose to manage the PostgreSQL database service and Adminer for database management. The configuration is defined in `docker-compose.yml`:
+
+```yaml
+version: '3'
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=erisfydb
+    ports:
+      - "5432:5432"
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
 ```
 
-To create a production bundle:
+This configuration:
 
-```sh
-npx nx build client
-```
+- Uses PostgreSQL version 15
+- Creates a database named 'erisfydb'
+- Sets up default credentials (username: postgres, password: postgres)
+- Maps port 5432 on your host machine to port 5432 in the container
+- Includes Adminer for database management
 
-To see all available targets to run for a project, run:
+Adminer:
+
+- Runs at <http://localhost:8080>
+- System: PostgreSQL
+- Server: db
+- Username: postgres
+- Password: postgres
+- Database: erisfydb
+
+#### Managing the Docker Container
+
+- Start the container: `pnpm run serve:docker`
+- Stop the container: Press Ctrl+C in the terminal running Docker
+- Remove the container: `docker-compose down`
+- Remove container and data volume: `docker-compose down -v`
+
+#### Troubleshooting Docker Issues
+
+1. **Port Conflicts**: If port 5432 is already in use:
+   - Check for running PostgreSQL instances: `docker ps`
+   - Stop any conflicting services
+   - Or modify the port mapping in docker-compose.yml
+
+2. **Container Won't Start**:
+   - Check Docker Desktop is running
+   - Try removing the container: `docker-compose down`
+   - Check Docker logs: `docker-compose logs db`
+
+3. **Data Persistence**:
+   - Data is stored in a Docker volume by default
+   - To start fresh, remove the volume: `docker-compose down -v`
+
+### Development Commands Quick Reference
+
+- `pnpm run serve:docker`: Start the PostgreSQL database container
+- `pnpm run serve:server`: Start the backend server in development mode
+- `pnpm run serve:client`: Start the frontend client in development mode
+- `pnpm run build:client`: Create a production bundle of the client
+- `pnpm run build:server`: Create a production bundle of the server
+
+To see all available targets to run for a project:
 
 ```sh
 npx nx show project client
@@ -167,7 +352,7 @@ These targets are either [inferred automatically](https://nx.dev/concepts/inferr
 
 [More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-## Run Tasks
+## Development Tasks
 
 The following scripts are available to manage and build the project:
 
@@ -223,8 +408,6 @@ Nx Console is an editor extension that enriches your developer experience. It le
 ### Current Projects
 
 - **Erisfy**: The main project integrating LLM and Agentic AI into a modern TypeScript-based web product.
-- **Shadcn UI**: A customizable component library for consistent and reusable design patterns.
-- **Nx Monorepo**: Modular and scalable workspace for managing multiple projects and libraries.
 
 ### Supporting Documentation
 
@@ -248,23 +431,72 @@ To learn how to theme your app using Shadcn UI and Tailwind CSS, please refer to
 
 To add a new component page to the routing in your React SPA, please refer to the detailed guide in [docs/adding-new-component-page.md](./docs/adding-new-component-page.md).
 
-## Enabling/Disabling API Mocks
+## API Mocking for Frontend Development and GitHub Pages
 
-To enable or disable API mocks, follow these steps:
+The client application (`apps/client`) includes API mocking capabilities using Mock Service Worker (MSW). This feature is particularly important as it allows us to:
 
-1. Open the `.env` file in the `apps/client` directory.
-2. Set the `VITE_REACT_APP_USE_MOCKS` environment variable to `true` to enable mocks or `false` to disable them.
+1. Deploy and showcase the frontend on GitHub Pages without requiring a backend
+2. Develop and test frontend features independently of the backend
+3. Present working demos of the application for review before backend deployment
+4. Enable frontend developers to work without a local backend setup
 
-```ini
-VITE_REACT_APP_USE_MOCKS=true
+### Enabling/Disabling API Mocks in the Client
+
+The API mocking configuration is specific to the client application located in `apps/client`. To enable or disable the mocks:
+
+1. Open the `.env` file in the `apps/client` directory
+2. Set the `VITE_REACT_APP_USE_MOCKS` environment variable:
+
+   ```ini
+   # Enable mocks for GitHub Pages deployment or local frontend-only development
+   VITE_REACT_APP_USE_MOCKS=true
+
+   # Disable mocks when working with the actual backend
+   VITE_REACT_APP_USE_MOCKS=false
+   ```
+
+When mocks are enabled, the client application will intercept API requests and return mock data instead of attempting to communicate with the backend server. This is particularly useful for:
+
+- GitHub Pages deployments where no backend is available
+- Frontend development and testing
+- Creating demonstrations and previews
+- UI/UX reviews and demonstrations
+
+### Mock Implementation Details
+
+The mock service implementation for the client is located in:
+
+- `apps/client/src/mocks/` - Main mocking setup and handlers
+- `apps/client/src/mocks/handlers/` - API endpoint mock implementations
+- `apps/client/src/mocks/data/` - Mock data responses
+
+To add or modify mock endpoints:
+
+1. Create or update handler files in `apps/client/src/mocks/handlers/`
+2. Define mock data in `apps/client/src/mocks/data/`
+3. Register handlers in `apps/client/src/mocks/browser.ts`
+
+Example mock handler:
+
+```typescript
+// apps/client/src/mocks/handlers/stockHandler.ts
+rest.get('/api/stocks', (req, res, ctx) => {
+  return res(ctx.status(200), ctx.json(mockStocksData));
+});
 ```
 
-## Running Tests with MSW
+When deploying to GitHub Pages, these mocks ensure that:
 
-To run tests with MSW, follow these steps:
+- The application remains functional without a backend
+- Features can be demonstrated to stakeholders
+- UI/UX can be reviewed in a production-like environment
+- Frontend iterations can be quickly deployed and tested
 
-1. Ensure that the mock server is set up in the `apps/client/src/mocks/server.ts` file.
-2. Import and start the mock server in your test setup file (`apps/client/src/test/setup.ts`).
+### Running Tests with MSW
+
+First, ensure that the mock server is set up in the `apps/client/src/mocks/server.ts` file.
+
+Next, import and start the mock server in your test setup file (`apps/client/src/test/setup.ts`):
 
 ```typescript
 import { server } from '../mocks/server';
@@ -274,7 +506,54 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 ```
 
-3. Write your tests as usual, and MSW will intercept the API requests and return the mock responses.
+Finally, write your tests as usual, and MSW will intercept the API requests and return the mock responses.
+
+### Development Workflow with API Mocks
+
+When working on frontend features, you can choose between using mocked or real API endpoints:
+
+1. **Local Development with Mocks** (No Backend Required):
+
+   ```env
+   # apps/client/.env.development
+   VITE_REACT_APP_USE_MOCKS=true
+   ```
+
+   Perfect for:
+   - Initial UI development
+   - Prototyping new features
+   - Working offline
+   - Frontend-only changes
+
+2. **Full Stack Development** (Backend Required):
+
+   ```env
+   # apps/client/.env.development
+   VITE_REACT_APP_USE_MOCKS=false
+   ```
+
+   Used when:
+   - Testing real API integration
+   - Developing backend features
+   - Validating end-to-end functionality
+
+3. **Production Deployment**:
+
+   ```env
+   # apps/client/.env.production
+   VITE_REACT_APP_USE_MOCKS=false
+   ```
+
+   Always use real API endpoints in production.
+
+4. **GitHub Pages Deployment**:
+
+   ```env
+   # apps/client/.env.production
+   VITE_REACT_APP_USE_MOCKS=true
+   ```
+
+   Enables demonstration of frontend features without backend deployment.
 
 ## Reference Documentation
 
@@ -293,8 +572,6 @@ This project is licensed under the MIT License.
 - [joshuarobs/nx-shadcn-ui-monorepo](https://github.com/joshuarobs/nx-shadcn-ui-monorepo)
 - [Shadcn UI](https://github.com/shadcn-ui/ui)
 - [Nx](https://nx.dev)
-- [Placebeard](https://placebeard.it/): A fantastic service for placeholder images featuring bearded individuals, inspired by similar services like placekitten.com and placedog.com. We appreciate their free service for adding a touch of fun to our project.
-- [unDraw](https://undraw.co/): Open-source illustrations for any idea you can imagine and create. A constantly updated design project with beautiful SVG images that you can use completely free and without attribution. Created by [Katerina Limpitsouni](https://x.com/ninaLimpi).
 - [Shadcn UI Theme Generator](https://www.readyjs.dev/tools/shadcn-ui-theme-generator): A tool for generating themes for Shadcn UI.
 
 ## Useful links

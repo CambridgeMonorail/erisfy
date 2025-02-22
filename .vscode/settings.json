@@ -32,5 +32,25 @@
       "text": "Add footer with BREAKING CHANGE or Closes #123 if applicable"
     }
   ],
-  "github.copilot.chat.edits.codesearch.enabled": true
+  "github.copilot.chat.edits.codesearch.enabled": true,
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#232ee9",
+    "activityBar.background": "#232ee9",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#3a0609",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#232ee9",
+    "statusBar.background": "#141ec5",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#232ee9",
+    "statusBarItem.remoteBackground": "#141ec5",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#141ec5",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#141ec599",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#141EC5"
 }

@@ -31,4 +31,8 @@ export class MarketInsightsEndpoint extends BaseApiClient {
   async deleteMarketInsight(date: string): Promise<ApiResponse<void>> {
     return this.delete<void>(`/market-insights/${date}`);
   }
+
+  async getLatestMarketInsight(): Promise<ApiResponse<MarketDataInsights>> {
+    return this.get<MarketDataInsights>('/market-insights/latest');
+  }
 }
