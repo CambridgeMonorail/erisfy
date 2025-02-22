@@ -2,7 +2,7 @@ import { Controller, Get, NotFoundException, InternalServerErrorException } from
 import { MarketNewsService } from './market-news.service';
 import { PrismaService } from '../../prisma.service';
 
-@Controller('market-news')
+@Controller('market-insights')
 export class MarketNewsController {
   constructor(
     private readonly marketNewsService: MarketNewsService,

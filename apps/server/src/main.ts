@@ -11,6 +11,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+
+  // Enable CORS for development
+  app.enableCors({
+    origin: process.env.NODE_ENV === 'production'
+      ? 'https://cambridgemonorail.github.io'
+      : 'http://localhost:4200',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(

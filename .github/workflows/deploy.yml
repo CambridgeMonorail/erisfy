@@ -75,7 +75,7 @@ jobs:
         if: env.AUTHOR_NAME != 'Monorail Updater'
         env:
           BASE_URL: '/erisfy/'
-          VITE_API_BASE_URL: 'https://cambridgemonorail.github.io/erisfy/api'
+          VITE_API_BASE_URL: 'https://api.erisfy.com/api'
           VITE_API_TIMEOUT: '30000'
           VITE_REACT_APP_MY_API_BASE_URL: 'https://api.financialdatasets.ai'
           VITE_REACT_APP_MY_API_KEY: ${{ secrets.REACT_APP_MY_API_KEY }}

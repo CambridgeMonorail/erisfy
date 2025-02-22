@@ -1,6 +1,33 @@
 # Erisfy Server API
 
-This is the backend server for Erisfy, providing market news and analysis through various API endpoints.
+This document provides comprehensive documentation for the Erisfy backend server, which handles market news analysis and data processing. It includes setup instructions, API documentation, development guidelines, and troubleshooting information.
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [API Endpoints](#api-endpoints)
+   - [Market News Endpoints](#market-news-endpoints)
+   - [Background Jobs](#background-jobs)
+3. [Development](#development)
+   - [Prerequisites](#prerequisites)
+   - [Environment Setup](#environment-variables)
+   - [Database Setup](#docker-database-setup)
+   - [Running the Server](#running-the-server)
+4. [Database Management](#database-management)
+   - [Schema Updates](#updating-the-database-schema)
+   - [Troubleshooting](#troubleshooting-database-issues)
+5. [Testing](#testing)
+6. [Error Handling](#error-responses)
+
+## Overview
+
+The Erisfy Server is a NestJS-based backend that:
+
+- Provides REST APIs for market news and analysis
+- Manages automated data collection from various sources
+- Processes and stores market data using PostgreSQL
+- Integrates with OpenAI for market analysis
+- Runs scheduled background jobs for data updates
 
 ## API Endpoints
 
@@ -9,9 +36,11 @@ This is the backend server for Erisfy, providing market news and analysis throug
 Base path: `/market-news`
 
 #### Get Latest Market News
+
 - **GET** `/market-news`
 - Returns the most recent market data record with associated stories
 - Response structure:
+
   ```typescript
   {
     id: string;
@@ -25,14 +54,17 @@ Base path: `/market-news`
       market_impact: string;
       market_sector: string;
       marketDataRecordId: string;
-    }[];
+    }
+    [];
   }
   ```
 
 #### Trigger News Update
+
 - **GET** `/market-news/trigger`
 - Manually triggers the market news fetch process
 - Response:
+
   ```typescript
   {
     message: string; // 'Market news update triggered'
@@ -51,27 +83,133 @@ The server includes automated tasks:
 ## Development
 
 ### Prerequisites
-- Node.js
-- pnpm
-- PostgreSQL database
-- OpenAI API key
+
+- Node.js v20.14.0 (or higher)
+- pnpm v9.15.0 (or higher)
+- Docker Desktop
 
 ### Environment Variables
-Make sure to set up the following environment variables:
+
+Create a `.env.development` file in the server directory by copying `.env.example`:
+
+```sh
+cp .env.example .env.development
+```
+
+Required environment variables:
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `OPENAI_API_KEY` - Your OpenAI API key
+- `PORT` - Server port (defaults to 3001)
+- `NODE_ENV` - Environment (development/production/test)
+
+### Docker Database Setup
+
+The project uses Docker Compose to manage the PostgreSQL database. Configuration is defined in `docker-compose.yml` at the root of the project.
+
+#### Database Configuration
+
+When running locally with Docker, use these database settings in your `.env.development`:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/erisfydb?schema=public"
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=erisfydb
+POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+```
+
+#### Starting the Database
+
+1. Start the PostgreSQL container:
+
+   ```sh
+   pnpm run serve:docker
+   ```
+
+2. For first-time setup, run database migrations:
+
+   ```sh
+   nx run server:prisma-migrate
+   ```
+
+#### Database Management with Adminer
+
+Adminer is included for database management:
+
+- Access at: <http://localhost:8080>
+- System: PostgreSQL
+- Server: db
+- Username: postgres
+- Password: postgres
+- Database: erisfydb
+
+#### Troubleshooting Database Issues
+
+1. **Port Conflicts**:
+   - Check for running PostgreSQL instances: `docker ps`
+   - Stop conflicting services or modify port in docker-compose.yml
+
+2. **Container Issues**:
+   - Verify Docker Desktop is running
+   - Check logs: `docker-compose logs db`
+   - Try removing container: `docker-compose down`
+   - For fresh start: `docker-compose down -v`
 
 ### Running the Server
-```bash
-# Install dependencies
-pnpm install
 
-# Start the development server
+Start the development server:
+
+```bash
 pnpm nx serve server
 ```
 
+The server will be available at <http://localhost:3001/api>
+
+### Database Management
+
+#### Updating the Database Schema
+
+When modifying the Prisma schema:
+
+1. Create and apply new migration:
+
+   ```sh
+   pnpm run prisma:migrate
+   ```
+
+2. Pull pending changes from DB:
+
+   ```sh
+   npx prisma db pull
+   ```
+
+3. Update Prisma client:
+
+   ```sh
+   npx prisma generate
+   ```
+
+### Testing
+
+To run server tests:
+
+```bash
+# Run all tests
+pnpm nx test server
+
+# Run tests in watch mode
+pnpm nx test server --watch
+
+# Run specific test file
+pnpm nx test server --testFile=path/to/test
+```
+
 ### Error Responses
+
 The API may return the following HTTP status codes:
+
 - `200` - Success
 - `404` - No market news data found
 - `500` - Internal server error (e.g., database connection issues, OpenAI API errors)
