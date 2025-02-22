@@ -1,11 +1,11 @@
 import { FC } from 'react';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
   cn,
-  Button
+  Button,
 } from '@erisfy/shadcnui';
 import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
 import { AlertCircle, RefreshCw } from 'lucide-react';
@@ -15,11 +15,11 @@ export interface AIPoweredMarketOverviewProps {
   className?: string;
 }
 
-export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({ 
-  className
+export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
+  className,
 }) => {
   const { news, isLoading, error, isUpdating, triggerUpdate } = useMarketNews();
-  
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64 bg-background/50 rounded-lg">
@@ -30,11 +30,13 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
 
   if (error) {
     return (
-      <Card className={cn("border-destructive bg-destructive/5", className)}>
+      <Card className={cn('border-destructive bg-destructive/5', className)}>
         <CardHeader>
           <div className="flex items-center space-x-2">
             <AlertCircle className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-destructive">Error Loading Market News</CardTitle>
+            <CardTitle className="text-destructive">
+              Error Loading Market News
+            </CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -46,7 +48,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
 
   if (!news || !news.stories) {
     return (
-      <Card className={cn("border-muted bg-muted/5", className)}>
+      <Card className={cn('border-muted bg-muted/5', className)}>
         <CardContent className="p-6">
           <p className="text-center text-muted-foreground">
             No market news available
@@ -57,7 +59,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
   }
 
   return (
-    <Card className={cn("bg-card border shadow-md", className)}>
+    <Card className={cn('bg-card border shadow-md', className)}>
       <CardHeader className="border-b bg-muted/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -69,8 +71,10 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
               disabled={isUpdating}
               className="gap-2"
             >
-              <RefreshCw className={cn("h-4 w-4", isUpdating && "animate-spin")} />
-              {isUpdating ? "Updating..." : "Update News"}
+              <RefreshCw
+                className={cn('h-4 w-4', isUpdating && 'animate-spin')}
+              />
+              {isUpdating ? 'Updating...' : 'Update News'}
             </Button>
           </div>
           <p className="text-sm text-muted-foreground font-medium">
@@ -78,7 +82,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
               weekday: 'long',
               year: 'numeric',
               month: 'long',
-              day: 'numeric'
+              day: 'numeric',
             })}
           </p>
         </div>

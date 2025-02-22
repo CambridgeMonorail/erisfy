@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { OpenAiService } from '../openai/openai.service';
 import { PrismaService } from '../../prisma.service';
@@ -52,5 +52,22 @@ export class MarketNewsService {
       this.logger.error('Failed to save market data to database', err);
       throw err;
     }
+  }
+
+  async getLatestMarketNews() {
+    const latestNews = await this.prisma.marketDataRecord.findFirst({
+      include: {
+        stories: true,
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    if (!latestNews) {
+      throw new NotFoundException('No market news available');
+    }
+
+    return latestNews;
   }
 }

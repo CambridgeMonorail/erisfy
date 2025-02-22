@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, NotFoundException, InternalServerErrorException, Query } from '@nestjs/common';
 import { MarketNewsService } from './market-news.service';
 import { PrismaService } from '../../prisma.service';
 
@@ -42,5 +42,10 @@ export class MarketNewsController {
       }
       throw new InternalServerErrorException('Failed to fetch market news data');
     }
+  }
+
+  @Get('latest')
+  async getLatest() {
+    return this.marketNewsService.getLatestMarketNews();
   }
 }

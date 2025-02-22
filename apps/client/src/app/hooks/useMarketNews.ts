@@ -6,6 +6,7 @@ export const useMarketNews = () => {
   const [news, setNews] = useState<MarketDataInsights | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const marketNewsClient = useMemo(
     () => new MarketInsightsEndpoint(createApiConfig()),
@@ -16,8 +17,8 @@ export const useMarketNews = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const { data } = await marketNewsClient.getMarketInsights();
-      setNews(data[0]); // Get the most recent insights
+      const { data } = await marketNewsClient.getLatestMarketInsight();
+      setNews(data);
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -29,14 +30,24 @@ export const useMarketNews = () => {
     }
   };
 
+  const triggerUpdate = async () => {
+    try {
+      setIsUpdating(true);
+      await fetchNews();
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   useEffect(() => {
     void fetchNews();
-  }, [fetchNews]);
+  }, []);
 
   return {
     news,
     isLoading,
     error,
-    refetch: fetchNews
+    isUpdating,
+    triggerUpdate,
   };
 };
