@@ -191,6 +191,16 @@ When modifying the Prisma schema:
    npx prisma generate
    ```
 
+**Note**: Nx runs Prisma commands in a non-interactive shell, so you may not be prompted for a migration name. You can work around this by running:
+```
+npx prisma migrate dev --name your_migration
+```
+You can also pass the --name argument directly via Nx:
+```
+nx run server:prisma-migrate -- --name your_migration
+```
+Consider using a consistent naming format such as `day_of_week_day_month_year` for your migrations.
+
 ### Testing
 
 To run server tests:

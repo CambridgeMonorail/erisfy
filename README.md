@@ -223,7 +223,7 @@ If you encounter errors:
 
 ## Installation
 
-To install the project, follow these steps:
+To install and set up the project, follow these steps:
 
 1. Clone the repository:
 
@@ -243,33 +243,37 @@ To install the project, follow these steps:
    pnpm install
    ```
 
-## Running Locally
-
-To run Erisfy locally, you'll need to start multiple services in the following order:
-
-1. Start the PostgreSQL database using Docker:
+4. Run the development setup script:
 
    ```sh
-   pnpm run serve:docker
+   node scripts/dev-setup.js
    ```
 
-   This will spin up the PostgreSQL database container. Wait until you see the database is ready to accept connections.
+   This script will:
+   - Prompt for required environment variables (OpenAI API key, etc.)
+   - Create necessary environment files
+   - Start Docker containers
+   - Run initial database migrations
 
-2. Start the server application:
+   > Note: Make sure Docker Desktop is running before executing the setup script.
+
+## Running Locally
+
+Once the setup is complete, you can start the application:
+
+1. Start the server:
 
    ```sh
    pnpm run serve:server
    ```
 
-   The server will run on port 3001 by default. Wait until you see the message indicating the server is running.
-
-3. Start the client application:
+2. In a new terminal, start the client:
 
    ```sh
    pnpm run serve:client
    ```
 
-   The client will run on port 4200 by default and should automatically open in your default browser.
+The client will run on port 4200 and should automatically open in your default browser.
 
 ### Docker Configuration
 
@@ -612,3 +616,47 @@ It's not finished yet.
 ### Why is the sky blue?
 
 It's not finished yet. (Just kidding, that's actually due to Rayleigh scattering.)
+
+## Troubleshooting Setup
+
+If you encounter issues during setup:
+
+1. **Setup Script Fails**:
+   - Ensure Docker Desktop is running
+   - Check that ports 3001 (server) and 5432 (database) are available
+   - Verify your OpenAI API key is valid
+
+2. **Manual Setup**:
+   If you prefer to set up manually or the script fails, follow these steps:
+
+   a. Create `apps/server/.env.development`:
+   ```env
+   PORT=3001
+   NODE_ENV=development
+   OPENAI_API_KEY=your_openai_api_key
+   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/erisfydb?schema=public
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DB=erisfydb
+   POSTGRES_PORT=5432
+   POSTGRES_HOST=localhost
+   ```
+
+   b. Create `apps/client/.env`:
+   ```env
+   VITE_REACT_APP_USE_MOCKS=false
+   ```
+
+   c. Start Docker and run migrations:
+   ```sh
+   pnpm run serve:docker
+   nx run server:prisma-migrate
+   ```
+
+3. **Database Issues**:
+   - If migrations fail, try resetting the database:
+     ```sh
+     docker-compose down -v
+     pnpm run serve:docker
+     nx run server:prisma-migrate
+     ```
