@@ -48,4 +48,14 @@ export class MarketNewsController {
   async getLatest() {
     return this.marketNewsService.getLatestMarketNews();
   }
+
+  @Get('news-trigger')
+  async triggerGeneralNewsUpdate() {
+    try {
+      await this.marketNewsService.triggerNewsUpdate();
+      return { message: 'General news update triggered' };
+    } catch {
+      throw new InternalServerErrorException('Failed to fetch general news');
+    }
+  }
 }
