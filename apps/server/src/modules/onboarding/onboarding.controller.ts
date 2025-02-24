@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { OnboardingService } from './onboarding.service';
-import { CreateOnboardingDto, OnboardingFilter, UpdateOnboardingDto, Onboarding } from '@erisfy/api';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { CreateOnboardingDto, UpdateOnboardingDto, OnboardingFilter } from './dto/onboarding.dto';
+import { Onboarding } from './entities/onboarding.entity';
 
 @ApiTags('onboardings')
 @Controller('onboardings')

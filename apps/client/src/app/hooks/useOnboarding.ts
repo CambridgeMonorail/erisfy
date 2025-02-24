@@ -1,4 +1,4 @@
-import { IOnboarding, OnboardingsEndpoint } from '@erisfy/api';
+import { IOnboarding, OnboardingsEndpoint, ApiError } from '@erisfy/api';
 import { useState, useEffect } from 'react';
 import { createApiConfig } from '../utils/apiConfig';
 

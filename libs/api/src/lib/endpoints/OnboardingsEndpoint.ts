@@ -1,10 +1,10 @@
 import { BaseApiClient } from '../base/BaseApiClient';
 import { ApiResponse } from '../types/api';
 import {
-    Onboarding,
-    OnboardingFilter,
-    CreateOnboardingDto,
-    UpdateOnboardingDto
+    IOnboarding,
+    IOnboardingFilter,
+    ICreateOnboardingDto,
+    IUpdateOnboardingDto
 } from '../types/onboarding';
 
 export type OnboardingStatus = {
@@ -13,24 +13,24 @@ export type OnboardingStatus = {
 };
 
 export class OnboardingsEndpoint extends BaseApiClient {
-    async getOnboardings(filter?: OnboardingFilter): Promise<ApiResponse<Onboarding[]>> {
-        return this.get<Onboarding[]>('/onboardings', { params: filter });
+    async getOnboardings(filter?: IOnboardingFilter): Promise<ApiResponse<IOnboarding[]>> {
+        return this.get<IOnboarding[]>('/onboardings', { params: filter });
     }
 
-    async getOnboardingById(id: number): Promise<ApiResponse<Onboarding>> {
-        return this.get<Onboarding>(`/onboardings/${id}`);
+    async getOnboardingById(id: number): Promise<ApiResponse<IOnboarding>> {
+        return this.get<IOnboarding>(`/onboardings/${id}`);
     }
 
-    async createOnboarding(data: CreateOnboardingDto): Promise<ApiResponse<Onboarding>> {
-        return this.post<Onboarding>('/onboardings', data);
+    async createOnboarding(data: ICreateOnboardingDto): Promise<ApiResponse<IOnboarding>> {
+        return this.post<IOnboarding>('/onboardings', data);
     }
 
-    async updateOnboarding(id: number, data: UpdateOnboardingDto): Promise<ApiResponse<Onboarding>> {
-        return this.patch<Onboarding>(`/onboardings/${id}`, data);
+    async updateOnboarding(id: number, data: IUpdateOnboardingDto): Promise<ApiResponse<IOnboarding>> {
+        return this.patch<IOnboarding>(`/onboardings/${id}`, data);
     }
 
-    async replaceOnboarding(id: number, data: CreateOnboardingDto): Promise<ApiResponse<Onboarding>> {
-        return this.put<Onboarding>(`/onboardings/${id}`, data);
+    async replaceOnboarding(id: number, data: ICreateOnboardingDto): Promise<ApiResponse<IOnboarding>> {
+        return this.put<IOnboarding>(`/onboardings/${id}`, data);
     }
 
     async deleteOnboarding(id: number): Promise<ApiResponse<void>> {
