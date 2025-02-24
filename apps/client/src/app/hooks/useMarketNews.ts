@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ApiError, MarketInsightsEndpoint, NewsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
 import { createApiConfig } from '../utils/apiConfig';
 
@@ -15,24 +15,24 @@ const useNewsData = <T extends NewsData>(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const client = clientFactory();
+  const client = useRef(clientFactory()).current;
 
   const fetchNews = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const getNews = 'getLatestMarketInsight' in client && client.getLatestMarketInsight
-        ? client.getLatestMarketInsight
-        : client.getLatestNews;
 
-      if (!getNews) {
+      const response = 'getLatestMarketInsight' in client
+        ? await client.getLatestMarketInsight.call(client)
+        : await client.getLatestNews?.call(client);
+
+      if (!response) {
         throw new Error('No valid news fetching method available');
       }
 
-      const { data } = await getNews();
-      setNews(data);
+      setNews(response.data);
     } catch (err) {
+      console.error('Error fetching news:', err);
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
@@ -44,13 +44,14 @@ const useNewsData = <T extends NewsData>(
   }, [client]);
 
   const triggerUpdate = useCallback(async () => {
+    if (isUpdating) return; // Prevent multiple simultaneous updates
     try {
       setIsUpdating(true);
       await fetchNews();
     } finally {
       setIsUpdating(false);
     }
-  }, [fetchNews]);
+  }, [fetchNews, isUpdating]);
 
   useEffect(() => {
     void fetchNews();

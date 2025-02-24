@@ -8,6 +8,11 @@ import {
 } from '../types/marketInsights';
 
 export class MarketInsightsEndpoint extends BaseApiClient {
+  constructor(config: ConstructorParameters<typeof BaseApiClient>[0]) {
+    super(config);
+    this.getLatestMarketInsight = this.getLatestMarketInsight.bind(this);
+  }
+
   async getMarketInsights(filter?: MarketDataInsightsFilter): Promise<ApiResponse<MarketDataInsights[]>> {
     return this.get<MarketDataInsights[]>('/market-insights', { params: filter });
   }
@@ -33,6 +38,8 @@ export class MarketInsightsEndpoint extends BaseApiClient {
   }
 
   async getLatestMarketInsight(): Promise<ApiResponse<MarketDataInsights>> {
-    return this.get<MarketDataInsights>('/market-insights/latest');
+    console.log('Calling getLatestMarketInsight');
+    console.log('this:', this);
+    return this.get<MarketDataInsights>('market-insights/latest');
   }
 }

@@ -17,6 +17,15 @@ export abstract class BaseApiClient {
 
     this.client = axios.create(axiosConfig);
     this.setupInterceptors();
+
+    // Bind the HTTP methods to this instance
+    this.get = this.get.bind(this);
+    this.post = this.post.bind(this);
+    this.put = this.put.bind(this);
+    this.delete = this.delete.bind(this);
+    this.patch = this.patch.bind(this);
+
+    console.log('Axios instance created with config:', axiosConfig);
   }
 
   private setupInterceptors(): void {
@@ -36,6 +45,7 @@ export abstract class BaseApiClient {
   }
 
   protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    console.log('Making GET request to:', path);
     const response = await this.client.get<T>(path, config);
     return response as ApiResponse<T>;
   }

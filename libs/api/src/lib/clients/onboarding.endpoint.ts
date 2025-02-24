@@ -1,8 +1,18 @@
-import { ApiResponse, BaseEndpoint } from './base.endpoint';
-import { IOnboarding, IOnboardingFilter, ICreateOnboardingDto, IUpdateOnboardingDto } from '../types/onboarding';
+import { BaseApiClient } from '../base/BaseApiClient';
+import { ApiResponse } from '../types/api';
+import {
+  IOnboarding,
+  IOnboardingFilter,
+  ICreateOnboardingDto,
+  IUpdateOnboardingDto
+} from '../types/onboarding';
 
-export class OnboardingsEndpoint extends BaseEndpoint {
-  protected basePath = '/api/onboardings';
+export class OnboardingsEndpoint extends BaseApiClient {
+  protected basePath = '/onboardings';
+
+  constructor(config: ConstructorParameters<typeof BaseApiClient>[0]) {
+    super(config);
+  }
 
   async getOnboardings(filter?: IOnboardingFilter): Promise<ApiResponse<IOnboarding[]>> {
     const queryParams = new URLSearchParams();
@@ -12,7 +22,7 @@ export class OnboardingsEndpoint extends BaseEndpoint {
     return this.get<IOnboarding[]>(`${this.basePath}?${queryParams}`);
   }
 
-  async getOnboarding(id: number): Promise<ApiResponse<IOnboarding>> {
+  async getOnboardingById(id: number): Promise<ApiResponse<IOnboarding>> {
     return this.get<IOnboarding>(`${this.basePath}/${id}`);
   }
 
@@ -25,6 +35,6 @@ export class OnboardingsEndpoint extends BaseEndpoint {
   }
 
   async deleteOnboarding(id: number): Promise<ApiResponse<void>> {
-    return this.delete(`${this.basePath}/${id}`);
+    return this.delete<void>(`${this.basePath}/${id}`);
   }
 }
