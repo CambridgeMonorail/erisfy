@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { CreateOnboardingDto, OnboardingFilter, UpdateOnboardingDto } from '@erisfy/api';
+import { CreateOnboardingDto, OnboardingFilter, UpdateOnboardingDto } from './dto/onboarding.dto';
 
 @Injectable()
 export class OnboardingService {
