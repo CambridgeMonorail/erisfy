@@ -5,9 +5,7 @@ This document provides comprehensive documentation for the Erisfy backend server
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [API Endpoints](#api-endpoints)
-   - [Market News Endpoints](#market-news-endpoints)
-   - [Background Jobs](#background-jobs)
+2. [API Documentation](#api-documentation)
 3. [Development](#development)
    - [Prerequisites](#prerequisites)
    - [Environment Setup](#environment-variables)
@@ -17,8 +15,6 @@ This document provides comprehensive documentation for the Erisfy backend server
    - [Schema Updates](#updating-the-database-schema)
    - [Troubleshooting](#troubleshooting-database-issues)
 5. [Testing](#testing)
-6. [Error Handling](#error-responses)
-7. [API Testing](#api-testing)
 
 ## Overview
 
@@ -30,96 +26,42 @@ The Erisfy Server is a NestJS-based backend that:
 - Integrates with OpenAI for market analysis
 - Runs scheduled background jobs for data updates
 
-## API Endpoints
+## API Documentation
 
-### Market News Endpoints
+The API documentation is available through Swagger UI, which provides an interactive interface to explore and test all available endpoints.
 
-Base path: `/market-insights`
+### Accessing Swagger Documentation
 
-#### Get Latest Market News
+1. Start the development server:
+   ```bash
+   pnpm nx serve server
+   ```
 
-- **GET** `/market-insights`
-- Returns the most recent market data record with associated stories
-- Response structure:
+2. Open your browser and navigate to:
+   ```
+   http://localhost:3001/api/docs
+   ```
 
-  ```typescript
-  {
-    id: string;
-    date: string;
-    createdAt: string;
-    stories: {
-      id: string;
-      title: string;
-      one_line_summary: string;
-      whats_happening: string;
-      market_impact: string;
-      market_sector: string;
-      marketDataRecordId: string;
-    }[];
-  }
-  ```
+### Using Swagger UI
 
-#### Get Latest Market News (Alternative Endpoint)
+The Swagger UI provides:
 
-- **GET** `/market-insights/latest`
-- Returns the latest market news using an alternative service method
-- Response structure matches the main endpoint
+- Interactive API documentation
+- Request/response examples for each endpoint
+- Built-in API testing interface
+- Authentication configuration
+- Schema definitions for all DTOs and responses
 
-#### Trigger Market News Update
+Key features:
+- **Try it out**: Test endpoints directly from the browser
+- **Models**: View detailed request/response schemas
+- **Authorization**: Configure auth tokens for protected endpoints
+- **Response codes**: See all possible response statuses and their meanings
 
-- **GET** `/market-insights/trigger`
-- Manually triggers the market news fetch process
-- Response:
-
-  ```typescript
-  {
-    message: string; // 'Market news update triggered'
-  }
-  ```
-
-#### Trigger General News Update
-
-- **GET** `/market-insights/news-trigger`
-- Triggers an update for general news
-- Response:
-
-  ```typescript
-  {
-    message: string; // 'General news update triggered'
-  }
-  ```
-
-### General News Endpoints
-
-Base path: `/news`
-
-#### Get Latest News
-
-- **GET** `/news/latest`
-- Returns the latest general news
-- Throws `404` if no news data is found
-- Response includes latest news data
-
-#### Trigger News Update
-
-- **GET** `/news/trigger`
-- Manually triggers a daily news update
-- Response:
-
-  ```typescript
-  {
-    message: string; // 'News update triggered'
-  }
-  ```
-
-### Background Jobs
-
-The server includes automated tasks:
-
-- Daily Market News Fetch
-  - Runs automatically at 08:00 UTC every day
-  - Fetches latest market stories using OpenAI
-  - Stores the data in the database
+API endpoints are organized by tags:
+- `market-insights`: Market news and analysis endpoints
+- `onboardings`: User onboarding management endpoints
+- `news`: General news endpoints
 
 ## Development
 
@@ -139,10 +81,14 @@ cp .env.example .env.development
 
 Required environment variables:
 
-- `DATABASE_URL` - PostgreSQL connection string
-- `OPENAI_API_KEY` - Your OpenAI API key
-- `PORT` - Server port (defaults to 3001)
-- `NODE_ENV` - Environment (development/production/test)
+```bash
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/erisfydb?schema=public"
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=erisfydb
+POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+```
 
 ### Docker Database Setup
 
@@ -194,7 +140,12 @@ Adminer is included for database management:
 
 2. **Container Issues**:
    - Verify Docker Desktop is running
-   - Check logs: `docker-compose logs db`
+   - Check logs:
+
+   ```shell
+   docker-compose logs db
+   ```
+
    - Try removing container: `docker-compose down`
    - For fresh start: `docker-compose down -v`
 
@@ -233,13 +184,17 @@ When modifying the Prisma schema:
    ```
 
 **Note**: Nx runs Prisma commands in a non-interactive shell, so you may not be prompted for a migration name. You can work around this by running:
-```
+
+```bash
 npx prisma migrate dev --name your_migration
 ```
+
 You can also pass the --name argument directly via Nx:
-```
+
+```bash
 nx run server:prisma-migrate -- --name your_migration
 ```
+
 Consider using a consistent naming format such as `day_of_week_day_month_year` for your migrations.
 
 ### Testing

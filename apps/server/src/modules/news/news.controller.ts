@@ -1,10 +1,16 @@
 import { Controller, Get, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { NewsService } from './news.service';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('news')
 @Controller('news')
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
+  @ApiOperation({ summary: 'Get latest news', description: 'Returns the most recent news data' })
+  @ApiResponse({ status: 200, description: 'Latest news retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'No news data found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   @Get('latest')
   async getLatestNews() {
     try {
@@ -21,6 +27,9 @@ export class NewsController {
     }
   }
 
+  @ApiOperation({ summary: 'Trigger news update', description: 'Manually triggers a daily news update' })
+  @ApiResponse({ status: 200, description: 'News update triggered successfully', schema: { properties: { message: { type: 'string', example: 'News update triggered' } } } })
+  @ApiResponse({ status: 500, description: 'Failed to fetch news' })
   @Get('trigger')
   async triggerNewsUpdate() {
     try {
