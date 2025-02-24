@@ -1,23 +1,36 @@
-import { useState, useEffect, useMemo } from 'react';
-import { ApiError, MarketInsightsEndpoint, MarketDataInsights } from '@erisfy/api';
+import { useState, useEffect, useCallback } from 'react';
+import { ApiError, MarketInsightsEndpoint, NewsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
 import { createApiConfig } from '../utils/apiConfig';
 
-export const useMarketNews = () => {
-  const [news, setNews] = useState<MarketDataInsights | null>(null);
+type NewsData = MarketDataInsights | NewsArticle[];
+type NewsClient<T> = {
+  getLatestMarketInsight?: () => Promise<{ data: T }>;
+  getLatestNews?: () => Promise<{ data: T }>;
+};
+
+const useNewsData = <T extends NewsData>(
+  clientFactory: () => NewsClient<T>
+) => {
+  const [news, setNews] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const marketNewsClient = useMemo(
-    () => new MarketInsightsEndpoint(createApiConfig()),
-    []
-  );
+  const client = clientFactory();
 
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const { data } = await marketNewsClient.getLatestMarketInsight();
+      const getNews = 'getLatestMarketInsight' in client && client.getLatestMarketInsight
+        ? client.getLatestMarketInsight
+        : client.getLatestNews;
+
+      if (!getNews) {
+        throw new Error('No valid news fetching method available');
+      }
+
+      const { data } = await getNews();
       setNews(data);
     } catch (err) {
       if (err instanceof ApiError) {
@@ -28,20 +41,20 @@ export const useMarketNews = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [client]);
 
-  const triggerUpdate = async () => {
+  const triggerUpdate = useCallback(async () => {
     try {
       setIsUpdating(true);
       await fetchNews();
     } finally {
       setIsUpdating(false);
     }
-  };
+  }, [fetchNews]);
 
   useEffect(() => {
     void fetchNews();
-  }, []);
+  }, [fetchNews]);
 
   return {
     news,
@@ -52,56 +65,14 @@ export const useMarketNews = () => {
   };
 };
 
-import { useState, useEffect, useMemo } from 'react';
-import { ApiError, NewsEndpoint, NewsArticle } from '@erisfy/api';
-import { createApiConfig } from '../utils/apiConfig';
+export const useMarketNews = () => {
+  return useNewsData<MarketDataInsights>(() =>
+    new MarketInsightsEndpoint(createApiConfig())
+  );
+};
 
 export const useGeneralNews = () => {
-  const [news, setNews] = useState<NewsArticle[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  const newsClient = useMemo(
-    () => new NewsEndpoint(createApiConfig()),
-    []
+  return useNewsData<NewsArticle[]>(() =>
+    new NewsEndpoint(createApiConfig())
   );
-
-  const fetchNews = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const { data } = await newsClient.getLatestNews();
-      setNews(data);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const triggerUpdate = async () => {
-    try {
-      setIsUpdating(true);
-      await fetchNews();
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  useEffect(() => {
-    void fetchNews();
-  }, []);
-
-  return {
-    news,
-    isLoading,
-    error,
-    isUpdating,
-    triggerUpdate,
-  };
 };

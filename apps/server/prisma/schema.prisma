@@ -8,7 +8,7 @@ generator client {
 }
 
 model MarketDataRecord {
-  id       String        @id @default(uuid()) 
+  id       String        @id @default(uuid())
   date     String        // Store the date as a string or ISO date
   stories  MarketStory[] // Relation to MarketStory
 
@@ -44,4 +44,13 @@ model NewsArticle {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Onboarding {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  hasViewed     Boolean  @default(false)
+  chosenOptions String[] // Storing array of options
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

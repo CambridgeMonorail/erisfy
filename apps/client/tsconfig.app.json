@@ -5,6 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "../../dist/out-tsc",
+    "module": "ES2022",
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",

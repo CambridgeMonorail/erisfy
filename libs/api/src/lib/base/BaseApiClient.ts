@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { ApiError } from '../errors/ApiError';
 import { ApiConfig, ApiResponse } from '../types/api';
 
@@ -36,22 +36,27 @@ export abstract class BaseApiClient {
   }
 
   protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.client.get<ApiResponse<T>, AxiosResponse<ApiResponse<T>>>(path, config);
+    const response = await this.client.get<T>(path, config);
+    return response as ApiResponse<T>;
   }
 
   protected async post<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.client.post<ApiResponse<T>, AxiosResponse<ApiResponse<T>>>(path, data, config);
+    const response = await this.client.post<T>(path, data, config);
+    return response as ApiResponse<T>;
   }
 
   protected async put<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.client.put<ApiResponse<T>, AxiosResponse<ApiResponse<T>>>(path, data, config);
+    const response = await this.client.put<T>(path, data, config);
+    return response as ApiResponse<T>;
   }
 
   protected async delete<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.client.delete<ApiResponse<T>, AxiosResponse<ApiResponse<T>>>(path, config);
+    const response = await this.client.delete<T>(path, config);
+    return response as ApiResponse<T>;
   }
 
   protected async patch<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.client.patch<ApiResponse<T>, AxiosResponse<ApiResponse<T>>>(path, data, config);
+    const response = await this.client.patch<T>(path, data, config);
+    return response as ApiResponse<T>;
   }
 }
