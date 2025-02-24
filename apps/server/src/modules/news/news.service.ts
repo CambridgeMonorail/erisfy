@@ -18,10 +18,11 @@ export class NewsService {
     this.logger.log('Running daily news fetch...');
 
     try {
-      const response = await axios.get(`${this.apiUrl}/v1/news/top`, {
+      const response = await axios.get(`${this.apiUrl}/top`, {
         params: {
           api_token: this.apiToken,
-          locale: 'us',
+          categories: 'business,tech,politics',
+          language: 'en',
           limit: 5,
         },
       });
@@ -40,7 +41,7 @@ export class NewsService {
         skipDuplicates: true,
       });
 
-      this.logger.log('Saved top 5 news articles');
+      this.logger.log('Saved top 5 market-relevant news articles');
     } catch (error) {
       this.logger.error('Failed to fetch or save news articles', error);
     }
