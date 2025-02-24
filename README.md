@@ -20,8 +20,8 @@ I'm learning LLMs and Agentic AI by building something
 - [Why This Project Was Built](#why-this-project-was-built)
 - [Technologies Used](#technologies-used)
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Running Locally](#running-locally)
+- [First-Time Project Setup](#first-time-project-setup)
+- [Running the Project Locally](#running-the-project-locally)
 - [Development Tasks](#development-tasks)
 - [Install Nx Console](#install-nx-console)
 - [Projects](#projects)
@@ -224,6 +224,104 @@ If you encounter errors:
 >   ```sh
 >   nx run server:prisma-migrate -- --name your_migration
 >   ```
+
+## First-Time Project Setup
+
+Follow these steps when setting up the project for the first time:
+
+1. Ensure prerequisites are installed:
+   - Node.js v20.14.0 (or higher)
+   - pnpm v9.15.0 (or higher)
+   - Docker Desktop
+   - Required API keys (see [API Key Setup Guide](./docs/how-to/api-key-setup.md))
+
+2. Clone the repository:
+   ```sh
+   git clone https://github.com/CambridgeMonorail/erisfy.git
+   cd erisfy
+   ```
+
+3. Install dependencies:
+   ```sh
+   pnpm install
+   ```
+
+4. Start Docker Desktop application
+
+5. Run the automated setup script:
+   ```sh
+   node scripts/dev-setup.js
+   ```
+   
+   This script will:
+   - Prompt for required environment variables (OpenAI API key, etc.)
+   - Create necessary environment files
+   - Start Docker containers
+   - Run initial database migrations
+
+## Running the Project Locally
+
+Follow these steps every time you want to run the project:
+
+1. Start Docker Desktop (if not already running)
+
+2. Start the Docker containers:
+   ```sh
+   pnpm run serve:docker
+   ```
+   Wait until you see the message that the database is ready.
+
+3. In a new terminal, start the server:
+   ```sh
+   pnpm run serve:server
+   ```
+   Wait until you see the message that the server is running.
+
+4. In another new terminal, start the client:
+   ```sh
+   pnpm run serve:client
+   ```
+
+Your application should now be running at:
+- Client: http://localhost:4200
+- Server: http://localhost:3001
+- Database Admin (Adminer): http://localhost:8080
+
+To stop the application:
+1. Press Ctrl+C in each terminal window (client and server)
+2. Stop the Docker containers with Ctrl+C in the Docker terminal
+3. (Optional) Close Docker Desktop if you're done developing
+
+### Troubleshooting Local Development
+
+If you encounter issues while running the project:
+
+1. **Port Conflicts**:
+   - Check if ports 3001, 4200, 5432, or 8080 are already in use
+   - Stop any conflicting services or change the ports in your environment files
+
+2. **Database Connection Issues**:
+   - Ensure Docker containers are running: `docker ps`
+   - Check Docker logs: `docker-compose logs db`
+   - Verify database connection settings in `.env.development`
+
+3. **Server Won't Start**:
+   - Verify Docker is running and database container is healthy
+   - Check server logs for specific error messages
+   - Verify environment variables in `.env.development`
+
+4. **Client Won't Start**:
+   - Check if the server is running and accessible
+   - Verify environment variables in client's `.env`
+   - Clear browser cache and reload
+
+5. **"Database Not Ready" Errors**:
+   - Wait a few more seconds for the database to initialize
+   - If persistent, try restarting the Docker containers:
+     ```sh
+     docker-compose down
+     pnpm run serve:docker
+     ```
 
 ## Installation
 
