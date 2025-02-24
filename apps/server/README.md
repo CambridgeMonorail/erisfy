@@ -18,6 +18,7 @@ This document provides comprehensive documentation for the Erisfy backend server
    - [Troubleshooting](#troubleshooting-database-issues)
 5. [Testing](#testing)
 6. [Error Handling](#error-responses)
+7. [API Testing](#api-testing)
 
 ## Overview
 
@@ -33,11 +34,11 @@ The Erisfy Server is a NestJS-based backend that:
 
 ### Market News Endpoints
 
-Base path: `/market-news`
+Base path: `/market-insights`
 
 #### Get Latest Market News
 
-- **GET** `/market-news`
+- **GET** `/market-insights`
 - Returns the most recent market data record with associated stories
 - Response structure:
 
@@ -54,20 +55,60 @@ Base path: `/market-news`
       market_impact: string;
       market_sector: string;
       marketDataRecordId: string;
-    }
-    [];
+    }[];
   }
   ```
 
-#### Trigger News Update
+#### Get Latest Market News (Alternative Endpoint)
 
-- **GET** `/market-news/trigger`
+- **GET** `/market-insights/latest`
+- Returns the latest market news using an alternative service method
+- Response structure matches the main endpoint
+
+#### Trigger Market News Update
+
+- **GET** `/market-insights/trigger`
 - Manually triggers the market news fetch process
 - Response:
 
   ```typescript
   {
     message: string; // 'Market news update triggered'
+  }
+  ```
+
+#### Trigger General News Update
+
+- **GET** `/market-insights/news-trigger`
+- Triggers an update for general news
+- Response:
+
+  ```typescript
+  {
+    message: string; // 'General news update triggered'
+  }
+  ```
+
+### General News Endpoints
+
+Base path: `/news`
+
+#### Get Latest News
+
+- **GET** `/news/latest`
+- Returns the latest general news
+- Throws `404` if no news data is found
+- Response includes latest news data
+
+#### Trigger News Update
+
+- **GET** `/news/trigger`
+- Manually triggers a daily news update
+- Response:
+
+  ```typescript
+  {
+    message: string; // 'News update triggered'
   }
   ```
 
@@ -92,7 +133,7 @@ The server includes automated tasks:
 
 Create a `.env.development` file in the server directory by copying `.env.example`:
 
-```sh
+```bash
 cp .env.example .env.development
 ```
 
@@ -124,13 +165,13 @@ POSTGRES_HOST=localhost
 
 1. Start the PostgreSQL container:
 
-   ```sh
+   ```bash
    pnpm run serve:docker
    ```
 
 2. For first-time setup, run database migrations:
 
-   ```sh
+   ```bash
    nx run server:prisma-migrate
    ```
 
@@ -175,19 +216,19 @@ When modifying the Prisma schema:
 
 1. Create and apply new migration:
 
-   ```sh
+   ```bash
    pnpm run prisma:migrate
    ```
 
 2. Pull pending changes from DB:
 
-   ```sh
+   ```bash
    npx prisma db pull
    ```
 
 3. Update Prisma client:
 
-   ```sh
+   ```bash
    npx prisma generate
    ```
 
@@ -223,3 +264,37 @@ The API may return the following HTTP status codes:
 - `200` - Success
 - `404` - No market news data found
 - `500` - Internal server error (e.g., database connection issues, OpenAI API errors)
+
+## API Testing
+
+### REST Client
+
+We provide an HTTP request collection file at `src/test/api.http` that works with the [REST Client VS Code extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) by Huachao Mao. This file contains pre-configured requests for all available API endpoints with examples and documentation.
+
+#### Setup
+
+1. Install the REST Client extension in VS Code
+2. Open `src/test/api.http`
+3. Click "Send Request" above any request to test it
+
+For example, to test the latest market news endpoint:
+
+```http
+GET http://localhost:3001/api/market-insights
+Content-Type: application/json
+```
+
+The file includes:
+
+- Environment variable configurations
+- All available API endpoints with documentation
+- Example response shapes
+- Error response examples
+
+#### Features
+
+- Test endpoints directly from VS Code
+- Switch between environments (local/staging/production)
+- View formatted JSON responses
+- See response headers and status codes
+- Save response examples

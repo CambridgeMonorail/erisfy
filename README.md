@@ -117,6 +117,10 @@ To use Erisfy, make sure you have the following installed and configured:
 - Node.js v20.14.0 (or higher)
 - pnpm v9.15.0 (or higher)
 - Docker Desktop (required for certain services)
+- API Keys (required for core functionality)
+  - **[API Key Setup Guide](./docs/how-to/api-key-setup.md)** - Complete guide for obtaining necessary API keys and exploring AI model alternatives
+  - The News API key - Required for market news data
+  - OpenAI API key - Required for AI analysis (or see our guide for alternative models)
 
 ### Environment Configuration
 
@@ -624,7 +628,8 @@ If you encounter issues during setup:
 1. **Setup Script Fails**:
    - Ensure Docker Desktop is running
    - Check that ports 3001 (server) and 5432 (database) are available
-   - Verify your OpenAI API key is valid
+   - Verify your API keys are valid (see our [API Key Setup Guide](./docs/how-to/api-key-setup.md))
+   - For API alternatives and self-hosted options, refer to our [setup guide](./docs/how-to/api-key-setup.md#2-alternatives-to-using-openai)
 
 2. **Manual Setup**:
    If you prefer to set up manually or the script fails, follow these steps:

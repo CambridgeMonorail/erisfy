@@ -6,6 +6,6 @@
     "ms-playwright.playwright",
     "nrwl.angular-console",
     "johnpapa.vscode-peacock",
-    "rangav.vscode-thunder-client"
+    "humao.rest-client"
   ]
 }
