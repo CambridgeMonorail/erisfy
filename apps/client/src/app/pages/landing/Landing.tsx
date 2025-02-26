@@ -39,15 +39,13 @@ const SOCIAL_URLS: SocialUrls = {
 
 export const LandingPage: FC = () => {
   const navigate = useNavigate();
-  const { onboarding, isLoading, error } = useOnboarding();
+  const { isLoading, error } = useOnboarding();
 
   const handleScrollToFeatures = useCallback(() => {
-    if (onboarding?.hasViewed) {
-      navigate('/home');
-    } else {
-      navigate('/screener/onboarding-flow');
-    }
-  }, [navigate, onboarding]);
+    // For new users or users who haven't viewed onboarding,
+    // always redirect to onboarding flow
+    navigate('/screener/onboarding-flow');
+  }, [navigate]);
 
   const handleGitHubRedirect = useCallback(() => {
     window.open(SOCIAL_URLS.GITHUB_URL, '_blank', 'noopener,noreferrer');

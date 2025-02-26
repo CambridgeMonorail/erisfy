@@ -22,9 +22,12 @@ const useNewsData = <T extends NewsData>(
       setIsLoading(true);
       setError(null);
 
-      const response = 'getLatestMarketInsight' in client
-        ? await client.getLatestMarketInsight.call(client)
-        : await client.getLatestNews?.call(client);
+      let response;
+      if ('getLatestMarketInsight' in client && client.getLatestMarketInsight) {
+        response = await client.getLatestMarketInsight();
+      } else if (client.getLatestNews) {
+        response = await client.getLatestNews();
+      }
 
       if (!response) {
         throw new Error('No valid news fetching method available');

@@ -15,16 +15,25 @@ export const useOnboarding = (userId = 'guest') => {
         setIsLoading(true);
         const { data } = await onboardingsClient.getOnboardings({ userId });
 
-        console.log('data', data);
+        // Handle empty array case - this is normal for new users
+        if (!data || data.length === 0) {
+          setOnboarding(null);
+          setError(null);
+          return;
+        }
 
-        setOnboarding(data[0] || null); // Ensure null if no data
+        setOnboarding(data[0]);
         setError(null);
       } catch (err) {
+        // Only set error for actual API failures
         if (err instanceof ApiError) {
-          setError(err.message);
+          setError(`API Error: ${err.message}`);
+        } else if (err instanceof Error) {
+          setError(`Unexpected error: ${err.message}`);
         } else {
-          setError('Failed to fetch onboarding data');
+          setError('An unknown error occurred');
         }
+        setOnboarding(null);
       } finally {
         setIsLoading(false);
       }
