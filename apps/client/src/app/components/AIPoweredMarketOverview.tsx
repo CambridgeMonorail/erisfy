@@ -20,7 +20,16 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
 }) => {
   const { news, isLoading, error, isUpdating, triggerUpdate } = useMarketNews();
 
+  console.log('[AIPoweredMarketOverview] Render state:', {
+    hasNews: !!news,
+    isLoading,
+    error,
+    isUpdating,
+    newsData: news
+  });
+
   if (isLoading) {
+    console.log('[AIPoweredMarketOverview] Rendering loading state');
     return (
       <div className="flex justify-center items-center h-64 bg-background/50 rounded-lg">
         <Spinner size="lg" aria-label="Loading market news" />
@@ -29,6 +38,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
   }
 
   if (error) {
+    console.log('[AIPoweredMarketOverview] Rendering error state:', error);
     return (
       <Card className={cn('border-destructive bg-destructive/5', className)}>
         <CardHeader>
@@ -47,6 +57,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
   }
 
   if (!news || !news.stories) {
+    console.log('[AIPoweredMarketOverview] No news data available:', { news });
     return (
       <Card className={cn('border-muted bg-muted/5', className)}>
         <CardContent className="p-6">
@@ -57,6 +68,11 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
       </Card>
     );
   }
+
+  console.log('[AIPoweredMarketOverview] Rendering news data:', {
+    date: news.date,
+    storiesCount: news.stories.length
+  });
 
   return (
     <Card className={cn('bg-card border shadow-md', className)}>
