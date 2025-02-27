@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_REACT_APP_MY_API_BASE_URL: string
   readonly VITE_REACT_APP_MY_API_KEY: string
   readonly BASE_URL: string
+  readonly VITE_API_BASE_URL: string
+  readonly VITE_API_TIMEOUT: string
 }
 
 interface ImportMeta {

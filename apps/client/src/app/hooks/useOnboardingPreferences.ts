@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { OnboardingsEndpoint, type CreateOnboardingDto } from '@erisfy/api';
+import { OnboardingsEndpoint, type ICreateOnboardingDto } from '@erisfy/api';
 import { createApiConfig } from '../utils/apiConfig';
 import type { InvestmentStyle, RiskTolerance } from '../pages/onboarding/onboardingData.js';
 
@@ -20,7 +20,7 @@ export const useOnboardingPreferences = (userId = 'guest') => {
       const { data: [existingData] } = await onboardingsClient.getOnboardings({ userId });
       const onboardingId = existingData?.id ?? 1; // Default to 1 if no existing record
 
-      const updateData: Partial<CreateOnboardingDto> = {
+      const updateData: Partial<ICreateOnboardingDto> = {
         userId,
         hasViewed: true,
         chosenOptions: [`style:${investmentStyle}`, `risk:${riskTolerance}`]

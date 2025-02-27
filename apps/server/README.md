@@ -5,9 +5,7 @@ This document provides comprehensive documentation for the Erisfy backend server
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [API Endpoints](#api-endpoints)
-   - [Market News Endpoints](#market-news-endpoints)
-   - [Background Jobs](#background-jobs)
+2. [API Documentation](#api-documentation)
 3. [Development](#development)
    - [Prerequisites](#prerequisites)
    - [Environment Setup](#environment-variables)
@@ -17,7 +15,6 @@ This document provides comprehensive documentation for the Erisfy backend server
    - [Schema Updates](#updating-the-database-schema)
    - [Troubleshooting](#troubleshooting-database-issues)
 5. [Testing](#testing)
-6. [Error Handling](#error-responses)
 
 ## Overview
 
@@ -29,56 +26,42 @@ The Erisfy Server is a NestJS-based backend that:
 - Integrates with OpenAI for market analysis
 - Runs scheduled background jobs for data updates
 
-## API Endpoints
+## API Documentation
 
-### Market News Endpoints
+The API documentation is available through Swagger UI, which provides an interactive interface to explore and test all available endpoints.
 
-Base path: `/market-news`
+### Accessing Swagger Documentation
 
-#### Get Latest Market News
+1. Start the development server:
+   ```bash
+   pnpm nx serve server
+   ```
 
-- **GET** `/market-news`
-- Returns the most recent market data record with associated stories
-- Response structure:
+2. Open your browser and navigate to:
+   ```
+   http://localhost:3001/api/docs
+   ```
 
-  ```typescript
-  {
-    id: string;
-    date: string;
-    createdAt: string;
-    stories: {
-      id: string;
-      title: string;
-      one_line_summary: string;
-      whats_happening: string;
-      market_impact: string;
-      market_sector: string;
-      marketDataRecordId: string;
-    }
-    [];
-  }
-  ```
+### Using Swagger UI
 
-#### Trigger News Update
+The Swagger UI provides:
 
-- **GET** `/market-news/trigger`
-- Manually triggers the market news fetch process
-- Response:
+- Interactive API documentation
+- Request/response examples for each endpoint
+- Built-in API testing interface
+- Authentication configuration
+- Schema definitions for all DTOs and responses
 
-  ```typescript
-  {
-    message: string; // 'Market news update triggered'
-  }
-  ```
+Key features:
+- **Try it out**: Test endpoints directly from the browser
+- **Models**: View detailed request/response schemas
+- **Authorization**: Configure auth tokens for protected endpoints
+- **Response codes**: See all possible response statuses and their meanings
 
-### Background Jobs
-
-The server includes automated tasks:
-
-- Daily Market News Fetch
-  - Runs automatically at 08:00 UTC every day
-  - Fetches latest market stories using OpenAI
-  - Stores the data in the database
+API endpoints are organized by tags:
+- `market-insights`: Market news and analysis endpoints
+- `onboardings`: User onboarding management endpoints
+- `news`: General news endpoints
 
 ## Development
 
@@ -92,16 +75,20 @@ The server includes automated tasks:
 
 Create a `.env.development` file in the server directory by copying `.env.example`:
 
-```sh
+```bash
 cp .env.example .env.development
 ```
 
 Required environment variables:
 
-- `DATABASE_URL` - PostgreSQL connection string
-- `OPENAI_API_KEY` - Your OpenAI API key
-- `PORT` - Server port (defaults to 3001)
-- `NODE_ENV` - Environment (development/production/test)
+```bash
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/erisfydb?schema=public"
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=erisfydb
+POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+```
 
 ### Docker Database Setup
 
@@ -124,13 +111,13 @@ POSTGRES_HOST=localhost
 
 1. Start the PostgreSQL container:
 
-   ```sh
+   ```bash
    pnpm run serve:docker
    ```
 
 2. For first-time setup, run database migrations:
 
-   ```sh
+   ```bash
    nx run server:prisma-migrate
    ```
 
@@ -153,7 +140,12 @@ Adminer is included for database management:
 
 2. **Container Issues**:
    - Verify Docker Desktop is running
-   - Check logs: `docker-compose logs db`
+   - Check logs:
+
+   ```shell
+   docker-compose logs db
+   ```
+
    - Try removing container: `docker-compose down`
    - For fresh start: `docker-compose down -v`
 
@@ -175,21 +167,35 @@ When modifying the Prisma schema:
 
 1. Create and apply new migration:
 
-   ```sh
+   ```bash
    pnpm run prisma:migrate
    ```
 
 2. Pull pending changes from DB:
 
-   ```sh
+   ```bash
    npx prisma db pull
    ```
 
 3. Update Prisma client:
 
-   ```sh
+   ```bash
    npx prisma generate
    ```
+
+**Note**: Nx runs Prisma commands in a non-interactive shell, so you may not be prompted for a migration name. You can work around this by running:
+
+```bash
+npx prisma migrate dev --name your_migration
+```
+
+You can also pass the --name argument directly via Nx:
+
+```bash
+nx run server:prisma-migrate -- --name your_migration
+```
+
+Consider using a consistent naming format such as `day_of_week_day_month_year` for your migrations.
 
 ### Testing
 
@@ -213,3 +219,37 @@ The API may return the following HTTP status codes:
 - `200` - Success
 - `404` - No market news data found
 - `500` - Internal server error (e.g., database connection issues, OpenAI API errors)
+
+## API Testing
+
+### REST Client
+
+We provide an HTTP request collection file at `src/test/api.http` that works with the [REST Client VS Code extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) by Huachao Mao. This file contains pre-configured requests for all available API endpoints with examples and documentation.
+
+#### Setup
+
+1. Install the REST Client extension in VS Code
+2. Open `src/test/api.http`
+3. Click "Send Request" above any request to test it
+
+For example, to test the latest market news endpoint:
+
+```http
+GET http://localhost:3001/api/market-insights
+Content-Type: application/json
+```
+
+The file includes:
+
+- Environment variable configurations
+- All available API endpoints with documentation
+- Example response shapes
+- Error response examples
+
+#### Features
+
+- Test endpoints directly from VS Code
+- Switch between environments (local/staging/production)
+- View formatted JSON responses
+- See response headers and status codes
+- Save response examples

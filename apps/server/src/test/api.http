@@ -1,0 +1,85 @@
+# Environment Settings
+@baseUrl = http://localhost:3001/api
+@contentType = application/json
+
+### Settings for different environments - uncomment the one you want to use
+# @baseUrl = http://localhost:3001/api # Local development
+# @baseUrl = https://staging-api.erisfy.com/api # Staging
+# @baseUrl = https://api.erisfy.com/api # Production
+
+### Market Insights Endpoints
+
+### Get Latest Market News
+# Returns the most recent market data record with associated stories
+GET {{baseUrl}}/market-insights
+Content-Type: {{contentType}}
+
+### Get Latest Market News (Alternative)
+# Alternative endpoint using a different service method
+GET {{baseUrl}}/market-insights/latest
+Content-Type: {{contentType}}
+
+### Trigger Market News Update
+# Manually triggers the market news fetch process
+# Note: This might take a few seconds to complete
+GET {{baseUrl}}/market-insights/trigger
+Content-Type: {{contentType}}
+
+### Trigger General News Update
+# Triggers an update for general news
+# Note: This process runs asynchronously
+GET {{baseUrl}}/market-insights/news-trigger
+Content-Type: {{contentType}}
+
+### General News Endpoints
+
+### Get Latest News
+# Returns the latest general news data
+# Will return 404 if no news data is found
+GET {{baseUrl}}/news/latest
+Content-Type: {{contentType}}
+
+### Trigger News Update
+# Manually triggers a daily news update
+GET {{baseUrl}}/news/trigger
+Content-Type: {{contentType}}
+
+### Sample Response Shapes (for documentation)
+
+# Market News Response Shape:
+# {
+#   "id": "string",
+#   "date": "string",
+#   "createdAt": "string",
+#   "stories": [
+#     {
+#       "id": "string",
+#       "title": "string",
+#       "one_line_summary": "string",
+#       "whats_happening": "string",
+#       "market_impact": "string",
+#       "market_sector": "string",
+#       "marketDataRecordId": "string"
+#     }
+#   ]
+# }
+
+# News Update Response Shape:
+# {
+#   "message": "News update triggered"
+# }
+
+### Error Response Examples:
+# 404 Not Found
+# {
+#   "statusCode": 404,
+#   "message": "No market news data found",
+#   "error": "Not Found"
+# }
+#
+# 500 Internal Server Error
+# {
+#   "statusCode": 500,
+#   "message": "Failed to fetch market news data",
+#   "error": "Internal Server Error"
+# }

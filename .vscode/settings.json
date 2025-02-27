@@ -52,5 +52,9 @@
     "titleBar.inactiveBackground": "#141ec599",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#141EC5"
+  "peacock.color": "#141EC5",
+  "cSpell.words": [
+    "adminer",
+    "erisfydb"
+  ]
 }
