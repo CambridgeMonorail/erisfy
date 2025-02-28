@@ -11,6 +11,6 @@ export interface IOnboardingFilter {
   hasViewed?: boolean;
 }
 
-export interface ICreateOnboardingDto extends Omit<IOnboarding, 'id'> {}
+export type ICreateOnboardingDto = Omit<IOnboarding, 'id'>;
 
-export interface IUpdateOnboardingDto extends Partial<ICreateOnboardingDto> {}
+export type IUpdateOnboardingDto = Partial<ICreateOnboardingDto>;
