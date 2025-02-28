@@ -1,12 +1,13 @@
 import { http, HttpResponse } from 'msw';
-import { Onboarding } from '@erisfy/api';
+import { IOnboarding } from '@erisfy/api';
 import {
   getOnboardingData,
   setOnboardingData,
   OnboardingError
 } from '@erisfy/data-access-indexeddb';
 
-const API_BASE_URL = '/erisfy';
+// Update API base URL to match the actual API URL used in the application
+const API_BASE_URL = 'https://api.erisfy.com';
 
 export const onboardingHandlers = [
   http.get(`${API_BASE_URL}/api/onboardings`, async ({ request }) => {
@@ -31,9 +32,9 @@ export const onboardingHandlers = [
   http.post(`${API_BASE_URL}/api/onboardings`, async ({ request }) => {
     try {
       console.log('[MSW] Handling POST request');
-      const data = await request.json() as Omit<Onboarding, 'id'>;
+      const data = await request.json() as Omit<IOnboarding, 'id'>;
       console.log('[MSW] Create payload:', data);
-      
+
       await setOnboardingData({ ...data, id: 1 }); // Add an ID for new records
       const savedData = await getOnboardingData(data.userId);
       console.log('[MSW] Created data:', savedData);
@@ -50,9 +51,9 @@ export const onboardingHandlers = [
   http.patch(`${API_BASE_URL}/api/onboardings/*`, async ({ request }) => {
     try {
       console.log('[MSW] Handling PATCH request:', request.url);
-      const updates = await request.json() as Partial<Onboarding>;
+      const updates = await request.json() as Partial<IOnboarding>;
       console.log('[MSW] Update payload:', updates);
-      
+
       if (!updates.userId) {
         return HttpResponse.json(
           { error: 'userId is required' },
@@ -61,16 +62,16 @@ export const onboardingHandlers = [
       }
 
       let existingData = await getOnboardingData(updates.userId);
-      
+
       // If no existing data, create new record
       if (!existingData) {
         console.log('[MSW] Creating new record for userId:', updates.userId);
-        await setOnboardingData({ 
+        await setOnboardingData({
           id: 1,
           userId: updates.userId,
           hasViewed: false,
           chosenOptions: [],
-          ...updates 
+          ...updates
         });
         existingData = await getOnboardingData(updates.userId);
       }
