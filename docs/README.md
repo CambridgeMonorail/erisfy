@@ -10,8 +10,19 @@ Contains guidelines for contributing to the project, including how to report iss
 
 ### `how-to`
 
-Provides practical how-to guides for various tasks and features within the project.
+Provides practical [how-to guides](./how-to/README.md) for various tasks and features within the project. Contains guides for setting up API keys, managing tokens, understanding the project structure, and many other development topics.
+
+### `research`
+
+Houses our [research documents](./research/readme.md) that provide the theoretical foundation for Erisfy's approach to stock screening. These include papers on quantitative heuristics for value investing, multi-agent systems for financial news analysis, and building LLM-powered stock screeners.
 
 ### `specs`
 
-Contains detailed specifications and requirements for different components and features of the project.
+Contains detailed specifications and requirements for different components and features of the project. For a comprehensive list of specifications, see the [specs readme](./specs/readme.md).
+
+## Additional Documentation
+
+For detailed guidance on specific topics:
+
+- [Contributing Guidelines](./CONTRIBUTING.md)
+- [Project Development Strategies](./strategies.md)
