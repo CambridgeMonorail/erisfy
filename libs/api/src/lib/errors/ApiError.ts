@@ -1,16 +1,18 @@
-export class ApiError extends Error {
-  public override name = 'ApiError';
-  public override message: string;
+// Define a type for API response data to avoid using 'any'
+export type ApiResponseData = {
+  message?: string;
+  errors?: Record<string, string[]>;
+  data?: unknown;
+  [key: string]: unknown;
+};
 
+export class ApiError extends Error {
   constructor(
-    public status: number,
+    public readonly status: number,
     message: string,
-    public data?: unknown
+    public readonly data?: unknown
   ) {
     super(message);
-    this.message = message;
-    
-    // Restore prototype chain properly
-    Object.setPrototypeOf(this, ApiError.prototype);
+    this.name = 'ApiError';
   }
 }

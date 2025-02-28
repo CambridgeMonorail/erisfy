@@ -5,6 +5,9 @@ import { CalendarDateRangePicker, InteractiveChart } from '@erisfy/shadcnui-bloc
 import { generateMockData, StockData } from '../../utils/mockData';
 import { DashboardCard } from '../../components/dashboard/DashboardCard';
 import type { FilterState } from '../../types/dashboard';
+import { MarketSentimentNewsFeed } from '../../components/MarketSentimentNewsFeed';
+import { useMarketNews } from '../../hooks/useMarketNews';
+import { useGeneralNews } from '../../hooks/useGeneralNews';
 
 /**
  * Renders the main dashboard page, including AI-powered insights, filter tools,
@@ -17,6 +20,9 @@ export const DashboardPage: FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
+  const { news: marketNews, isLoading: isMarketNewsLoading, error: marketNewsError } = useMarketNews();
+  const { news: generalNews, isLoading: isGeneralNewsLoading, error: generalNewsError } = useGeneralNews();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -317,29 +323,23 @@ export const DashboardPage: FC = () => {
           title="Market Sentiment & News Feed"
           description="Get the latest market sentiment and news relevant to your watchlist."
         >
-          <div className="space-y-4">
-            <div>
-              <strong>Smart AI-Summarized News:</strong>
-              <ul className="list-disc list-inside">
-                <li>Top 3-5 stories that impact the market today.</li>
-                <li>Each story summarized in 1-2 sentences.</li>
-                <li>Highlight relevance to user watchlist.</li>
-              </ul>
-            </div>
-            <div>
-              <strong>Sentiment-Based Categorization:</strong>
-              <p>
-                Tags stories as{' '}
-                <span role="img" aria-label="Bullish">🟢</span> Bullish,{' '}
-                <span role="img" aria-label="Bearish">🔴</span> Bearish, or{' '}
-                <span role="img" aria-label="Neutral">⚪</span> Neutral based on AI analysis.
-              </p>
-            </div>
-            <div>
-              <strong>Custom Watchlist News Feed:</strong>
-              <p>Users see only news related to their selected stocks & sectors.</p>
-            </div>
-          </div>
+          <MarketSentimentNewsFeed
+            className="mb-4"
+            isLoading={isMarketNewsLoading}
+            error={marketNewsError}
+            news={marketNews}
+          />
+          <DashboardCard
+            title="General News"
+            description="Get the latest general news impacting the market."
+          >
+            <MarketSentimentNewsFeed
+              className="mb-4"
+              isLoading={isGeneralNewsLoading}
+              error={generalNewsError}
+              news={generalNews}
+            />
+          </DashboardCard>
         </DashboardCard>
 
         {/* Footer Section */}

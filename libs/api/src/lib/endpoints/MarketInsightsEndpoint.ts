@@ -8,6 +8,15 @@ import {
 } from '../types/marketInsights';
 
 export class MarketInsightsEndpoint extends BaseApiClient {
+  constructor(config: ConstructorParameters<typeof BaseApiClient>[0]) {
+    super(config);
+    this.getLatestMarketInsight = this.getLatestMarketInsight.bind(this);
+    console.log('[MarketInsightsEndpoint] Initialized with config:', {
+      baseURL: config.baseURL,
+      timeout: config.timeout
+    });
+  }
+
   async getMarketInsights(filter?: MarketDataInsightsFilter): Promise<ApiResponse<MarketDataInsights[]>> {
     return this.get<MarketDataInsights[]>('/market-insights', { params: filter });
   }
@@ -33,6 +42,26 @@ export class MarketInsightsEndpoint extends BaseApiClient {
   }
 
   async getLatestMarketInsight(): Promise<ApiResponse<MarketDataInsights>> {
-    return this.get<MarketDataInsights>('/market-insights/latest');
+    console.log('[MarketInsightsEndpoint] Calling getLatestMarketInsight');
+    try {
+      const response = await this.get<MarketDataInsights>('market-insights/latest');
+      console.log('[MarketInsightsEndpoint] Raw response:', response);
+
+      // Ensure we're returning the response in the correct format
+      if (response && typeof response === 'object' && !('data' in response)) {
+        // If the response is the data itself, wrap it in the expected format with all required properties
+        return {
+          data: response as MarketDataInsights,
+          status: 200,
+          message: 'Latest market insight retrieved successfully'
+        };
+      }
+
+      console.log('[MarketInsightsEndpoint] Formatted response:', response);
+      return response;
+    } catch (error) {
+      console.error('[MarketInsightsEndpoint] Error fetching latest market insight:', error);
+      throw error;
+    }
   }
 }

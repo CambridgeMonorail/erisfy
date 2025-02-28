@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { OpenAiService } from '../openai/openai.service';
 import { PrismaService } from '../../prisma.service';
+import { NewsService } from '../news/news.service';
 
 @Injectable()
 export class MarketNewsService {
@@ -9,7 +10,8 @@ export class MarketNewsService {
 
   constructor(
     private openAiService: OpenAiService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
+    private newsService: NewsService
   ) {}
 
   @Cron('0 8 * * *', {
@@ -54,6 +56,14 @@ export class MarketNewsService {
     }
   }
 
+  @Cron('0 8 * * *', {
+    timeZone: 'UTC',
+  })
+  async fetchDailyNews() {
+    this.logger.log('Running daily news fetch...');
+    await this.newsService.fetchDailyNews();
+  }
+
   async getLatestMarketNews() {
     const latestNews = await this.prisma.marketDataRecord.findFirst({
       include: {
@@ -69,5 +79,11 @@ export class MarketNewsService {
     }
 
     return latestNews;
+  }
+
+  async triggerNewsUpdate() {
+    this.logger.log('Triggering news update...');
+    await this.fetchDailyNews();
+    return { message: 'News update triggered' };
   }
 }
