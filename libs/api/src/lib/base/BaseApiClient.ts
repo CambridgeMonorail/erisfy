@@ -34,12 +34,12 @@ export abstract class BaseApiClient {
       (error) => {
         if (error.response) {
           throw new ApiError(
-            error.response?.data?.message || 'An unexpected error occurred',
             error.response?.status,
+            error.response?.data?.message || 'An unexpected error occurred',
             error.response?.data
           );
         }
-        throw new ApiError('Network Error', 500);
+        throw new ApiError(500, 'Network Error');
       }
     );
   }
