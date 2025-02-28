@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { Onboarding } from '@erisfy/api';
+import { IOnboarding } from '@erisfy/api';
 
-export const createOnboarding = (override?: Partial<Onboarding>): Onboarding => ({
+export const createOnboarding = (override?: Partial<IOnboarding>): IOnboarding => ({
   id: faker.number.int({ min: 1, max: 1000 }),
   userId: faker.string.uuid(),
   hasViewed: faker.datatype.boolean(),
