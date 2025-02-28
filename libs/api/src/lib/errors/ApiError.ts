@@ -8,9 +8,9 @@ export type ApiResponseData = {
 
 export class ApiError extends Error {
   constructor(
+    public readonly status: number,
     message: string,
-    public readonly statusCode?: number,
-    public readonly responseData?: ApiResponseData
+    public readonly data?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
