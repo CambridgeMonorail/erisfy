@@ -4,8 +4,9 @@ import {
   Swords,
   AudioWaveform,
   SquareTerminal,
-  Bot,
   Landmark,
+  Wallet,
+  Settings,
 } from 'lucide-react';
 import { Logo } from '@erisfy/shadcnui-blocks';
 
@@ -27,6 +28,8 @@ import { StockDetailPage } from '../pages/stock-detail/StockDetail';
 import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelectionScreen';
 import { MarketOpportunitiesPage } from '../pages/market-opportunities/MarketOpportunities';
 import { OnboardingFlow } from '../pages/onboarding/OnboardingFlow';
+import { PortfolioPage } from '../pages/portfolio/Portfolio';
+import { SettingsPage } from '../pages/settings/Settings';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -45,6 +48,8 @@ const paths = {
   pricing: '/pricing',
   statusBoard: '/status-board',
   termsAndConditions: '/terms-and-conditions',
+  portfolio: '/portfolio',
+  settings: '/settings',
   components: {
     colorPalette: '/color-palette',
     library: '/library',
@@ -82,45 +87,63 @@ const sidebarData: SidebarConfiguration = {
   ],
   navMain: [
     {
-      title: 'Sample Pages',
-      url: paths.about,
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        { title: 'Landing', url: paths.landing },
-        { title: 'Dashboard', url: paths.dashboard },
-        { title: 'About', url: paths.about },
-        { title: 'Features', url: paths.features },
-        { title: 'Pricing', url: paths.pricing },
-        { title: 'FAQ', url: paths.faq },
-        { title: 'Contact', url: paths.contact },
-        { title: 'Blog', url: paths.blog },
-        { title: 'Terms and Conditions', url: paths.termsAndConditions },
-        { title: 'StatusBoard', url: paths.statusBoard },
-      ],
-    },
-    {
-      title: 'Components',
-      url: paths.components.library,
-      icon: Bot,
-      items: [
-        { title: 'Shadcn/ui Components', url: paths.components.library },
-        { title: 'Color Palette', url: paths.components.colorPalette },
-      ],
-    },
-    {
       title: 'Screener',
       url: paths.screener.results,
       icon: Landmark,
       items: [
-        { title: 'Screener Results', url: paths.screener.results },
-        { title: 'Stock Detail', url: paths.screener.stockDetail },
-        { title: 'Filter Selection', url: paths.screener.filterSelection },
+        { title: 'Smart Start', url: paths.screener.onboardingFlow },
         {
           title: 'Market Opportunities',
           url: paths.screener.marketOpportunities,
         },
-        { title: 'Smart Start', url: paths.screener.onboardingFlow }, // P58c2
+        { title: 'Filter Selection', url: paths.screener.filterSelection },
+        { title: 'Screener Results', url: paths.screener.results },
+        { title: 'Stock Detail', url: paths.screener.stockDetail },
+      ],
+    },
+    {
+      title: 'Portfolio',
+      url: paths.portfolio,
+      icon: Wallet,
+      items: [
+        { title: 'Overview', url: paths.portfolio },
+        // Future portfolio-related pages can be added here
+      ],
+    },
+    {
+      title: 'Settings',
+      url: paths.settings,
+      icon: Settings,
+    },
+    {
+      title: 'Work in Progress',
+      url: paths.about,
+      icon: SquareTerminal,
+      items: [
+        {
+          title: 'Sample Pages',
+          url: paths.about,
+          items: [
+            { title: 'Landing', url: paths.landing },
+            { title: 'Dashboard', url: paths.dashboard },
+            { title: 'About', url: paths.about },
+            { title: 'Features', url: paths.features },
+            { title: 'Pricing', url: paths.pricing },
+            { title: 'FAQ', url: paths.faq },
+            { title: 'Contact', url: paths.contact },
+            { title: 'Blog', url: paths.blog },
+            { title: 'Terms and Conditions', url: paths.termsAndConditions },
+            { title: 'StatusBoard', url: paths.statusBoard },
+          ],
+        },
+        {
+          title: 'Components',
+          url: paths.components.library,
+          items: [
+            { title: 'Shadcn/ui Components', url: paths.components.library },
+            { title: 'Color Palette', url: paths.components.colorPalette },
+          ],
+        },
       ],
     },
   ],
@@ -155,33 +178,51 @@ export const navigationConfig = {
           label: 'Market Opportunities',
           path: paths.screener.marketOpportunities,
         },
-        { label: 'Screening  Rules', path: paths.screener.filterSelection },
+        { label: 'Screening Rules', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
       ],
     },
     {
-      label: 'Sample Pages',
-      path: paths.about,
+      label: 'Portfolio',
+      path: paths.portfolio,
       children: [
-        { label: 'Landing', path: paths.landing },
-        { label: 'Dashboard', path: paths.dashboard },
-        { label: 'About', path: paths.about },
-        { label: 'Features', path: paths.features },
-        { label: 'Pricing', path: paths.pricing },
-        { label: 'FAQ', path: paths.faq },
-        { label: 'Contact', path: paths.contact },
-        { label: 'Blog', path: paths.blog },
-        { label: 'Terms and Conditions', path: paths.termsAndConditions },
-        { label: 'StatusBoard', path: paths.statusBoard },
+        { label: 'Overview', path: paths.portfolio },
+        // Future portfolio-related pages can be added here
       ],
     },
     {
-      label: 'Components',
-      path: paths.components.library,
+      label: 'Settings',
+      path: paths.settings,
+    },
+    {
+      label: 'Work in Progress',
+      path: paths.about,
       children: [
-        { label: 'Shadcn/ui Components', path: paths.components.library },
-        { label: 'Color Palette', path: paths.components.colorPalette },
+        {
+          label: 'Sample Pages',
+          path: paths.about,
+          children: [
+            { label: 'Landing', path: paths.landing },
+            { label: 'Dashboard', path: paths.dashboard },
+            { label: 'About', path: paths.about },
+            { label: 'Features', path: paths.features },
+            { label: 'Pricing', path: paths.pricing },
+            { label: 'FAQ', path: paths.faq },
+            { label: 'Contact', path: paths.contact },
+            { label: 'Blog', path: paths.blog },
+            { label: 'Terms and Conditions', path: paths.termsAndConditions },
+            { label: 'StatusBoard', path: paths.statusBoard },
+          ],
+        },
+        {
+          label: 'Components',
+          path: paths.components.library,
+          children: [
+            { label: 'Shadcn/ui Components', path: paths.components.library },
+            { label: 'Color Palette', path: paths.components.colorPalette },
+          ],
+        },
       ],
     },
   ] as MenuItem[],
@@ -245,6 +286,8 @@ navigationConfig.routes = [
   createRoute(paths.pricing, PricingPage),
   createRoute(paths.statusBoard, StatusBoardPage),
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
+  createRoute(paths.portfolio, PortfolioPage),
+  createRoute(paths.settings, SettingsPage),
   createRoute(paths.screener.results, ScreenerResultsPage),
   createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.screener.filterSelection, FilterSelectionScreen),
