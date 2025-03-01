@@ -4,7 +4,6 @@ import {
   Swords,
   AudioWaveform,
   SquareTerminal,
-  Bot,
   Landmark,
 } from 'lucide-react';
 import { Logo } from '@erisfy/shadcnui-blocks';
@@ -103,6 +102,7 @@ const sidebarData: SidebarConfiguration = {
       items: [
         {
           title: 'Sample Pages',
+          url: paths.about,
           items: [
             { title: 'Landing', url: paths.landing },
             { title: 'Dashboard', url: paths.dashboard },
@@ -118,6 +118,7 @@ const sidebarData: SidebarConfiguration = {
         },
         {
           title: 'Components',
+          url: paths.components.library,
           items: [
             { title: 'Shadcn/ui Components', url: paths.components.library },
             { title: 'Color Palette', url: paths.components.colorPalette },
