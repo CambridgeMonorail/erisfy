@@ -1,13 +1,3 @@
-Got it! I will research how LLMs and agentic AI can be leveraged to build an automated stock screener for value investing. This will include insights into:
-
-- How LLMs can extract, summarise, and interpret financial news to determine stock relevance.
-- Approaches to integrating fundamental analysis for ranking stocks.
-- The use of agentic AI to refine heuristics based on past performance.
-- Recommendations for free or low-cost data sources.
-- Considerations for backtesting to ensure the recommendations are not poor.
-
-I'll also explore best practices for keeping the human in the loop while maximising AI autonomy. I will get back to you with detailed findings.
-
 # Introduction
 
 Building an **automated stock screener for value investing** with modern AI involves blending **financial data analysis** with **language model capabilities**. The goal is to automatically find undervalued stocks by analyzing both quantitative fundamentals and qualitative news context. Key components of such a system include: (1) **NLP/LLM modules** to digest financial news and assess relevance, (2) **fundamental analysis filters** (P/E, P/B, growth, etc.) to screen and rank value stocks, (3) an **agentic AI approach** that learns and refines its selection heuristics over time, (4) integration of **free or low-cost data sources** for financial and news data, (5) rigorous **backtesting** to validate performance and avoid overfitting, and (6) clear, **explainable outputs** that keep human users (especially novices) informed and in control. Below, we break down each aspect with best practices and implementation considerations.

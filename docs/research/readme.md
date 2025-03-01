@@ -1,6 +1,11 @@
 # Erisfy Research Documentation
 
-This directory contains research documents that inform the development of Erisfy, our AI-powered stock screener. These documents provide the theoretical foundation and implementation strategies for various aspects of the system.
+This directory contains research documents that inform the development of Erisfy, our AI-powered stock screener. These documents provide the theoretical foundation and implementation strategies for various aspects of the system, including:
+
+- **Quantitative Heuristics for Systematic Value Investing**: A comprehensive analysis of data-driven rules for value investing strategies
+- **Building an LLM-Powered Value Investing Stock Screener**: Details on leveraging LLMs and agentic AI for automated stock screening
+- **Multi-Agent System for Financial News Analysis**: Architecture and methodology for specialized news analysis agents
+- **Building a Multi-Agent Financial News Analysis System with LangGraphJS**: Technical implementation of multi-agent systems using LangGraphJS
 
 ## Available Research Documents
 
