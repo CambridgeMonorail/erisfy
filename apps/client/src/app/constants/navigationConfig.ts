@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   SquareTerminal,
   Landmark,
+  Wallet,
 } from 'lucide-react';
 import { Logo } from '@erisfy/shadcnui-blocks';
 
@@ -26,6 +27,7 @@ import { StockDetailPage } from '../pages/stock-detail/StockDetail';
 import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelectionScreen';
 import { MarketOpportunitiesPage } from '../pages/market-opportunities/MarketOpportunities';
 import { OnboardingFlow } from '../pages/onboarding/OnboardingFlow';
+import { PortfolioPage } from '../pages/portfolio/Portfolio';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -44,6 +46,7 @@ const paths = {
   pricing: '/pricing',
   statusBoard: '/status-board',
   termsAndConditions: '/terms-and-conditions',
+  portfolio: '/portfolio',
   components: {
     colorPalette: '/color-palette',
     library: '/library',
@@ -93,6 +96,15 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Filter Selection', url: paths.screener.filterSelection },
         { title: 'Screener Results', url: paths.screener.results },
         { title: 'Stock Detail', url: paths.screener.stockDetail },
+      ],
+    },
+    {
+      title: 'Portfolio',
+      url: paths.portfolio,
+      icon: Wallet,
+      items: [
+        { title: 'Overview', url: paths.portfolio },
+        // Future portfolio-related pages can be added here
       ],
     },
     {
@@ -158,9 +170,17 @@ export const navigationConfig = {
           label: 'Market Opportunities',
           path: paths.screener.marketOpportunities,
         },
-        { label: 'Screening  Rules', path: paths.screener.filterSelection },
+        { label: 'Screening Rules', path: paths.screener.filterSelection },
         { label: 'Screener Results', path: paths.screener.results },
         { label: 'Stock Detail', path: paths.screener.stockDetail },
+      ],
+    },
+    {
+      label: 'Portfolio',
+      path: paths.portfolio,
+      children: [
+        { label: 'Overview', path: paths.portfolio },
+        // Future portfolio-related pages can be added here
       ],
     },
     {
@@ -254,6 +274,7 @@ navigationConfig.routes = [
   createRoute(paths.pricing, PricingPage),
   createRoute(paths.statusBoard, StatusBoardPage),
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
+  createRoute(paths.portfolio, PortfolioPage),
   createRoute(paths.screener.results, ScreenerResultsPage),
   createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.screener.filterSelection, FilterSelectionScreen),
