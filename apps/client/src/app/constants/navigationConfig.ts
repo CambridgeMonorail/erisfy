@@ -6,6 +6,7 @@ import {
   SquareTerminal,
   Landmark,
   Wallet,
+  Settings,
 } from 'lucide-react';
 import { Logo } from '@erisfy/shadcnui-blocks';
 
@@ -28,6 +29,7 @@ import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelection
 import { MarketOpportunitiesPage } from '../pages/market-opportunities/MarketOpportunities';
 import { OnboardingFlow } from '../pages/onboarding/OnboardingFlow';
 import { PortfolioPage } from '../pages/portfolio/Portfolio';
+import { SettingsPage } from '../pages/settings/Settings';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
 
 /**
@@ -47,6 +49,7 @@ const paths = {
   statusBoard: '/status-board',
   termsAndConditions: '/terms-and-conditions',
   portfolio: '/portfolio',
+  settings: '/settings',
   components: {
     colorPalette: '/color-palette',
     library: '/library',
@@ -106,6 +109,11 @@ const sidebarData: SidebarConfiguration = {
         { title: 'Overview', url: paths.portfolio },
         // Future portfolio-related pages can be added here
       ],
+    },
+    {
+      title: 'Settings',
+      url: paths.settings,
+      icon: Settings,
     },
     {
       title: 'Work in Progress',
@@ -182,6 +190,10 @@ export const navigationConfig = {
         { label: 'Overview', path: paths.portfolio },
         // Future portfolio-related pages can be added here
       ],
+    },
+    {
+      label: 'Settings',
+      path: paths.settings,
     },
     {
       label: 'Work in Progress',
@@ -275,6 +287,7 @@ navigationConfig.routes = [
   createRoute(paths.statusBoard, StatusBoardPage),
   createRoute(paths.termsAndConditions, TermsAndConditionsPage),
   createRoute(paths.portfolio, PortfolioPage),
+  createRoute(paths.settings, SettingsPage),
   createRoute(paths.screener.results, ScreenerResultsPage),
   createRoute(paths.screener.stockDetail, StockDetailPage),
   createRoute(paths.screener.filterSelection, FilterSelectionScreen),
