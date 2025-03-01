@@ -24,3 +24,7 @@ Explores the implementation of a multi-agent system using LangGraphJS for financ
 ## How These Documents Support Erisfy
 
 These research documents collectively inform Erisfy's approach to transforming raw market data into clear, actionable insights. By implementing the strategies and methodologies outlined in these papers, we aim to build a robust, intelligent system that helps investors discover opportunities, analyze trends, and make confident investment decisions.
+
+---
+
+[← Back to Main Documentation](../README.md)
