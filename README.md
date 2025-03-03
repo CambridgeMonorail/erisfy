@@ -121,6 +121,7 @@ To use Erisfy, make sure you have the following installed and configured:
   - **[API Key Setup Guide](./docs/how-to/api-key-setup.md)** - Complete guide for obtaining necessary API keys and exploring AI model alternatives
   - The News API key - Required for market news data
   - OpenAI API key - Required for AI analysis (or see our guide for alternative models)
+  - Financial Datasets API key - Required for stock market data and financial metrics
 
 ### Environment Configuration
 
@@ -252,7 +253,7 @@ Follow these steps when setting up the project for the first time:
    ```sh
    node scripts/dev-setup.js
    ```
-   
+
    This script will:
    - Prompt for required environment variables (OpenAI API key, etc.)
    - Create necessary environment files
