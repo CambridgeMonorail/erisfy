@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from "recharts"
 
-interface SparkLineProps {
+export interface SparkLineProps {
   data: number[]
   strokeColor?: string
   strokeWidth?: number
@@ -20,7 +20,7 @@ interface SparkLineProps {
 
 /**
  * A minimal sparkline using Recharts.
- * 
+ *
  * Pass in an array of numbers, and it will map them to a simple line chart.
  */
 export function SparkLine({
