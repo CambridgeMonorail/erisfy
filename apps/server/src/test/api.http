@@ -44,6 +44,18 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/news/trigger
 Content-Type: {{contentType}}
 
+### Stock Data Endpoints
+
+### Get Stock Data by Ticker
+# Returns real-time stock data for a specified ticker symbol
+GET {{baseUrl}}/stock-data/AAPL
+Content-Type: {{contentType}}
+
+### Search Stock Data from Query
+# Tries to extract a ticker from a text query and returns corresponding stock data
+GET {{baseUrl}}/stock-data?query=What's the current price of TSLA stock?
+Content-Type: {{contentType}}
+
 ### Sample Response Shapes (for documentation)
 
 # Market News Response Shape:
@@ -67,6 +79,16 @@ Content-Type: {{contentType}}
 # News Update Response Shape:
 # {
 #   "message": "News update triggered"
+# }
+
+# Stock Data Response Shape:
+# {
+#   "ticker": "AAPL",
+#   "price": 150.45,
+#   "volume": 5000000,
+#   "marketCap": "2.5T",
+#   "dayChange": 1.25,
+#   "dayChangePercentage": "0.83%"
 # }
 
 ### Error Response Examples:
