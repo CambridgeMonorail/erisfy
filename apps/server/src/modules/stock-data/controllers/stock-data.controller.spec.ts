@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { StockDataController } from './stock-data.controller';
 import { StockDataService } from '../services/stock-data.service';
-import { NewsAnalysisState } from '../../news-analysis/interfaces/news-analysis-state.interface';
 
 describe('StockDataController', () => {
   let controller: StockDataController;

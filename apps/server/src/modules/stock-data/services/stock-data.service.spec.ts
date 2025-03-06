@@ -7,22 +7,18 @@ describe('StockDataService', () => {
   let service: StockDataService;
   let configService: ConfigService;
 
-  const mockConfigService = {
-    get: jest.fn().mockImplementation((key) => {
-      if (key === 'FINANCIALDATASETS_API_KEY') {
-        return 'test-api-key';
-      }
-      return undefined;
-    }),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StockDataService,
         {
           provide: ConfigService,
-          useValue: mockConfigService,
+          useValue: {
+            getOrThrow: jest.fn().mockImplementation((key: string) => {
+              if (key === 'FINNHUB_API_KEY') return 'test-api-key';
+              throw new Error(`Config key not found: ${key}`);
+            }),
+          },
         },
       ],
     }).compile();
@@ -48,6 +44,10 @@ describe('StockDataService', () => {
 
     afterEach(() => {
       mockFetch.mockRestore();
+    });
+
+    it('should initialize with API key from config service', async () => {
+      expect(configService.getOrThrow).toHaveBeenCalledWith('FINNHUB_API_KEY');
     });
 
     it('should return state with error when no ticker is provided or extracted', async () => {

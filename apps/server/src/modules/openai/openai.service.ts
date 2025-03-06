@@ -63,7 +63,7 @@ export class OpenAiService {
    * @returns Updated news analysis state with analysis field populated
    * @throws OpenAiException if the API call fails
    */
-  async analyzeNews(state: NewsAnalysisState, structured: boolean = false): Promise<NewsAnalysisState> {
+  async analyzeNews(state: NewsAnalysisState, structured = false): Promise<NewsAnalysisState> {
     if (!state.articles || state.articles.length === 0) {
       state.analysis = 'No news articles found.';
       return state;

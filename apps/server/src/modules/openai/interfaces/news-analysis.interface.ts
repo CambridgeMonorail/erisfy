@@ -24,23 +24,46 @@ export interface NewsArticle {
 }
 
 /**
+ * Interface for stock market data
+ */
+export interface StockInfo {
+  /** Stock ticker symbol */
+  ticker: string;
+  /** Current stock price */
+  price?: number;
+  /** Price change */
+  change?: number;
+  /** Percentage price change */
+  changePercent?: number;
+  /** Timestamp of the stock data */
+  timestamp?: string;
+  /** Error message if fetch failed */
+  error?: string;
+  /** Additional error details */
+  details?: string;
+}
+
+/**
  * Interface for news analysis state
  * Contains both input articles and resulting analysis
  */
 export interface NewsAnalysisState {
-  /**
-   * Array of news articles to analyze
-   */
+  /** Retrieved news articles */
   articles: NewsArticle[];
 
-  /**
-   * The resulting analysis output
-   */
+  /** Generated analysis from LLM - starts empty and gets populated during processing */
   analysis: string;
 
-  /**
-   * Optional error message if analysis fails
-   */
+  /** Initial search query or topic (optional) */
+  query?: string;
+
+  /** Stock ticker symbol (if known) */
+  ticker?: string;
+
+  /** Stock market data (optional) */
+  stockInfo?: StockInfo;
+
+  /** Any error that occurred during processing */
   error?: string;
 }
 

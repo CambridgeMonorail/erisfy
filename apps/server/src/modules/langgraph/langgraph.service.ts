@@ -22,13 +22,19 @@ export class LangGraphService {
         const newsState = await this.newsFetcher.fetchNews(state);
         return { state: newsState };
       },
-      // Step 2: Analyze News
+      // Step 2: Analyze News (only if we have articles)
       async ({ state }) => {
+        if (state.error || !state.articles?.length) {
+          return { state };
+        }
         const analysisState = await this.newsAnalyser.analyseNews(state);
         return { state: analysisState };
       },
-      // Step 3: Fetch Stock Data
+      // Step 3: Fetch Stock Data (only if we have analysis and no errors)
       async ({ state }) => {
+        if (state.error || !state.analysis || !state.ticker) {
+          return { state };
+        }
         const finalState = await this.stockData.fetchStock(state);
         return { state: finalState };
       }
@@ -41,7 +47,13 @@ export class LangGraphService {
       return result.state;
     } catch (err) {
       this.logger.error('Error executing workflow', err);
-      throw err;
+      // Return a proper error state instead of throwing
+      return {
+        ...initialState,
+        error: `Workflow execution failed: ${err.message}`,
+        articles: [],
+        analysis: ''
+      };
     }
   }
 }

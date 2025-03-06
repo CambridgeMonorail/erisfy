@@ -40,7 +40,10 @@ export class StockDataService {
 
     if (!ticker) {
       this.logger.log('No ticker identified for stock data retrieval');
-      state.stockInfo = { error: 'No ticker identified.' };
+      state.stockInfo = {
+        ticker: 'UNKNOWN',
+        error: 'No ticker identified.'
+      };
       return state;
     }
 
@@ -64,7 +67,10 @@ export class StockDataService {
       const stockData = await res.json();
       this.logger.debug(`Successfully retrieved stock data for ${ticker}`);
 
-      state.stockInfo = stockData;
+      state.stockInfo = {
+        ...stockData,
+        ticker // Ensure ticker is included in successful response
+      };
     } catch (err) {
       this.logger.error(`Error fetching stock data for ${ticker} from Financial Datasets API`, err instanceof Error ? err.message : String(err));
       state.stockInfo = {

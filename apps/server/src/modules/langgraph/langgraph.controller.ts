@@ -20,6 +20,14 @@ export class LangGraphController {
   @ApiResponse({ status: 400, description: 'Invalid input parameters' })
   @ApiResponse({ status: 500, description: 'Internal server error during analysis' })
   async analyzeNews(@Body() analyzeNewsDto: AnalyzeNewsDto): Promise<NewsAnalysisState> {
-    return this.langGraphService.runWorkflow(analyzeNewsDto);
+    // Initialize state with required properties
+    const initialState: NewsAnalysisState = {
+      query: analyzeNewsDto.query,
+      ticker: analyzeNewsDto.ticker,
+      articles: [], // Will be populated by news fetcher
+      analysis: '' // Will be populated by news analyzer
+    };
+
+    return this.langGraphService.runWorkflow(initialState);
   }
 }
