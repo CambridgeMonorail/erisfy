@@ -21,24 +21,16 @@ export class MarketNewsService {
     this.logger.log('Running daily market news fetch...');
 
     // 1) Query OpenAI
-    const rawContent = await this.openAiService.getMarketStories();
-
-    // 2) Parse JSON
-    let parsed;
     try {
-      parsed = JSON.parse(rawContent);
-    } catch (err) {
-      this.logger.error('Failed to parse ChatGPT response as JSON', err);
-      return;
-    }
+      // The getMarketStories method already returns a parsed object
+      const marketStories = await this.openAiService.getMarketStories();
 
-    // 3) Save to Postgres
-    try {
+      // 3) Save to Postgres
       await this.prisma.marketDataRecord.create({
         data: {
-          date: parsed.date,
+          date: marketStories.date,
           stories: {
-            create: parsed.stories.map((story) => ({
+            create: marketStories.stories.map((story) => ({
               title: story.title,
               one_line_summary: story.one_line_summary,
               whats_happening: story.whats_happening,
@@ -49,9 +41,9 @@ export class MarketNewsService {
         },
       });
 
-      this.logger.log(`Saved market data for ${parsed.date}`);
+      this.logger.log(`Saved market data for ${marketStories.date}`);
     } catch (err) {
-      this.logger.error('Failed to save market data to database', err);
+      this.logger.error('Failed to process market news', err);
       throw err;
     }
   }
