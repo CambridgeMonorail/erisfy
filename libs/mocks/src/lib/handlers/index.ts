@@ -9,6 +9,16 @@ import { marketInsightsHandlers } from './marketInsights';
 // Add a catch-all handler for debugging purposes
 const debugHandlers = [
   http.all('*', ({ request }) => {
+    const url = new URL(request.url);
+
+    // Skip assets and let them passthrough
+    if (
+      /\.(png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot|mp4|webm|ogg)$/i.test(url.pathname) ||
+      url.pathname.includes('/assets/')
+    ) {
+      return;  // Return undefined to let the request pass through
+    }
+
     console.log('[MSW Debug] Caught unhandled request:', request.method, request.url);
     console.log('[MSW Debug] Headers:', Object.fromEntries([...request.headers.entries()]));
     return HttpResponse.error();

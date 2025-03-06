@@ -12,7 +12,11 @@ async function enableMocking() {
   ) {
     return;
   }
-  const { worker } = await import('@erisfy/mocks');
+  const { worker, bypassAssets } = await import('@erisfy/mocks');
+
+  // Apply the bypass configuration before starting the worker
+  bypassAssets(worker);
+
   await worker.start({
     onUnhandledRequest: 'warn',
     serviceWorker: {

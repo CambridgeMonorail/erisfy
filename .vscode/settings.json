@@ -55,9 +55,17 @@
   "peacock.color": "#141EC5",
   "cSpell.words": [
     "adminer",
+    "analyse",
     "backtested",
     "backtesting",
     "erisfydb",
+    "langgraph",
     "subfolders"
-  ]
+  ],
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.newWorkspaceCreation.enabled": true,
+  "github.copilot.chat.search.semanticTextResults": true,
+  "githubPullRequests.experimental.chat": true
 }

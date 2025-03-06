@@ -121,6 +121,7 @@ To use Erisfy, make sure you have the following installed and configured:
   - **[API Key Setup Guide](./docs/how-to/api-key-setup.md)** - Complete guide for obtaining necessary API keys and exploring AI model alternatives
   - The News API key - Required for market news data
   - OpenAI API key - Required for AI analysis (or see our guide for alternative models)
+  - Financial Datasets API key - Required for stock market data and financial metrics
 
 ### Environment Configuration
 
@@ -236,12 +237,14 @@ Follow these steps when setting up the project for the first time:
    - Required API keys (see [API Key Setup Guide](./docs/how-to/api-key-setup.md))
 
 2. Clone the repository:
+
    ```sh
    git clone https://github.com/CambridgeMonorail/erisfy.git
    cd erisfy
    ```
 
 3. Install dependencies:
+
    ```sh
    pnpm install
    ```
@@ -249,10 +252,11 @@ Follow these steps when setting up the project for the first time:
 4. Start Docker Desktop application
 
 5. Run the automated setup script:
+
    ```sh
    node scripts/dev-setup.js
    ```
-   
+
    This script will:
    - Prompt for required environment variables (OpenAI API key, etc.)
    - Create necessary environment files
@@ -266,28 +270,35 @@ Follow these steps every time you want to run the project:
 1. Start Docker Desktop (if not already running)
 
 2. Start the Docker containers:
+
    ```sh
    pnpm run serve:docker
    ```
+
    Wait until you see the message that the database is ready.
 
 3. In a new terminal, start the server:
+
    ```sh
    pnpm run serve:server
    ```
+
    Wait until you see the message that the server is running.
 
 4. In another new terminal, start the client:
+
    ```sh
    pnpm run serve:client
    ```
 
 Your application should now be running at:
-- Client: http://localhost:4200
-- Server: http://localhost:3001
-- Database Admin (Adminer): http://localhost:8080
+
+- Client: <http://localhost:4200>
+- Server: <http://localhost:3001>
+- Database Admin (Adminer): <http://localhost:8080>
 
 To stop the application:
+
 1. Press Ctrl+C in each terminal window (client and server)
 2. Stop the Docker containers with Ctrl+C in the Docker terminal
 3. (Optional) Close Docker Desktop if you're done developing
@@ -318,6 +329,7 @@ If you encounter issues while running the project:
 5. **"Database Not Ready" Errors**:
    - Wait a few more seconds for the database to initialize
    - If persistent, try restarting the Docker containers:
+
      ```sh
      docker-compose down
      pnpm run serve:docker
@@ -733,6 +745,7 @@ If you encounter issues during setup:
    If you prefer to set up manually or the script fails, follow these steps:
 
    a. Create `apps/server/.env.development`:
+
    ```env
    PORT=3001
    NODE_ENV=development
@@ -746,11 +759,13 @@ If you encounter issues during setup:
    ```
 
    b. Create `apps/client/.env`:
+
    ```env
    VITE_REACT_APP_USE_MOCKS=false
    ```
 
    c. Start Docker and run migrations:
+
    ```sh
    pnpm run serve:docker
    nx run server:prisma-migrate
@@ -758,6 +773,7 @@ If you encounter issues during setup:
 
 3. **Database Issues**:
    - If migrations fail, try resetting the database:
+
      ```sh
      docker-compose down -v
      pnpm run serve:docker

@@ -9,6 +9,7 @@ This document provides comprehensive documentation for the Erisfy backend server
 3. [Development](#development)
    - [Prerequisites](#prerequisites)
    - [Environment Setup](#environment-variables)
+   - [External API Keys](#external-api-keys)
    - [Database Setup](#docker-database-setup)
    - [Running the Server](#running-the-server)
 4. [Database Management](#database-management)
@@ -88,6 +89,22 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=erisfydb
 POSTGRES_PORT=5432
 POSTGRES_HOST=localhost
+```
+
+### External API Keys
+
+The server requires API keys for several external services. Refer to the [API Key Setup Guide](../../docs/how-to/api-key-setup.md) for detailed instructions on obtaining API keys for:
+
+- OpenAI Platform - For market analysis and AI-powered insights
+- The News API - For financial news aggregation
+- Financial Datasets API - For stock market data and financial metrics
+
+Add these API keys to your `.env.development` file:
+
+```bash
+OPENAI_API_KEY=your_openai_api_key
+NEWS_API_KEY=your_thenewsapi_key
+FINANCIAL_DATASETS_API_KEY=your_financial_datasets_key
 ```
 
 ### Docker Database Setup

@@ -2,7 +2,7 @@
 
 This document provides a complete overview of two main topics:
 
-1. **API Key Setup** – Instructions on how to obtain API keys for The News API and the OpenAI Platform.
+1. **API Key Setup** – Instructions on how to obtain API keys for The News API, the OpenAI Platform, and Financial Datasets API.
 2. **Alternatives to Using OpenAI** – An exploration of local and cloud-based alternatives, including open-source options and emerging models such as DeepSeek.
 
 All information is presented in British English and aims to help you choose the solution that best fits your needs.
@@ -42,6 +42,28 @@ To obtain an API key from the OpenAI Platform, follow these steps:
 
 4. **Implement Security Best Practices**  
    Keep your secret API key private. Use environment variables or secure storage methods in your application.
+
+### 1.3 Financial Datasets API
+
+Financial Datasets provides a developer-friendly stock market API with comprehensive market data. To obtain an API key:
+
+1. **Create an Account**  
+   Visit [Financial Datasets](https://www.financialdatasets.ai/) and sign up for a new developer account.
+
+2. **Access Your Developer Dashboard**  
+   Once registered and logged in, navigate to the API Keys section in your developer dashboard.
+
+3. **Generate an API Key**  
+   Follow the platform's instructions to generate a new API key for your project.
+
+4. **Select Your Subscription Plan**  
+   Choose the appropriate subscription plan based on your usage requirements. Financial Datasets typically offers tiered plans with varying data access levels and request limits.
+
+5. **Store Your API Key Securely**  
+   As with all API keys, ensure you store it securely in environment variables or a secure configuration system.
+
+6. **Review Documentation and Limits**  
+   Familiarise yourself with the API documentation, noting any rate limits or usage restrictions that may apply to your selected plan.
 
 ---
 
@@ -116,7 +138,7 @@ Recent developments have seen the rise of innovative alternatives such as **Deep
 
 When building AI-enabled applications, the choice between using a managed service like OpenAI's API and deploying local or alternative cloud-based models depends on your priorities:
 
-- **API Key Setup:** Use The News API and OpenAI Platform instructions for quick integration.
+- **API Key Setup:** Use The News API, OpenAI Platform, and Financial Datasets API instructions for quick integration.
 - **Local Solutions:** Consider Ollama and similar tools if you value privacy, lower latency and long-term cost savings.
 - **Cloud Alternatives:** Providers such as Anthropic, Cohere and AI21 Labs offer competitive cloud solutions with additional customisation.
 - **Future Trends:** Emerging models like DeepSeek illustrate the rapid evolution of the industry, challenging traditional cost models and prompting a shift towards open-source and self-hosted approaches.
