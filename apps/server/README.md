@@ -27,6 +27,18 @@ The Erisfy Server is a NestJS-based backend that:
 - Integrates with OpenAI for market analysis
 - Runs scheduled background jobs for data updates
 
+### Key Modules
+
+#### LangGraph Module
+
+The LangGraph module is a sophisticated multi-agent system that powers our financial news analysis pipeline. It combines:
+
+- News fetching from TheNewsAPI
+- AI-powered analysis using OpenAI GPT-4
+- Financial metrics integration from Financial Datasets API
+
+[View detailed LangGraph documentation](src/modules/langgraph/README.md)
+
 ## API Documentation
 
 The API documentation is available through Swagger UI, which provides an interactive interface to explore and test all available endpoints.
@@ -34,12 +46,14 @@ The API documentation is available through Swagger UI, which provides an interac
 ### Accessing Swagger Documentation
 
 1. Start the development server:
+
    ```bash
    pnpm nx serve server
    ```
 
 2. Open your browser and navigate to:
-   ```
+
+   ```txt
    http://localhost:3001/api/docs
    ```
 
@@ -54,15 +68,36 @@ The Swagger UI provides:
 - Schema definitions for all DTOs and responses
 
 Key features:
-- **Try it out**: Test endpoints directly from the browser
-- **Models**: View detailed request/response schemas
-- **Authorization**: Configure auth tokens for protected endpoints
-- **Response codes**: See all possible response statuses and their meanings
+
+### Try it out
+
+Test endpoints directly from the browser
+
+### Models
+
+View detailed request/response schemas
+
+### Authorization
+
+Configure auth tokens for protected endpoints
+
+### Response codes
+
+See all possible response statuses and their meanings
 
 API endpoints are organized by tags:
-- `market-insights`: Market news and analysis endpoints
-- `onboardings`: User onboarding management endpoints
-- `news`: General news endpoints
+
+### Market Insights
+
+Market news and analysis endpoints
+
+### Onboarding
+
+User onboarding management endpoints
+
+### News
+
+General news endpoints
 
 ## Development
 
@@ -265,8 +300,22 @@ The file includes:
 
 #### Features
 
-- Test endpoints directly from VS Code
-- Switch between environments (local/staging/production)
-- View formatted JSON responses
-- See response headers and status codes
-- Save response examples
+### Direct Testing
+
+Test endpoints directly from VS Code
+
+### Environment Switching
+
+Switch between environments (local/staging/production)
+
+### Response Viewing
+
+View formatted JSON responses
+
+### Headers and Status
+
+See response headers and status codes
+
+### Response Examples
+
+Save response examples

@@ -1,8 +1,6 @@
-Below is a single, combined README document in British English, pulling together the best elements from both original documents. All spellings use British English conventions, and no em dashes have been included.
-
----
-
 # LangGraph Module Documentation
+
+[← Back to Server Documentation](../../../README.md)
 
 ## Table of Contents
 
@@ -256,17 +254,27 @@ Enable detailed logging by setting the appropriate log level:
 
 #### Accessing Logs
 
-**Development Logs**
+### Development Logs
+
+#### Console Output
 
 - Output to console when running `pnpm nx serve server`.  
+
+#### Log Files
+
 - Log files in `apps/server/logs/`:
   - `error.log`: Error-level messages  
   - `combined.log`: All log levels  
   - `debug.log`: Debug-level details  
 
-**Production Logs**
+### Production Logs
+
+#### Cloud Logs
 
 - Available through CloudWatch Logs under `/erisfy/api/langgraph/*`.  
+
+#### APM Metrics
+
 - Datadog APM under service `erisfy-api` with tag `module:langgraph`.
 
 #### Log Format
@@ -420,20 +428,47 @@ Example: [2024-02-14 10:15:23] [INFO] [NewsFetcherService] Fetching news for que
 
 ### Development Tips
 
-1. **Local Testing**
-   - Use mock data for development.  
-   - Create test fixtures for common scenarios.  
-   - Implement retry logic for flaky APIs.
+### Local Testing
 
-2. **Error Recovery**
-   - Implement graceful fallbacks when external services fail.  
-   - Cache successful responses.  
-   - Use circuit breakers to handle repeated failures.
+#### Mock Data Usage
 
-3. **Monitoring Setup**
-   - Enable detailed logging in development.  
-   - Track API usage and quotas.  
-   - Monitor performance metrics.
+- Use mock data for development.  
+
+#### Test Fixtures
+
+- Create test fixtures for common scenarios.  
+
+#### API Resilience
+
+- Implement retry logic for flaky APIs.
+
+### Error Recovery
+
+#### Fallback Strategies
+
+- Implement graceful fallbacks when external services fail.  
+
+#### Response Caching
+
+- Cache successful responses.  
+
+#### Circuit Breaking
+
+- Use circuit breakers to handle repeated failures.
+
+### Monitoring Setup
+
+#### Log Configuration
+
+- Enable detailed logging in development.  
+
+#### Usage Tracking
+
+- Track API usage and quotas.  
+
+#### Performance
+
+- Monitor performance metrics.
 
 ---
 
@@ -476,5 +511,3 @@ For further support:
 - Contact the development team.
 
 ---
-
-*End of combined README.*
