@@ -107,3 +107,221 @@ Required environment variables:
 - @langchain/core
 - @langchain/openai
 - @nestjs/swagger
+
+## Testing & Diagnostics
+
+### Manual Testing Options
+
+#### Using Swagger UI
+
+1. Start the server: `pnpm nx serve server`
+2. Navigate to: `http://localhost:3001/api/docs`
+3. Locate the "News Analysis" section
+4. Try the `/news-analysis/analyze` endpoint with sample payloads:
+
+```json
+{
+  "query": "Tesla Q4 earnings",
+  "ticker": "TSLA"
+}
+```
+
+```json
+{
+  "query": "Apple new product launch"
+  // Let ticker auto-detect
+}
+```
+
+#### Using REST Client
+
+Add these requests to your `api.http` file:
+
+```http
+### Analyze News with Ticker
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: application/json
+
+{
+    "query": "Tesla Q4 earnings",
+    "ticker": "TSLA"
+}
+
+### Analyze News without Ticker
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: application/json
+
+{
+    "query": "Apple new product launch"
+}
+```
+
+### Accessing Logs
+
+#### Development Logs
+
+When running the server locally (`pnpm nx serve server`), logs are output to:
+
+1. Console output in your terminal
+2. Log files in `apps/server/logs/`:
+   - `error.log`: Error-level messages
+   - `combined.log`: All log levels
+   - `debug.log`: Debug-level details
+
+#### Production Logs
+
+In production, logs are available through:
+
+1. CloudWatch Logs under `/erisfy/api/langgraph/*`
+2. Datadog APM under service `erisfy-api` with tag `module:langgraph`
+
+#### Log Format
+
+Each log entry follows this structure:
+
+```
+[Timestamp] [Level] [Service] Message
+Example: [2024-02-14 10:15:23] [INFO] [NewsFetcherService] Fetching news for query: Tesla
+```
+
+### Diagnostic Checkpoints
+
+1. **News Fetching Phase**
+   - **Where to look**:
+     - Development: `apps/server/logs/combined.log`
+     - Production: CloudWatch `/erisfy/api/langgraph/newsfetcher`
+   - **What to check**:
+
+     ```log
+     [NewsFetcherService] Fetching news for query: {query}
+     [NewsFetcherService] Retrieved {count} articles
+     [NewsFetcherService] Request to NewsAPI completed in {time}ms
+     ```
+
+2. **Analysis Phase**
+   - **Where to look**:
+     - Development: `apps/server/logs/combined.log`
+     - Production: CloudWatch `/erisfy/api/langgraph/newsanalyser`
+   - **What to check**:
+
+     ```log
+     [NewsAnalyserService] Analyzing {count} news articles
+     [NewsAnalyserService] OpenAI request started
+     [NewsAnalyserService] Analysis completed in {time}ms
+     ```
+
+3. **Stock Data Phase**
+   - **Where to look**:
+     - Development: `apps/server/logs/combined.log`
+     - Production: CloudWatch `/erisfy/api/langgraph/stockdata`
+   - **What to check**:
+
+     ```log
+     [StockDataService] Fetching data for ticker: {ticker}
+     [StockDataService] Finnhub API request completed in {time}ms
+     ```
+
+#### Error Logs
+
+For errors, always check:
+
+1. Development: `apps/server/logs/error.log`
+2. Production:
+   - CloudWatch `/erisfy/api/langgraph/error`
+   - Datadog Events with tag `severity:error`
+
+#### Viewing Logs
+
+1. **Development Environment**
+
+   ```bash
+   # Tail the combined log
+   tail -f apps/server/logs/combined.log
+
+   # Search for specific service logs
+   grep "NewsFetcherService" apps/server/logs/combined.log
+
+   # View recent errors
+   tail -f apps/server/logs/error.log
+   ```
+
+2. **Production Environment**
+
+   ```bash
+   # Using AWS CLI
+   aws logs get-log-events \
+     --log-group-name "/erisfy/api/langgraph" \
+     --log-stream-name "newsanalyser" \
+     --limit 100
+
+   # Using Datadog CLI
+   dog stream-logs "service:erisfy-api module:langgraph"
+   ```
+
+### Monitoring Response Quality
+
+1. **News Articles**
+   - Should receive 3-5 relevant articles
+   - Articles should be recent (within last 24-48 hours)
+   - Articles should match query context
+
+2. **AI Analysis**
+   - Should contain structured insights
+   - Should identify key market themes
+   - Should extract mentioned companies/tickers
+   - Should provide clear market impact analysis
+
+3. **Stock Data**
+   - Should provide real-time market data
+   - Should include price movements
+   - Should match identified ticker
+
+### Common Error Patterns
+
+Monitor these specific error messages in the response:
+
+```typescript
+{
+  error: "Failed to fetch news: {specific error}"
+  // News API issues
+}
+
+{
+  error: "Failed to analyze news: {specific error}"
+  // OpenAI API issues
+}
+
+{
+  error: "Failed to fetch stock data: {specific error}"
+  // Finnhub API issues
+}
+```
+
+### Performance Benchmarks
+
+Typical response times:
+
+- News Fetch: < 1s
+- Analysis: 2-5s
+- Stock Data: < 500ms
+- Total Request: 3-7s
+
+### Development Tips
+
+1. Use environment-specific API keys for testing
+2. Monitor rate limits across all services:
+   - NewsAPI: 100 requests/day (free tier)
+   - OpenAI: Varies by tier
+   - Finnhub: 60 calls/minute
+
+3. Test error scenarios:
+   - Invalid API keys
+   - Malformed queries
+   - Rate limit exceeded
+   - Network timeouts
+
+4. For debugging, check logs in order:
+   1. NewsFetcherService
+   2. NewsAnalyserService
+   3. StockDataService
+   4. LangGraphService workflow execution
