@@ -60,9 +60,11 @@
     "backtested",
     "backtesting",
     "erisfydb",
+    "financialdatasets",
     "Finnhub",
     "langgraph",
-    "subfolders"
+    "subfolders",
+    "thenewsapi"
   ],
   "github.copilot.chat.codesearch.enabled": true,
   "github.copilot.nextEditSuggestions.enabled": true,

@@ -44,6 +44,25 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/news/trigger
 Content-Type: {{contentType}}
 
+### News Analysis Endpoints
+
+### Analyze News with Ticker
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+    "query": "Tesla Q4 earnings",
+    "ticker": "TSLA"
+}
+
+### Analyze News without Ticker
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+    "query": "Apple new product launch"
+}
+
 ### Stock Data Endpoints
 
 ### Get Stock Data by Ticker
