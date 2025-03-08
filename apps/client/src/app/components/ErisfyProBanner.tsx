@@ -27,7 +27,7 @@ export const ErisfyProBanner: FC<ErisfyProBannerProps> = ({ className }) => {
   };
 
   return (
-    <Card className={`bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6 mt-8 ${className ?? ''}`}>
+    <Card className={`bg-primary mesh-gradient text-primary-foreground ${className ?? ''}`}>
       <CardHeader>
         <CardTitle className="text-2xl font-bold mb-2">
           <span role="img" aria-label="rocket">🚀</span> Unlock Advanced Investment Tools with Erisfy Pro
@@ -55,7 +55,7 @@ export const ErisfyProBanner: FC<ErisfyProBannerProps> = ({ className }) => {
             — Alex Carter, <cite>Early Erisfy Pro Adopter</cite>
           </figcaption>
         </figure>
-        <Button 
+        <Button
           className="bg-green-500 text-white hover:bg-green-600"
           onClick={handleUpgradeClick}
           aria-label="Upgrade to Erisfy Pro"

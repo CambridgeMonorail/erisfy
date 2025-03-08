@@ -256,6 +256,7 @@ const createRoute = (
           menuItems,
           mode,
           title,
+          headerClassName: 'mesh-gradient',
           logoIcon: createElement(Logo, {
             fill: 'currentColor',
             height: '24px',
