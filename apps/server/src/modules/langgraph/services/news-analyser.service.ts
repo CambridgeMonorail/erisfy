@@ -22,11 +22,21 @@ export class NewsAnalyserService {
   async analyseNews(state: NewsAnalysisState): Promise<NewsAnalysisState> {
     try {
       if (!state.articles || state.articles.length === 0) {
+        this.logger.warn('No articles provided for analysis');
         state.analysis = "No news articles found for analysis.";
         return state;
       }
 
-      this.logger.log(`Analyzing ${state.articles.length} news articles`);
+      this.logger.log(`Starting analysis of ${state.articles.length} news articles`);
+
+      // Log article details
+      state.articles.forEach((article, index) => {
+        this.logger.debug(`Article ${index + 1}:`, {
+          title: article.title,
+          description: article.description?.substring(0, 100) + '...',
+          publishedAt: article.publishedAt
+        });
+      });
 
       // Construct the prompt
       const systemPrompt = new SystemMessage({
@@ -48,30 +58,55 @@ export class NewsAnalyserService {
         content: `Please analyze these financial news articles:\n\n${newsContent}`
       });
 
+      this.logger.debug('Sending prompts to LLM:', {
+        systemPrompt: systemPrompt.content,
+        userPrompt: String(userPrompt.content).substring(0, 200) + '...'
+      });
+
       // Get analysis from LLM
       const response = await this.llm.invoke([systemPrompt, userPrompt]);
 
       // Safely extract text content from the response
+      let analysisContent: string;
       if (response instanceof BaseMessage) {
-        state.analysis = response.content.toString();
+        analysisContent = response.content.toString();
       } else if (typeof response === 'object' && response !== null) {
-        state.analysis = JSON.stringify(response);
+        analysisContent = JSON.stringify(response);
       } else {
-        state.analysis = String(response);
+        analysisContent = String(response);
       }
+
+      this.logger.debug('LLM Analysis Response:', {
+        analysis: analysisContent.substring(0, 200) + '...',
+        responseType: response instanceof BaseMessage ? 'BaseMessage' : typeof response
+      });
+
+      state.analysis = analysisContent;
 
       // Try to extract stock tickers if not already provided
       if (!state.ticker) {
         const tickerMatch = state.analysis.match(/\b[A-Z]{1,5}\b/g); // Simple regex for tickers
         if (tickerMatch) {
           state.ticker = tickerMatch[0]; // Take the first match
+          this.logger.debug('Extracted stock ticker:', { ticker: state.ticker });
+        } else {
+          this.logger.debug('No stock ticker found in analysis');
         }
       }
 
+      this.logger.log('News analysis completed successfully');
       return state;
 
     } catch (error) {
-      this.logger.error('Error analyzing news', error);
+      this.logger.error('Error analyzing news', {
+        error: error.message,
+        stack: error.stack,
+        state: {
+          articleCount: state.articles?.length,
+          hasQuery: !!state.query,
+          hasTicker: !!state.ticker
+        }
+      });
       state.error = `Failed to analyze news: ${error.message}`;
       return state;
     }

@@ -1,6 +1,6 @@
-import { Controller, Get, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, InternalServerErrorException, NotFoundException, Query } from '@nestjs/common';
 import { NewsService } from './news.service';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('news')
 @Controller('news')
@@ -35,8 +35,29 @@ export class NewsController {
     try {
       await this.newsService.fetchDailyNews();
       return { message: 'News update triggered' };
-    } catch {
-      throw new InternalServerErrorException('Failed to fetch news');
+    } catch (error) {
+      const message = error.message || 'Failed to fetch news';
+      throw new InternalServerErrorException(message);
+    }
+  }
+
+  @ApiOperation({ summary: 'Query news articles', description: 'Search for news articles by query string' })
+  @ApiQuery({ name: 'q', description: 'Search query string', required: true })
+  @ApiResponse({ status: 200, description: 'News articles found successfully' })
+  @ApiResponse({ status: 500, description: 'Failed to query news' })
+  @Get('search')
+  async searchNews(@Query('q') query: string) {
+    try {
+      if (!query) {
+        throw new NotFoundException('Search query is required');
+      }
+      const articles = await this.newsService.queryNews(query);
+      return articles;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to search news');
     }
   }
 }
