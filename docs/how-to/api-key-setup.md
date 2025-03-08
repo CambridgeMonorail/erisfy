@@ -65,6 +65,26 @@ Financial Datasets provides a developer-friendly stock market API with comprehen
 6. **Review Documentation and Limits**  
    Familiarise yourself with the API documentation, noting any rate limits or usage restrictions that may apply to your selected plan.
 
+### 1.4 Tavily API
+
+Tavily provides an AI-powered search API specializing in real-time web search and analysis. To get started:
+
+1. **Create an Account**  
+   Visit [Tavily](https://tavily.com/) and sign up for a new account.
+
+2. **Get Your API Key**  
+   - Navigate to your [API Keys Dashboard](https://tavily.com/dashboard)
+   - Generate a new API key for your project
+   - Copy and store your API key securely
+
+3. **Choose Your Plan**  
+   Select an appropriate plan based on your needs. Tavily offers:
+   - Free tier for testing and development
+   - Paid tiers for production use with higher rate limits
+
+4. **Implement Security**  
+   Store your API key securely using environment variables or secure configuration systems.
+
 ---
 
 ## 2. Alternatives to Using OpenAI

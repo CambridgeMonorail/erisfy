@@ -122,6 +122,7 @@ To use Erisfy, make sure you have the following installed and configured:
   - The News API key - Required for market news data
   - OpenAI API key - Required for AI analysis (or see our guide for alternative models)
   - Financial Datasets API key - Required for stock market data and financial metrics
+  - Tavily API key - real-time accurate search results tailored for LLMs and RAG
 
 ### Environment Configuration
 
