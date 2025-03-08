@@ -91,15 +91,38 @@ export class NewsService {
 
   async queryNews(query: string) {
     this.logger.log(`Querying news for: ${query}`);
-    const articles = await this.callNewsApi('/all', { search: query });
-    return articles.map(article => ({
-      title: article.title,
-      description: article.description,
-      url: article.url,
-      publishedAt: article.published_at,
-      source: article.source,
-      category: article.categories?.join(', '),
-    }));
+    this.logger.debug('API Request details:', {
+      url: `${this.apiUrl}/all`,
+      params: {
+        search: query,
+        api_token: '[REDACTED]',
+        language: 'en'
+      }
+    });
+
+    try {
+      const articles = await this.callNewsApi('/all', { search: query });
+      this.logger.debug('API Response:', {
+        articleCount: articles.length,
+        firstArticle: articles[0]
+      });
+
+      return articles.map(article => ({
+        title: article.title,
+        description: article.description,
+        url: article.url,
+        publishedAt: article.published_at,
+        source: article.source,
+        category: article.categories?.join(', '),
+      }));
+    } catch (error) {
+      this.logger.error('News query failed:', {
+        query,
+        error: error.message,
+        response: error.response?.data
+      });
+      throw error;
+    }
   }
 
   async getLatestNews() {
