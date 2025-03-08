@@ -65,6 +65,7 @@
     "gamereactor",
     "langgraph",
     "subfolders",
+    "Tavily",
     "thenewsapi"
   ],
   "github.copilot.chat.codesearch.enabled": true,

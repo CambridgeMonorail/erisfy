@@ -7,6 +7,7 @@ import { MarketNewsModule } from '../modules/market-news/market-news.module';
 import { OnboardingModule } from '../modules/onboarding/onboarding.module';
 import { NewsAnalysisModule } from '../modules/news-analysis/news-analysis.module';
 import { StockDataModule } from '../modules/stock-data/stock-data.module';
+import { TavilyModule } from '../modules/tavily/tavily.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { StockDataModule } from '../modules/stock-data/stock-data.module';
     MarketNewsModule,
     OnboardingModule,
     NewsAnalysisModule,
-    StockDataModule
+    StockDataModule,
+    TavilyModule
   ],
   controllers: [AppController],
   providers: [AppService],
