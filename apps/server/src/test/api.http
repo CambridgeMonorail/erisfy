@@ -75,6 +75,32 @@ Content-Type: {{contentType}}
 GET {{baseUrl}}/stock-data?query=What's the current price of TSLA stock?
 Content-Type: {{contentType}}
 
+### Tavily API Integration Endpoints
+
+### Search Financial Market Headlines
+# Sends a search query to the Tavily API for financial market headlines
+POST {{baseUrl}}/tavily/search
+Content-Type: {{contentType}}
+
+{
+    "query": "today financial market headlines",
+    "search_depth": "basic",
+    "include_answer": true,
+    "max_results": 5
+}
+
+### Custom Financial Search
+# Sends a custom search query to the Tavily API
+POST {{baseUrl}}/tavily/search
+Content-Type: {{contentType}}
+
+{
+    "query": "inflation outlook 2023",
+    "search_depth": "advanced",
+    "include_domains": ["wsj.com", "bloomberg.com", "ft.com"],
+    "max_results": 3
+}
+
 ### Sample Response Shapes (for documentation)
 
 # Market News Response Shape:
@@ -108,6 +134,22 @@ Content-Type: {{contentType}}
 #   "marketCap": "2.5T",
 #   "dayChange": 1.25,
 #   "dayChangePercentage": "0.83%"
+# }
+
+# Tavily Search Response Shape:
+# {
+#   "id": "string",
+#   "query": "today financial market headlines",
+#   "results": [
+#     {
+#       "url": "https://finance-website.com/article",
+#       "title": "Today's Market Update",
+#       "content": "Financial markets are experiencing...",
+#       "score": 0.95
+#     }
+#   ],
+#   "answer": "Markets today are responding to...",
+#   "tokens_used": 1250
 # }
 
 ### Error Response Examples:
