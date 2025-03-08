@@ -57,7 +57,7 @@ export const LandingPage: FC = () => {
 
   return (
     <div
-      className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-primary text-foreground"
+      className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-primary text-foreground mesh-gradient"
       data-testid="landing-page"
       role="main"
       aria-live="polite"
@@ -71,7 +71,7 @@ export const LandingPage: FC = () => {
         </div>
       )}
       <div
-        className="relative bg-primary"
+        className="relative"
         data-testid="hero-section-container"
         id="hero-title"
         aria-labelledby="hero-title"
@@ -104,6 +104,7 @@ export const LandingPage: FC = () => {
           }}
           layout="left"
           data-testid="hero-section"
+          className='bg-transparent'
           variant="dark"
         />
       </div>
@@ -237,6 +238,7 @@ export const LandingPage: FC = () => {
         buttonAction={handleGitHubRedirect}
         data-testid="community-section"
         aria-label="Community section"
+        className='bg-transparent'
       />
       <StepsSection
         title="Quick Start with Erisfy"
@@ -266,7 +268,7 @@ export const LandingPage: FC = () => {
         dataTestId="tagline"
       />
       <Footer
-        className="w-full px-4 sm:px-6 lg:px-8"
+        className="w-full px-4 sm:px-6 lg:px-8 bg-transparent"
         navigationLinks={[
           { text: 'Home', url: '#' },
           { text: 'Features', url: '#features' },
