@@ -49,7 +49,7 @@ graph TD
     B --> C[NewsFetcherService]
     B --> D[NewsAnalyserService]
     B --> E[StockDataService]
-    C --> F[TheNewsAPI]
+    C --> F[TavilyAPI]
     D --> G[OpenAI GPT-4]
     E --> H[Financial Datasets API]
 ```
@@ -63,15 +63,17 @@ graph TD
    - Implements comprehensive error handling with state updates.
 
 2. **NewsFetcherService**  
-   - Integrates with TheNewsAPI.  
-   - Retrieves financial news articles based on search query.  
-   - Handles URL encoding and API authentication.  
+   - Integrates with Tavily API for news search.  
+   - Implements caching for improved performance (5 minute TTL).  
+   - Handles deduplication of in-flight requests.  
+   - Enriches and filters articles for relevancy.  
    - Maps API response to internal article format.
 
 3. **NewsAnalyserService**  
    - Leverages OpenAI's GPT-4 for news analysis.  
    - Uses zero temperature for consistent outputs.  
    - Implements system and human message chain.  
+   - Extracts potential stock tickers from analysis.  
    - Provides structured financial insights.
 
 4. **StockDataService**  
@@ -85,7 +87,7 @@ graph TD
 ## Workflow
 
 1. **Input**  
-   - Query string (required).  
+   - Query string (optional, analyzes top financial news if not provided).  
    - Stock ticker (optional).
 
 2. **Process Flow**  
@@ -95,9 +97,17 @@ graph TD
    ```
 
 3. **State Management**  
-   - Uses `NewsAnalysisState` interface to maintain context.  
-   - Propagates data and errors through the workflow.  
-   - Preserves intermediate results.
+   ```typescript
+   interface NewsAnalysisState {
+     query?: string;           // Search query or topic
+     ticker?: string;         // Stock ticker symbol
+     articles: NewsArticle[]; // Retrieved articles
+     analysis: string;       // Generated analysis
+     stockInfo?: StockInfo;  // Market data
+     error?: string;         // Error messages
+     isDefaultQuery?: boolean; // Using default top news query
+   }
+   ```
 
 ---
 
@@ -111,8 +121,8 @@ Analyzes financial news and stock data.
 
 ```typescript
 {
-  query: string;   // Search query for news
-  ticker?: string; // Optional stock ticker
+  query?: string;   // Search query for news (optional)
+  ticker?: string;  // Stock ticker (optional)
 }
 ```
 
@@ -120,12 +130,12 @@ Analyzes financial news and stock data.
 
 ```typescript
 {
-  query: string;            // Original search query
-  ticker?: string;          // Stock ticker
+  query: string;            // Original or default query
+  ticker?: string;         // Stock ticker
   articles?: NewsArticle[]; // Retrieved articles
-  analysis?: string;        // AI-generated analysis
-  stockInfo?: StockInfo;    // Market data
-  error?: string;           // Error message if any
+  analysis?: string;       // AI-generated analysis
+  stockInfo?: StockInfo;   // Market data if available
+  error?: string;         // Error message if any
 }
 ```
 
@@ -145,9 +155,8 @@ Analyzes financial news and stock data.
 Required environment variables:
 
 ```env
-NEWS_API_TOKEN=your_thenewsapi_token
-NEWS_API_BASE_URL=https://api.thenewsapi.com/v1/news
 OPENAI_API_KEY=your_openai_api_key
+TAVILY_API_KEY=your_tavily_api_key
 FINANCIAL_DATASETS_API_KEY=your_financial_datasets_api_key
 FINANCIAL_DATASETS_API_BASE_URL=your_financial_datasets_api_base_url
 ```
@@ -157,6 +166,8 @@ FINANCIAL_DATASETS_API_BASE_URL=your_financial_datasets_api_base_url
 ## Dependencies
 
 - `@nestjs/common`  
+- `@nestjs/config`  
+- `@nestjs/cache-manager`  
 - `@langchain/core`  
 - `@langchain/openai`  
 - `@nestjs/swagger`
@@ -297,7 +308,7 @@ Example: [2024-02-14 10:15:23] [INFO] [NewsFetcherService] Fetching news for que
      ```log
      [NewsFetcherService] Fetching news for query: {query}
      [NewsFetcherService] Retrieved {count} articles
-     [NewsFetcherService] Request to TheNewsAPI completed in {time}ms
+     [NewsFetcherService] Tavily search completed in {time}ms
      ```
 
 2. **Analysis Phase**
@@ -358,7 +369,8 @@ Example: [2024-02-14 10:15:23] [INFO] [NewsFetcherService] Fetching news for que
 ### Common Error Patterns
 
 1. **News Fetching Errors**  
-   - TheNewsAPI request failures (HTTP status errors)  
+   - Tavily API request failures
+   - Invalid search parameters
    - No results for query  
    - API quota exceeded  
    - Network connectivity issues

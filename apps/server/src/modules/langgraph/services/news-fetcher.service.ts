@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { NewsService } from '../../news/news.service';
 import { NewsAnalysisState } from '../interfaces/news-analysis-state.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { NewsArticle } from '../../openai/interfaces/news-analysis.interface';
+import { TavilyService } from '../../tavily/tavily.service';
 
 // Extending the NewsArticle interface to include our enrichment properties
 interface EnrichedNewsArticle extends NewsArticle {
@@ -17,34 +17,39 @@ export class NewsFetcherService {
   private inFlightRequests = new Map<string, Promise<NewsAnalysisState>>();
 
   constructor(
-    private readonly newsService: NewsService,
+    private readonly tavilyService: TavilyService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async fetchNews(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    if (!state.query) {
-      this.logger.warn('No query provided for news lookup');
+    // For default query (no specific query provided), use a predefined query
+    const effectiveQuery = state.isDefaultQuery ? 'top financial news today' : state.query;
+
+    // Validate query after considering default case
+    if (!effectiveQuery) {
+      this.logger.error('No query available for news lookup');
+      state.error = 'Invalid news query configuration';
       return state;
     }
 
-    const cacheKey = `news:${state.query}:${state.ticker || 'noticker'}`;
+    const cacheKey = `news:${effectiveQuery}:${state.ticker || 'noticker'}`;
 
     // Try cache first
     const cached = await this.cacheManager.get<NewsAnalysisState>(cacheKey);
     if (cached) {
-      this.logger.log(`Retrieved news from cache for query: ${state.query}`);
+      this.logger.log(`Retrieved news from cache for query: ${effectiveQuery}`);
       return cached;
     }
 
     // Deduplicate in-flight requests
     if (this.inFlightRequests.has(cacheKey)) {
-      this.logger.log(`Using existing in-flight request for query: ${state.query}`);
+      this.logger.log(`Using existing in-flight request for query: ${effectiveQuery}`);
       const request = this.inFlightRequests.get(cacheKey);
-      return request ? request : this.performNewsFetch(state, cacheKey);
+      return request ? request : this.performNewsFetch({ ...state, query: effectiveQuery }, cacheKey);
     }
 
     // Create new request
-    const requestPromise = this.performNewsFetch(state, cacheKey);
+    const requestPromise = this.performNewsFetch({ ...state, query: effectiveQuery }, cacheKey);
     this.inFlightRequests.set(cacheKey, requestPromise);
 
     try {
@@ -55,11 +60,29 @@ export class NewsFetcherService {
   }
 
   private async performNewsFetch(state: NewsAnalysisState, cacheKey: string): Promise<NewsAnalysisState> {
-    this.logger.log(`Fetching news for query: ${state.query}`);
+    this.logger.log(`Fetching news for ${state.isDefaultQuery ? 'top financial news' : `query: ${state.query}`}`);
     const startTime = Date.now();
 
     try {
-      const articles = await this.newsService.queryNews(state.query);
+      // Adjust Tavily search parameters based on whether it's default or specific query
+      const tavilyParams = {
+        query: state.query || 'top financial news today',
+        search_depth: state.isDefaultQuery ? "basic" : "advanced" as "basic" | "advanced",
+        include_answer: false,
+        include_raw_content: false,
+        include_domains: ["reuters.com", "bloomberg.com", "cnbc.com", "wsj.com", "ft.com", "marketwatch.com", "finance.yahoo.com"],
+        max_results: state.isDefaultQuery ? 10 : 5 // More results for top news, fewer for specific queries
+      };
+
+      const tavilyResponse = await this.tavilyService.search(tavilyParams);
+
+      // Convert Tavily results to NewsArticle format
+      const articles = tavilyResponse.results.map(result => ({
+        title: result.title,
+        description: result.content,
+        url: result.url,
+        publishedAt: result.published_date || new Date().toISOString()
+      }));
 
       // Filter and enrich articles
       const enrichedArticles = articles
@@ -88,10 +111,14 @@ export class NewsFetcherService {
   }
 
   private isRelevantArticle(article: NewsArticle, state: NewsAnalysisState): boolean {
-    // Filter out irrelevant or duplicate articles
     if (!article.title || !article.description) return false;
 
-    // If ticker is provided, prioritize articles mentioning it
+    // For default query (top news), ensure it's a substantial article
+    if (state.isDefaultQuery) {
+      return article.description.length > 100; // Ensure article has meaningful content
+    }
+
+    // For specific queries, prioritize articles mentioning the ticker or query terms
     if (state.ticker &&
         !article.title.toUpperCase().includes(state.ticker) &&
         !article.description.toUpperCase().includes(state.ticker)) {

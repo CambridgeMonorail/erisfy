@@ -65,6 +65,9 @@ export interface NewsAnalysisState {
 
   /** Any error that occurred during processing */
   error?: string;
+
+  /** Flag indicating if we're using the default top news query */
+  isDefaultQuery?: boolean;
 }
 
 /**

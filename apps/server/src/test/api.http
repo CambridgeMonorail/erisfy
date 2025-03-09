@@ -7,6 +7,77 @@
 # @baseUrl = https://staging-api.erisfy.com/api # Staging
 # @baseUrl = https://api.erisfy.com/api # Production
 
+### Basic News Analysis Endpoints
+
+### Basic News Analysis
+# Simple analysis for basic sentiment and topic extraction
+POST {{baseUrl}}/basic-news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+    "content": "Federal Reserve signals three rate cuts for 2024 as inflation cools"
+}
+
+### Get Basic Analysis History
+GET {{baseUrl}}/basic-news-analysis/history
+Content-Type: {{contentType}}
+
+### AI-Powered News Analysis Endpoints
+
+### AI News Analysis (with both query and ticker)
+# Advanced multi-agent analysis using LangGraph and GPT-4
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+    "query": "Recent developments in Tesla's self-driving technology",
+    "ticker": "TSLA"
+}
+
+### AI News Analysis (query only)
+# AI will attempt to identify relevant tickers automatically
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+    "query": "Impact of Fed interest rate decisions"
+}
+
+### AI News Analysis (Top Financial News)
+# Analyzes trending financial news using AI
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+}
+
+# Basic News Analysis Response Shape:
+# {
+#   "success": boolean,
+#   "analysis": {
+#     "sentiment": "positive" | "negative" | "neutral",
+#     "keyTopics": string[],
+#     "marketImplications": string[],
+#     "timestamp": string
+#   }
+# }
+
+# AI News Analysis Response Shape:
+# {
+#   "query": "string | undefined",
+#   "ticker": "string | undefined",
+#   "articles": [
+#     {
+#       "title": "string",
+#       "description": "string",
+#       "url": "string",
+#       "publishedAt": "string"
+#     }
+#   ],
+#   "analysis": "string",
+#   "isDefaultQuery": boolean
+# }
+
 ### Market Insights Endpoints
 
 ### Get Latest Market News
@@ -43,25 +114,6 @@ Content-Type: {{contentType}}
 # Manually triggers a daily news update
 GET {{baseUrl}}/news/trigger
 Content-Type: {{contentType}}
-
-### News Analysis Endpoints
-
-### Analyze News with Ticker
-POST {{baseUrl}}/news-analysis/analyze
-Content-Type: {{contentType}}
-
-{
-    "query": "Tesla Q4 earnings",
-    "ticker": "TSLA"
-}
-
-### Analyze News without Ticker
-POST {{baseUrl}}/news-analysis/analyze
-Content-Type: {{contentType}}
-
-{
-    "query": "Apple new product launch"
-}
 
 ### Stock Data Endpoints
 
