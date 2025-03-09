@@ -22,17 +22,17 @@ export class StockDataService {
 
   /**
    * Fetches stock data for a given ticker and updates the state
-   * If no ticker is provided, attempts to extract one from the analysis
+   * If no ticker is provided in state.tickers, attempts to extract one from the analysis
    * @param state The current news analysis state
    * @returns Updated state with stock information
    */
   async fetchStock(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    let ticker = state.ticker;
+    let ticker = state.tickers && state.tickers.length > 0 ? state.tickers[0] : undefined;
 
     // Optionally extract ticker from the analysis if not provided
     if (!ticker && state.analysis) {
       const match = state.analysis.match(/[A-Z]{1,5}/);
-      if (match) {
+      if (match && this.isValidTickerFormat(match[0])) {
         ticker = match[0];
         this.logger.debug(`Extracted ticker ${ticker} from analysis`);
       }
@@ -74,8 +74,8 @@ export class StockDataService {
     } catch (err) {
       this.logger.error(`Error fetching stock data for ${ticker} from Financial Datasets API`, err instanceof Error ? err.message : String(err));
       state.stockInfo = {
-        error: 'Financial Datasets API call failed.',
         ticker,
+        error: 'Financial Datasets API call failed.',
         details: err instanceof Error ? err.message : 'Unknown error'
       };
     }

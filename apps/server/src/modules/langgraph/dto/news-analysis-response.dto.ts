@@ -67,10 +67,11 @@ export class NewsAnalysisResponseDto {
   query: string;
 
   @ApiPropertyOptional({
-    description: 'Stock ticker symbol if specified in the request or extracted from news',
-    example: 'TSLA'
+    description: 'Stock ticker symbols identified in the request or extracted from news',
+    example: ['TSLA', 'RIVN'],
+    type: [String]
   })
-  ticker?: string;
+  tickers?: string[];
 
   @ApiPropertyOptional({
     description: 'Collection of news articles related to the query',
@@ -85,15 +86,28 @@ export class NewsAnalysisResponseDto {
   analysis: string;
 
   @ApiPropertyOptional({
+    description: 'Market sentiment derived from the analysis',
+    enum: ['positive', 'negative', 'neutral'],
+    example: 'positive'
+  })
+  sentiment?: 'positive' | 'negative' | 'neutral';
+
+  @ApiPropertyOptional({
+    description: 'List of market sectors affected',
+    type: [String],
+    example: ['Automotive', 'Technology']
+  })
+  sectors?: string[];
+
+  @ApiPropertyOptional({
     description: 'Error message if analysis failed',
     example: 'Failed to fetch news data'
   })
   error?: string;
 
-  @ApiProperty({
-    description: 'Current market data for the related stock',
-    type: StockInfoDto,
-    required: false
+  @ApiPropertyOptional({
+    description: 'Current market data for the related stocks',
+    type: [StockInfoDto]
   })
-  stockInfo?: StockInfoDto;
+  stockInfo?: StockInfoDto[];
 }

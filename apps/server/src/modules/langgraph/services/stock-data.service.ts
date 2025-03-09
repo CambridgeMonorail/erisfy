@@ -14,14 +14,17 @@ export class StockDataService {
   }
 
   async fetchStock(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    if (!state.ticker) {
-      this.logger.warn('No stock ticker available for lookup');
+    // Skip if no tickers available
+    if (!state.tickers?.length) {
+      this.logger.warn('No stock tickers available for lookup');
       return state;
     }
 
-    this.logger.log(`Fetching stock data for ticker: ${state.ticker}`);
+    // Use the first ticker for now - in future we could fetch data for all tickers
+    const ticker = state.tickers[0];
+    this.logger.log(`Fetching stock data for ticker: ${ticker}`);
 
-    const url = `${this.apiBaseUrl}/financial-metrics/snapshot?ticker=${state.ticker}`;
+    const url = `${this.apiBaseUrl}/financial-metrics/snapshot?ticker=${ticker}`;
     const headers = { 'X-API-KEY': this.apiKey };
 
     try {
@@ -40,14 +43,14 @@ export class StockDataService {
       const { snapshot } = data;
 
       state.stockInfo = {
-        ticker: state.ticker,
+        ticker,
         price: snapshot.market_cap, // Replace with the appropriate field
         change: snapshot.price_to_earnings_ratio, // Replace with the appropriate field
         changePercent: snapshot.price_to_book_ratio, // Replace with the appropriate field
         timestamp: new Date().toISOString(),
       };
 
-      this.logger.log(`Retrieved stock data for ${state.ticker}`);
+      this.logger.log(`Retrieved stock data for ${ticker}`);
     } catch (error) {
       this.logger.error('Error fetching stock data', error);
       state.error = `Failed to fetch stock data: ${error.message}`;

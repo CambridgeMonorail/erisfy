@@ -32,7 +32,9 @@ export class NewsFetcherService {
       return state;
     }
 
-    const cacheKey = `news:${effectiveQuery}:${state.ticker || 'noticker'}`;
+    // Create cache key from query and tickers if present
+    const tickersKey = state.tickers?.length ? state.tickers.sort().join(',') : 'notickers';
+    const cacheKey = `news:${effectiveQuery}:${tickersKey}`;
 
     // Try cache first
     const cached = await this.cacheManager.get<NewsAnalysisState>(cacheKey);
@@ -102,7 +104,7 @@ export class NewsFetcherService {
       this.logger.error('Error fetching news', {
         error,
         query: state.query,
-        ticker: state.ticker,
+        tickers: state.tickers,
         duration: Date.now() - startTime
       });
       state.error = `Failed to fetch news: ${error.message}`;
@@ -118,11 +120,15 @@ export class NewsFetcherService {
       return article.description.length > 100; // Ensure article has meaningful content
     }
 
-    // For specific queries, prioritize articles mentioning the ticker or query terms
-    if (state.ticker &&
-        !article.title.toUpperCase().includes(state.ticker) &&
-        !article.description.toUpperCase().includes(state.ticker)) {
-      return false;
+    // For specific queries, prioritize articles mentioning the tickers or query terms
+    if (state.tickers && state.tickers.length > 0) {
+      const mentionsTicker = state.tickers.some(ticker =>
+        article.title.toUpperCase().includes(ticker) ||
+        article.description.toUpperCase().includes(ticker)
+      );
+      if (!mentionsTicker) {
+        return false;
+      }
     }
 
     // Add more relevancy checks as needed
@@ -141,12 +147,11 @@ export class NewsFetcherService {
     let score = 1;
 
     // Increase score based on ticker mentions
-    if (state.ticker) {
-      const tickerMentions = (article.title + article.description)
-        .toUpperCase()
-        .split(state.ticker)
-        .length - 1;
-      score += tickerMentions * 0.5;
+    if (state.tickers && state.tickers.length > 0) {
+      state.tickers.forEach(ticker => {
+        if (article.title.toUpperCase().includes(ticker)) score += 0.5;
+        if (article.description.toUpperCase().includes(ticker)) score += 0.3;
+      });
     }
 
     // Add more scoring factors as needed

@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, Matches, Length } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsOptional, Matches, Length, IsArray } from 'class-validator';
 
 export class AnalyzeNewsDto {
   @ApiPropertyOptional({
@@ -14,14 +14,19 @@ export class AnalyzeNewsDto {
   query?: string;
 
   @ApiPropertyOptional({
-    description: 'Stock ticker symbol in uppercase (e.g., AAPL, TSLA, MSFT)',
-    example: 'TSLA',
-    pattern: '^[A-Z]{1,5}$'
+    description: 'Stock ticker symbols in uppercase (e.g., ["AAPL", "TSLA", "MSFT"])',
+    example: ['TSLA'],
+    isArray: true,
+    items: {
+      type: 'string',
+      pattern: '^[A-Z]{1,5}$'
+    }
   })
-  @IsString()
+  @IsArray()
   @IsOptional()
   @Matches(/^[A-Z]{1,5}$/, {
-    message: 'Ticker must be 1-5 uppercase letters'
+    message: 'Each ticker must be 1-5 uppercase letters',
+    each: true
   })
-  ticker?: string;
+  tickers?: string[];
 }

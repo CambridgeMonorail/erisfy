@@ -32,7 +32,7 @@ export class LangGraphService {
       },
       // Step 3: Fetch Stock Data (only if we have analysis and no errors)
       async ({ state }) => {
-        if (state.error || !state.analysis || !state.ticker) {
+        if (state.error || !state.analysis || !state.tickers?.length) {
           return { state };
         }
         const finalState = await this.stockData.fetchStock(state);
