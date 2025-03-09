@@ -5,7 +5,7 @@ import { AnalyzeNewsDto } from './dto/analyze-news.dto';
 import { NewsAnalysisResponseDto } from './dto/news-analysis-response.dto';
 import { NewsAnalysisState } from './interfaces/news-analysis-state.interface';
 
-@ApiTags('AI News Analysis')
+@ApiTags('news-analysis')
 @ApiExtraModels(NewsAnalysisResponseDto)
 @Controller('news-analysis')
 export class LangGraphController {
@@ -32,7 +32,7 @@ export class LangGraphController {
   @ApiResponse({
     status: 200,
     description: 'Advanced AI news analysis completed successfully',
-    type: NewsAnalysisResponseDto,
+    type: NewsAnalysisResponseDto
   })
   @ApiResponse({
     status: 400,

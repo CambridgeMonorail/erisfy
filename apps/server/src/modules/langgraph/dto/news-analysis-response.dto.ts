@@ -1,28 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { NewsArticle } from '../../openai/interfaces/news-analysis.interface';
 
-class NewsArticleDto {
+export class NewsArticleDto implements NewsArticle {
   @ApiProperty({
-    description: 'The headline or title of the news article',
-    example: 'Tesla Beats Q4 Earnings Expectations, Plans New Model Launch'
+    description: 'The title of the news article',
+    example: 'Tesla Beats Q4 Earnings Expectations'
   })
   title: string;
 
   @ApiProperty({
-    description: 'A summary or excerpt of the article content',
-    example: 'Tesla reported Q4 earnings of $2.50 per share, beating analyst estimates of $2.20 per share...'
+    description: 'The description or content of the news article',
+    example: 'Tesla reported Q4 earnings of $2.50 per share, surpassing analyst estimates...'
   })
   description: string;
 
-  @ApiProperty({
-    description: 'Direct link to the full article',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'URL to the source article',
     example: 'https://reuters.com/articles/tesla-q4-earnings-2024'
   })
   url?: string;
 
-  @ApiProperty({
-    description: 'ISO 8601 formatted publication date',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Publication date of the article',
     example: '2024-02-14T15:30:00Z'
   })
   publishedAt?: string;
@@ -67,32 +66,29 @@ export class NewsAnalysisResponseDto {
   })
   query: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Stock ticker symbol if specified in the request or extracted from news',
-    required: false,
     example: 'TSLA'
   })
   ticker?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Collection of news articles related to the query',
-    type: [NewsArticleDto],
-    required: false,
-    example: [{
-      title: 'Tesla Beats Q4 Earnings Expectations',
-      description: 'Tesla reported Q4 earnings of $2.50 per share...',
-      url: 'https://reuters.com/articles/tesla-q4-earnings-2024',
-      publishedAt: '2024-02-14T15:30:00Z'
-    }]
+    type: [NewsArticleDto]
   })
   articles?: NewsArticleDto[];
 
   @ApiProperty({
     description: 'AI-generated analysis summarizing key insights from the news articles',
-    required: false,
-    example: 'Tesla reported strong Q4 earnings, beating analyst expectations. Key highlights include...'
+    example: 'Tesla\'s strong Q4 performance indicates continued market leadership in EVs. The earnings beat suggests robust demand and improving operational efficiency. This could have positive implications for the broader EV sector.'
   })
-  analysis?: string;
+  analysis: string;
+
+  @ApiPropertyOptional({
+    description: 'Error message if analysis failed',
+    example: 'Failed to fetch news data'
+  })
+  error?: string;
 
   @ApiProperty({
     description: 'Current market data for the related stock',
@@ -100,11 +96,4 @@ export class NewsAnalysisResponseDto {
     required: false
   })
   stockInfo?: StockInfoDto;
-
-  @ApiProperty({
-    description: 'Error message if the analysis process encountered issues',
-    required: false,
-    example: 'Unable to fetch stock data: API rate limit exceeded'
-  })
-  error?: string;
 }
