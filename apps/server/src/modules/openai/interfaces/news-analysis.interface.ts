@@ -30,13 +30,15 @@ export interface StockInfo {
   /** Stock ticker symbol */
   ticker: string;
   /** Current stock price */
-  price?: number;
-  /** Price change */
-  change?: number;
-  /** Percentage price change */
-  changePercent?: number;
+  price: number;
+  /** Price change for the day */
+  dayChange: number;
+  /** Percentage price change for the day */
+  dayChangePercent: number;
+  /** Market capitalization */
+  marketCap: number;
   /** Timestamp of the stock data */
-  timestamp?: string;
+  time: string;
   /** Error message if fetch failed */
   error?: string;
   /** Additional error details */
@@ -69,8 +71,11 @@ export interface NewsAnalysisState {
   /** List of affected market sectors */
   sectors?: string[];
 
-  /** Stock market data (optional) */
+  /** Stock market data for primary ticker (optional) */
   stockInfo?: StockInfo;
+
+  /** Stock market data for all tickers */
+  stockInfoMap?: Record<string, StockInfo>;
 
   /** Any error that occurred during processing */
   error?: string;

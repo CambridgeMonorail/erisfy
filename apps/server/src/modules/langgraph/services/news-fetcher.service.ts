@@ -73,6 +73,7 @@ export class NewsFetcherService {
         include_answer: false,
         include_raw_content: false,
         include_domains: ["reuters.com", "bloomberg.com", "cnbc.com", "wsj.com", "ft.com", "marketwatch.com", "finance.yahoo.com"],
+        exclude_domains: ["www.cnbc.com/finance/"],
         max_results: state.isDefaultQuery ? 10 : 5 // More results for top news, fewer for specific queries
       };
 
