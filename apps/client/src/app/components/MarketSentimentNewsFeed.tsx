@@ -12,11 +12,33 @@ type NewsItem = {
   relevance?: string[];
 };
 
+type StockInfo = {
+  ticker: string;
+  price: number;
+  dayChange: number;
+  dayChangePercent: number;
+  marketCap: number;
+  time: string;
+};
+
+type MarketData = {
+  structuredAnalysis: {
+    analysis: string;
+    sectors: string[];
+    marketSentiment: SentimentType;
+    tickers: string[];
+  };
+  sentiment: SentimentType;
+  stockInfoMap: Record<string, StockInfo>;
+  stockInfo: StockInfo;
+};
+
 type MarketSentimentNewsFeedProps = {
   className?: string;
   isLoading?: boolean;
   error?: Error | null;
   news?: NewsItem[];
+  marketData?: MarketData;
 };
 
 const getSentimentEmoji = (sentiment: SentimentType): { emoji: string; label: string } => ({
@@ -29,7 +51,8 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   className,
   isLoading = false,
   error = null,
-  news = [] 
+  news = [],
+  marketData
 }) => {
   if (isLoading) {
     return (
@@ -59,6 +82,8 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
     );
   }
 
+  const sentimentEmoji = getSentimentEmoji(marketData?.structuredAnalysis.marketSentiment || 'neutral');
+
   return (
     <Card 
       className={cn("market-sentiment-feed", className)}
@@ -66,56 +91,73 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
     >
       <CardHeader>
         <CardTitle 
-          className="text-2xl font-semibold mb-2 text-primary"
+          className="flex items-center gap-2 text-2xl font-semibold mb-2 text-primary"
           data-testid="market-sentiment-title"
         >
-          Market Sentiment & News Feed
+          <span>Market Sentiment & News Feed</span>
+          <span role="img" aria-label={sentimentEmoji.label}>{sentimentEmoji.emoji}</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <section 
-            aria-label="AI-Summarized News"
-            data-testid="ai-summarized-news"
-          >
-            <h3 className="font-semibold mb-2">Smart AI-Summarized News:</h3>
-            <ul className="list-disc list-inside space-y-2">
-              <li>Top 3-5 stories that impact the market today</li>
-              <li>Each story summarized in 1-2 sentences</li>
-              <li>Highlight relevance to user watchlist</li>
-            </ul>
-          </section>
-
-          <section 
-            aria-label="Sentiment Categories"
-            data-testid="sentiment-categories"
-          >
-            <h3 className="font-semibold mb-2">Sentiment-Based Categorization:</h3>
-            <p className="flex items-center gap-2">
-              Tags stories as{' '}
-              {['bullish', 'bearish', 'neutral'].map((sentiment) => {
-                const { emoji, label } = getSentimentEmoji(sentiment as SentimentType);
-                return (
-                  <span 
-                    key={sentiment}
-                    className="inline-flex items-center gap-1"
-                    role="img" 
-                    aria-label={label}
-                  >
-                    {emoji} {label}
-                  </span>
-                );
-              })}
-              {' '}based on AI analysis.
+          <section aria-label="AI Analysis">
+            <h3 className="text-xl font-semibold mb-2">AI Market Analysis</h3>
+            <p className="text-sm leading-relaxed">
+              {marketData?.structuredAnalysis.analysis}
             </p>
           </section>
 
-          <section 
-            aria-label="Watchlist Feed"
-            data-testid="watchlist-feed"
-          >
-            <h3 className="font-semibold mb-2">Custom Watchlist News Feed:</h3>
-            <p>Users see only news related to their selected stocks & sectors.</p>
+          <section aria-label="Highlighted Sectors" className="my-4">
+            <h3 className="text-lg font-semibold mb-2">Key Sectors</h3>
+            <div className="flex flex-wrap gap-2">
+              {marketData?.structuredAnalysis.sectors.map((sector) => (
+                <span
+                  key={sector}
+                  className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
+                >
+                  {sector}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          <section aria-label="Tickers Table" className="my-4">
+            <h3 className="text-lg font-semibold mb-2">Tracked Tickers</h3>
+            <table className="w-full table-auto border-collapse">
+              <thead>
+                <tr className="bg-muted text-muted-foreground">
+                  <th className="px-4 py-2 text-left">Ticker</th>
+                  <th className="px-4 py-2 text-left">Price</th>
+                  <th className="px-4 py-2 text-left">Day Change</th>
+                  <th className="px-4 py-2 text-left">Change %</th>
+                  <th className="px-4 py-2 text-left">Market Cap</th>
+                  <th className="px-4 py-2 text-left">Last Updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.values(marketData?.stockInfoMap || {}).map((info) => {
+                  const isPositive = info.dayChange > 0;
+                  return (
+                    <tr key={info.ticker} className="border-b">
+                      <td className="px-4 py-2 font-medium">{info.ticker}</td>
+                      <td className="px-4 py-2">${info.price.toFixed(2)}</td>
+                      <td className={cn("px-4 py-2", isPositive ? "text-green-600" : "text-red-600")}>
+                        {isPositive ? `+${info.dayChange.toFixed(2)}` : info.dayChange.toFixed(2)}
+                      </td>
+                      <td className={cn("px-4 py-2", isPositive ? "text-green-600" : "text-red-600")}>
+                        {isPositive ? `+${info.dayChangePercent.toFixed(2)}` : info.dayChangePercent.toFixed(2)}%
+                      </td>
+                      <td className="px-4 py-2">
+                        {(info.marketCap / 1_000_000_000).toFixed(2)}B
+                      </td>
+                      <td className="px-4 py-2">
+                        {new Date(info.time).toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </section>
 
           {news.length === 0 && (

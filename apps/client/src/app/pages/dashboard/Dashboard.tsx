@@ -328,6 +328,49 @@ export const DashboardPage: FC = () => {
             isLoading={isMarketNewsLoading}
             error={marketNewsError}
             news={marketNews}
+            marketData={{
+              structuredAnalysis: {
+                analysis: "Tech stocks rebounded today as interest rate fears eased.",
+                sectors: ["Technology", "Finance", "Healthcare"],
+                marketSentiment: "neutral",
+                tickers: ["AAPL", "MSFT", "GOOGL"]
+              },
+              sentiment: "neutral",
+              stockInfoMap: {
+                AAPL: {
+                  ticker: "AAPL",
+                  price: 150.00,
+                  dayChange: 2.00,
+                  dayChangePercent: 1.35,
+                  marketCap: 2500000000,
+                  time: "2025-03-08T00:52:47Z"
+                },
+                MSFT: {
+                  ticker: "MSFT",
+                  price: 250.00,
+                  dayChange: 3.00,
+                  dayChangePercent: 1.20,
+                  marketCap: 3000000000,
+                  time: "2025-03-08T00:52:47Z"
+                },
+                GOOGL: {
+                  ticker: "GOOGL",
+                  price: 2800.00,
+                  dayChange: 50.00,
+                  dayChangePercent: 1.80,
+                  marketCap: 1800000000,
+                  time: "2025-03-08T00:52:47Z"
+                }
+              },
+              stockInfo: {
+                ticker: "AAPL",
+                price: 150.00,
+                dayChange: 2.00,
+                dayChangePercent: 1.35,
+                marketCap: 2500000000,
+                time: "2025-03-08T00:52:47Z"
+              }
+            }}
           />
           <DashboardCard
             title="General News"
