@@ -1,5 +1,11 @@
 import { FC, useState, useEffect, useMemo } from 'react';
-import { Button, cn, Alert, AlertTitle, AlertDescription } from '@erisfy/shadcnui';
+import {
+  Button,
+  cn,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from '@erisfy/shadcnui';
 import { Download, AlertTriangle } from 'lucide-react';
 import { CalendarDateRangePicker } from '@erisfy/shadcnui-blocks';
 
@@ -8,11 +14,17 @@ import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
 import { generateMockData, StockData } from '../../utils/mockData';
 import { AIPoweredMarketOverview } from '../../components/AIPoweredMarketOverview';
 import { MainWorkspace } from '../../components/MainWorkspace';
-import { MarketSentimentNewsFeed } from '../../components/MarketSentimentNewsFeed';
+import {
+  MarketSentimentNewsFeed,
+  type MarketData,
+} from '../../components/MarketSentimentNewsFeed';
 import { type MarketOpportunitiesProps } from '../../types/market';
 import { ApiError } from '@erisfy/api';
 
-const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({ error, onRetry }) => (
+const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({
+  error,
+  onRetry,
+}) => (
   <Alert variant="destructive">
     <AlertTriangle className="h-4 w-4" />
     <AlertTitle>Error</AlertTitle>
@@ -25,7 +37,78 @@ const ApiErrorAlert: FC<{ error: ApiError; onRetry: () => void }> = ({ error, on
   </Alert>
 );
 
-export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ className }) => {
+const mockMarketData: MarketData = {
+  structuredAnalysis: {
+    analysis:
+      'The market sentiment is mixed with both positive and negative influences. European bonds fell while defense stocks rallied due to the likelihood of increased military spending. Tech stocks, particularly chip stocks like Nvidia, Broadcom, and Taiwan Semiconductor, led gains in the market. However, there were concerns about renewed tariff jitters causing a weekly loss for the S&P 500. Stocks like fuboTV and Nextdoor fell due to weak quarterly results and missed expectations. Meanwhile, US stocks rose after a consumer inflation update showed key prices increased less than expected.',
+    sectors: ['Defense', 'Technology', 'Consumer Services', 'Financials'],
+    marketSentiment: 'neutral',
+    tickers: ['SLGN', 'NVDA', 'AVGO', 'TSM', 'FUBO', 'KIND'],
+  },
+  sentiment: 'neutral',
+  stockInfoMap: {
+    SLGN: {
+      ticker: 'SLGN',
+      price: 53.01,
+      dayChange: 0.99,
+      dayChangePercent: 1.91,
+      marketCap: 5661184396.5,
+      time: '2025-03-08T00:52:47Z',
+    },
+    NVDA: {
+      ticker: 'NVDA',
+      price: 112.69,
+      dayChange: 2.14,
+      dayChangePercent: 1.94,
+      marketCap: 2749636000000,
+      time: '2025-03-08T01:01:00Z',
+    },
+    AVGO: {
+      ticker: 'AVGO',
+      price: 194.96,
+      dayChange: 15.57,
+      dayChangePercent: 8.68,
+      marketCap: 916688334602.3201,
+      time: '2025-03-08T01:00:00Z',
+    },
+    TSM: {
+      ticker: 'TSM',
+      price: 177.1,
+      dayChange: 1.16,
+      dayChangePercent: 0.66,
+      marketCap: 918537402860,
+      time: '2025-03-08T00:59:52Z',
+    },
+    FUBO: {
+      ticker: 'FUBO',
+      price: 3.18,
+      dayChange: 0.16,
+      dayChangePercent: 5.37,
+      marketCap: 1085895572.1000001,
+      time: '2025-03-08T00:59:36Z',
+    },
+    KIND: {
+      ticker: 'KIND',
+      price: 1.72,
+      dayChange: -0.09,
+      dayChangePercent: -4.95,
+      marketCap: 664438812.2,
+      time: '2025-03-08T00:52:47Z',
+    },
+  },
+  stockInfo: {
+    ticker: 'SLGN',
+    price: 53.01,
+    dayChange: 0.99,
+    dayChangePercent: 1.91,
+    marketCap: 5661184396.5,
+    time: '2025-03-08T00:52:47Z',
+  },
+};
+
+export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({
+  className,
+}) => {
   const [isMobile, setIsMobile] = useState(false);
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -49,9 +132,10 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
         const data = generateMockData(100);
         setStocks(data);
       } catch (err) {
-        const error = err instanceof ApiError 
-          ? err 
-          : new ApiError(500, 'Failed to fetch data');
+        const error =
+          err instanceof ApiError
+            ? err
+            : new ApiError(500, 'Failed to fetch data');
         setError(error);
       } finally {
         setIsLoading(false);
@@ -62,8 +146,7 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
   }, []);
 
   // Apply search only
-  const filteredStocks = useMemo(() => 
-    stocks, [stocks]);
+  const filteredStocks = useMemo(() => stocks, [stocks]);
 
   const handleReset = () => {
     setError(null);
@@ -100,15 +183,22 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
       {/* Market Analysis Section */}
       <ErrorBoundary>
         <div className="space-y-4">
-          <AIPoweredMarketOverview filteredStocks={filteredStocks} isLoading={isLoading} />
-          <MainWorkspace />
+          <AIPoweredMarketOverview
+            filteredStocks={filteredStocks}
+            isLoading={isLoading}
+          />
         </div>
       </ErrorBoundary>
 
       {/* Market Intel Section */}
       <ErrorBoundary>
         <div className="space-y-4">
-          <MarketSentimentNewsFeed />
+          <MarketSentimentNewsFeed
+            isLoading={isLoading}
+            error={error}
+            marketData={mockMarketData}
+          />
+          <MainWorkspace />
         </div>
       </ErrorBoundary>
 
@@ -137,10 +227,10 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({ classNam
       role="main"
       data-testid="market-opportunities-page"
       className={cn(
-        "h-full min-h-full w-full text-primary-900 flex-col",
+        'h-full min-h-full w-full text-primary-900 flex-col',
         isMobile ? 'flex' : 'hidden',
         'md:flex',
-        className
+        className,
       )}
     >
       {isLoading ? (

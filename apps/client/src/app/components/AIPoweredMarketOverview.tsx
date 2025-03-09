@@ -10,22 +10,29 @@ import {
 import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { useMarketNews } from '../hooks/useMarketNews';
+import { StockData } from '../utils/mockData';
 
 export interface AIPoweredMarketOverviewProps {
   className?: string;
+  filteredStocks: StockData[];
+  isLoading: boolean;
 }
 
 export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
   className,
+  filteredStocks,
+  isLoading: stocksLoading,
 }) => {
-  const { news, isLoading, error, isUpdating, triggerUpdate } = useMarketNews();
+  const { news, isLoading: newsLoading, error, isUpdating, triggerUpdate } = useMarketNews();
+  const isLoading = stocksLoading || newsLoading;
 
   console.log('[AIPoweredMarketOverview] Render state:', {
     hasNews: !!news,
     isLoading,
     error,
     isUpdating,
-    newsData: news
+    newsData: news,
+    stocksCount: filteredStocks.length
   });
 
   if (isLoading) {

@@ -1,8 +1,14 @@
 import { FC } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Skeleton } from '@erisfy/shadcnui';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Skeleton,
+} from '@erisfy/shadcnui';
 import { cn } from '@erisfy/shadcnui';
 
-type SentimentType = 'bullish' | 'bearish' | 'neutral';
+export type SentimentType = 'bullish' | 'bearish' | 'neutral';
 
 type NewsItem = {
   id: string;
@@ -12,7 +18,7 @@ type NewsItem = {
   relevance?: string[];
 };
 
-type StockInfo = {
+export type StockInfo = {
   ticker: string;
   price: number;
   dayChange: number;
@@ -21,7 +27,7 @@ type StockInfo = {
   time: string;
 };
 
-type MarketData = {
+export type MarketData = {
   structuredAnalysis: {
     analysis: string;
     sectors: string[];
@@ -41,22 +47,25 @@ type MarketSentimentNewsFeedProps = {
   marketData?: MarketData;
 };
 
-const getSentimentEmoji = (sentiment: SentimentType): { emoji: string; label: string } => ({
-  bullish: { emoji: '🟢', label: 'Bullish' },
-  bearish: { emoji: '🔴', label: 'Bearish' },
-  neutral: { emoji: '⚪', label: 'Neutral' }
-}[sentiment]);
+const getSentimentEmoji = (
+  sentiment: SentimentType,
+): { emoji: string; label: string } =>
+  ({
+    bullish: { emoji: '🟢', label: 'Bullish' },
+    bearish: { emoji: '🔴', label: 'Bearish' },
+    neutral: { emoji: '⚪', label: 'Neutral' },
+  })[sentiment];
 
-export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({ 
+export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   className,
   isLoading = false,
   error = null,
   news = [],
-  marketData
+  marketData,
 }) => {
   if (isLoading) {
     return (
-      <Card className={cn("market-sentiment-feed", className)}>
+      <Card className={cn('market-sentiment-feed', className)}>
         <CardHeader>
           <Skeleton className="h-8 w-64" />
         </CardHeader>
@@ -69,33 +78,35 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
 
   if (error) {
     return (
-      <Card className={cn("market-sentiment-feed", className)} role="alert">
+      <Card className={cn('market-sentiment-feed', className)} role="alert">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold mb-2 text-destructive">
             Error Loading News Feed
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          {error.message}
-        </CardContent>
+        <CardContent>{error.message}</CardContent>
       </Card>
     );
   }
 
-  const sentimentEmoji = getSentimentEmoji(marketData?.structuredAnalysis.marketSentiment || 'neutral');
+  const sentimentEmoji = getSentimentEmoji(
+    marketData?.structuredAnalysis.marketSentiment || 'neutral',
+  );
 
   return (
-    <Card 
-      className={cn("market-sentiment-feed", className)}
+    <Card
+      className={cn('market-sentiment-feed', className)}
       data-testid="market-sentiment-feed"
     >
       <CardHeader>
-        <CardTitle 
+        <CardTitle
           className="flex items-center gap-2 text-2xl font-semibold mb-2 text-primary"
           data-testid="market-sentiment-title"
         >
           <span>Market Sentiment & News Feed</span>
-          <span role="img" aria-label={sentimentEmoji.label}>{sentimentEmoji.emoji}</span>
+          <span role="img" aria-label={sentimentEmoji.label}>
+            {sentimentEmoji.emoji} - {sentimentEmoji.label}
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -141,11 +152,26 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
                     <tr key={info.ticker} className="border-b">
                       <td className="px-4 py-2 font-medium">{info.ticker}</td>
                       <td className="px-4 py-2">${info.price.toFixed(2)}</td>
-                      <td className={cn("px-4 py-2", isPositive ? "text-green-600" : "text-red-600")}>
-                        {isPositive ? `+${info.dayChange.toFixed(2)}` : info.dayChange.toFixed(2)}
+                      <td
+                        className={cn(
+                          'px-4 py-2',
+                          isPositive ? 'text-green-600' : 'text-red-600',
+                        )}
+                      >
+                        {isPositive
+                          ? `+${info.dayChange.toFixed(2)}`
+                          : info.dayChange.toFixed(2)}
                       </td>
-                      <td className={cn("px-4 py-2", isPositive ? "text-green-600" : "text-red-600")}>
-                        {isPositive ? `+${info.dayChangePercent.toFixed(2)}` : info.dayChangePercent.toFixed(2)}%
+                      <td
+                        className={cn(
+                          'px-4 py-2',
+                          isPositive ? 'text-green-600' : 'text-red-600',
+                        )}
+                      >
+                        {isPositive
+                          ? `+${info.dayChangePercent.toFixed(2)}`
+                          : info.dayChangePercent.toFixed(2)}
+                        %
                       </td>
                       <td className="px-4 py-2">
                         {(info.marketCap / 1_000_000_000).toFixed(2)}B
@@ -161,7 +187,7 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
           </section>
 
           {news.length === 0 && (
-            <p 
+            <p
               className="text-muted-foreground italic"
               data-testid="coming-soon-message"
             >
