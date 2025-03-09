@@ -14,45 +14,97 @@ export class StockDataService {
   }
 
   async fetchStock(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    if (!state.ticker) {
-      this.logger.warn('No stock ticker available for lookup');
+    if (!state.tickers?.length) {
+      this.logger.warn('No stock tickers available for lookup');
+      state.stockInfo = {
+        ticker: 'UNKNOWN',
+        price: 0,
+        dayChange: 0,
+        dayChangePercent: 0,
+        marketCap: 0,
+        time: new Date().toISOString(),
+        error: 'No tickers available for lookup'
+      };
       return state;
     }
 
-    this.logger.log(`Fetching stock data for ticker: ${state.ticker}`);
-
-    const url = `${this.apiBaseUrl}/financial-metrics/snapshot?ticker=${state.ticker}`;
-    const headers = { 'X-API-KEY': this.apiKey };
-
     try {
-      const response = await fetch(url, { headers });
+      const stockDataPromises = state.tickers.map(ticker => this.fetchStockData(ticker));
+      const stockResults = await Promise.allSettled(stockDataPromises);
 
-      if (!response.ok) {
-        throw new Error(`Financial Datasets API request failed with status ${response.status}`);
-      }
+      // Initialize stockInfoMap if it doesn't exist
+      state.stockInfoMap = {};
 
-      const data = await response.json();
+      // Process results and populate stockInfoMap
+      stockResults.forEach((result, index) => {
+        const ticker = state.tickers[index];
+        if (result.status === 'fulfilled') {
+          state.stockInfoMap[ticker] = result.value;
+          // Set the first successful result as the primary stockInfo for backward compatibility
+          if (!state.stockInfo) {
+            state.stockInfo = result.value;
+          }
+        } else {
+          this.logger.error(`Failed to fetch data for ${ticker}:`, result.reason);
+          const errorStockInfo = {
+            ticker,
+            price: 0,
+            dayChange: 0,
+            dayChangePercent: 0,
+            marketCap: 0,
+            time: new Date().toISOString(),
+            error: result.reason.message
+          };
+          state.stockInfoMap[ticker] = errorStockInfo;
+          // If this is the first ticker and we don't have stockInfo set yet, use this as fallback
+          if (!state.stockInfo) {
+            state.stockInfo = errorStockInfo;
+          }
+        }
+      });
 
-      if (!data.snapshot) {
-        throw new Error('No snapshot data found in the response');
-      }
-
-      const { snapshot } = data;
-
-      state.stockInfo = {
-        ticker: state.ticker,
-        price: snapshot.market_cap, // Replace with the appropriate field
-        change: snapshot.price_to_earnings_ratio, // Replace with the appropriate field
-        changePercent: snapshot.price_to_book_ratio, // Replace with the appropriate field
-        timestamp: new Date().toISOString(),
-      };
-
-      this.logger.log(`Retrieved stock data for ${state.ticker}`);
     } catch (error) {
       this.logger.error('Error fetching stock data', error);
       state.error = `Failed to fetch stock data: ${error.message}`;
+      state.stockInfo = {
+        ticker: state.tickers[0] || 'UNKNOWN',
+        price: 0,
+        dayChange: 0,
+        dayChangePercent: 0,
+        marketCap: 0,
+        time: new Date().toISOString(),
+        error: error.message
+      };
     }
 
     return state;
+  }
+
+  private async fetchStockData(ticker: string) {
+    const url = `${this.apiBaseUrl}/prices/snapshot?ticker=${ticker}`;
+    const headers = { 'X-API-KEY': this.apiKey };
+
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      throw new Error(`Financial Datasets API request failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.snapshot) {
+      throw new Error('No snapshot data found in the response');
+    }
+
+    const { snapshot } = data;
+
+    return {
+      ticker,
+      price: snapshot.price,
+      dayChange: snapshot.day_change,
+      dayChangePercent: snapshot.day_change_percent,
+      marketCap: snapshot.market_cap,
+      time: snapshot.time,
+    };
   }
 }

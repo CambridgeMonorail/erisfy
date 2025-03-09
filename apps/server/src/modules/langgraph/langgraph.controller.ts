@@ -61,7 +61,7 @@ export class LangGraphController {
       query: '', // Will be set to default query by NewsFetcherService if empty
       articles: [],
       analysis: '',
-      ticker: analyzeNewsDto.ticker,
+      tickers: analyzeNewsDto.tickers || [], // Initialize with provided tickers array
       isDefaultQuery: !analyzeNewsDto.query // Flag indicating if we should use default query
     };
 

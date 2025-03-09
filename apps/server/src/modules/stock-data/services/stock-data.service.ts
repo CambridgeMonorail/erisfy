@@ -21,66 +21,104 @@ export class StockDataService {
   }
 
   /**
-   * Fetches stock data for a given ticker and updates the state
-   * If no ticker is provided, attempts to extract one from the analysis
+   * Fetches stock data for all tickers in the state
+   * If no tickers are provided, attempts to extract one from the analysis
    * @param state The current news analysis state
    * @returns Updated state with stock information
    */
   async fetchStock(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    let ticker = state.ticker;
+    // Initialize tickers array from state or try to extract from analysis
+    let tickers = state.tickers || [];
 
-    // Optionally extract ticker from the analysis if not provided
-    if (!ticker && state.analysis) {
-      const match = state.analysis.match(/[A-Z]{1,5}/);
-      if (match) {
-        ticker = match[0];
-        this.logger.debug(`Extracted ticker ${ticker} from analysis`);
+    if (tickers.length === 0 && state.analysis) {
+      const matches = state.analysis.match(/[A-Z]{1,5}/g) || [];
+      tickers = matches.filter(match => this.isValidTickerFormat(match));
+      if (tickers.length > 0) {
+        this.logger.debug(`Extracted tickers from analysis: ${tickers.join(', ')}`);
       }
     }
 
-    if (!ticker) {
-      this.logger.log('No ticker identified for stock data retrieval');
-      state.stockInfo = {
+    // Initialize stockInfoMap
+    state.stockInfoMap = {};
+
+    // Handle case when no tickers are available
+    if (tickers.length === 0) {
+      this.logger.warn('No stock tickers available for lookup');
+      const defaultStockInfo = {
         ticker: 'UNKNOWN',
-        error: 'No ticker identified.'
+        price: 0,
+        dayChange: 0,
+        dayChangePercent: 0,
+        marketCap: 0,
+        time: new Date().toISOString(),
+        error: 'No tickers available for lookup'
       };
+      state.stockInfoMap['UNKNOWN'] = defaultStockInfo;
       return state;
     }
 
-    // Use the Financial Datasets API snapshot endpoint
-    const url = `${this.apiBaseUrl}/prices/snapshot?ticker=${ticker}`;
+    // Fetch data for all tickers in parallel
+    const stockDataPromises = tickers.map(ticker => this.fetchStockData(ticker));
+    const results = await Promise.allSettled(stockDataPromises);
 
-    try {
-      this.logger.log(`Fetching stock data for ticker: ${ticker}`);
-
-      const res = await fetch(url, {
-        headers: {
-          'X-API-KEY': this.apiKey,
-          'Accept': 'application/json',
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}: ${await res.text()}`);
+    // Process results and populate stockInfoMap
+    results.forEach((result, index) => {
+      const ticker = tickers[index];
+      if (result.status === 'fulfilled') {
+        state.stockInfoMap[ticker] = result.value;
+      } else {
+        const errorStockInfo = {
+          ticker,
+          price: 0,
+          dayChange: 0,
+          dayChangePercent: 0,
+          marketCap: 0,
+          time: new Date().toISOString(),
+          error: 'Financial Datasets API call failed.',
+          details: result.reason instanceof Error ? result.reason.message : 'Unknown error'
+        };
+        state.stockInfoMap[ticker] = errorStockInfo;
       }
-
-      const stockData = await res.json();
-      this.logger.debug(`Successfully retrieved stock data for ${ticker}`);
-
-      state.stockInfo = {
-        ...stockData,
-        ticker // Ensure ticker is included in successful response
-      };
-    } catch (err) {
-      this.logger.error(`Error fetching stock data for ${ticker} from Financial Datasets API`, err instanceof Error ? err.message : String(err));
-      state.stockInfo = {
-        error: 'Financial Datasets API call failed.',
-        ticker,
-        details: err instanceof Error ? err.message : 'Unknown error'
-      };
-    }
+    });
 
     return state;
+  }
+
+  /**
+   * Fetches stock data for a single ticker from the Financial Datasets API
+   * @param ticker The stock ticker symbol
+   * @returns Promise of StockInfo
+   */
+  private async fetchStockData(ticker: string) {
+    const url = `${this.apiBaseUrl}/prices/snapshot?ticker=${ticker}`;
+
+    const res = await fetch(url, {
+      headers: {
+        'X-API-KEY': this.apiKey,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}: ${await res.text()}`);
+    }
+
+    const data = await res.json();
+
+    if (!data.snapshot) {
+      throw new Error('No snapshot data found in the response');
+    }
+
+    const { snapshot } = data;
+
+    return {
+      ticker,
+      price: snapshot.price || 0,
+      dayChange: snapshot.day_change || 0,
+      dayChangePercent: snapshot.day_change_percent || 0,
+      marketCap: snapshot.market_cap || 0,
+      time: snapshot.time || new Date().toISOString(),
+    };
   }
 
   /**

@@ -30,13 +30,15 @@ export interface StockInfo {
   /** Stock ticker symbol */
   ticker: string;
   /** Current stock price */
-  price?: number;
-  /** Price change */
-  change?: number;
-  /** Percentage price change */
-  changePercent?: number;
+  price: number;
+  /** Price change for the day */
+  dayChange: number;
+  /** Percentage price change for the day */
+  dayChangePercent: number;
+  /** Market capitalization */
+  marketCap: number;
   /** Timestamp of the stock data */
-  timestamp?: string;
+  time: string;
   /** Error message if fetch failed */
   error?: string;
   /** Additional error details */
@@ -51,17 +53,29 @@ export interface NewsAnalysisState {
   /** Retrieved news articles */
   articles: NewsArticle[];
 
-  /** Generated analysis from LLM - starts empty and gets populated during processing */
+  /** Raw analysis string from LLM */
   analysis: string;
+
+  /** Structured analysis data when available */
+  structuredAnalysis?: StructuredLLMResponse;
 
   /** Initial search query or topic (optional) */
   query?: string;
 
-  /** Stock ticker symbol (if known) */
-  ticker?: string;
+  /** Stock ticker symbols (if known) */
+  tickers?: string[];
 
-  /** Stock market data (optional) */
+  /** Overall market sentiment */
+  sentiment?: 'positive' | 'negative' | 'neutral';
+
+  /** List of affected market sectors */
+  sectors?: string[];
+
+  /** Stock market data for primary ticker (optional) */
   stockInfo?: StockInfo;
+
+  /** Stock market data for all tickers */
+  stockInfoMap?: Record<string, StockInfo>;
 
   /** Any error that occurred during processing */
   error?: string;
@@ -97,4 +111,18 @@ export interface StructuredNewsAnalysis {
    * Overall summary of the analysis
    */
   summary: string;
+}
+
+/**
+ * Interface for structured LLM analysis response
+ */
+export interface StructuredLLMResponse {
+  /** Concise analysis of major market themes or events */
+  analysis: string;
+  /** List of affected market sectors */
+  sectors: string[];
+  /** Overall market sentiment */
+  marketSentiment: 'positive' | 'negative' | 'neutral';
+  /** List of mentioned stock tickers */
+  tickers: string[];
 }

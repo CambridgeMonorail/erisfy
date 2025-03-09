@@ -4,6 +4,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { BaseMessage } from "@langchain/core/messages";
 import { NewsAnalysisState } from '../interfaces/news-analysis-state.interface';
+import { StructuredLLMResponse } from '../../openai/interfaces/news-analysis.interface';
 
 @Injectable()
 export class NewsAnalyserService {
@@ -33,7 +34,7 @@ export class NewsAnalyserService {
       this.logger.debug('Incoming state:', {
         articleCount: state.articles.length,
         query: state.query,
-        ticker: state.ticker,
+        tickers: state.tickers,
         isDefaultQuery: state.isDefaultQuery
       });
 
@@ -52,20 +53,42 @@ export class NewsAnalyserService {
       // Construct the prompt - adjust based on whether it's default or specific query
       const systemPrompt = new SystemMessage({
         content: state.isDefaultQuery
-          ? `You are a financial analyst assistant. Review these top financial news articles and provide:
-              1. Overview of major market themes or events today
-              2. Key sectors or industries affected
-              3. Overall market sentiment (positive/negative/neutral)
-              4. Notable company mentions or stock tickers
+          ? `You are a financial analyst assistant. Review these top financial news articles and provide a response as a JSON object with the following keys:
+      {
+        "analysis": "<A concise overview of the major market themes or events today>",
+        "sectors": ["<list of key sectors or industries affected>"],
+        "marketSentiment": "<one of: positive, negative, neutral>",
+        "tickers": ["<list of notable company mentions or stock tickers>"]
+      }
 
-              Focus on the most impactful stories and their broader market implications.`
-          : `You are a financial analyst assistant. Analyze the provided news articles and explain:
-              1. The key themes or events being discussed
-              2. Potential impact on relevant stocks or market sectors
-              3. Overall market sentiment (positive/negative/neutral)
-              4. Any specific company names or stock tickers mentioned
+      Example output:
+      {
+        "analysis": "The S&P 500 experienced a decline due to tariff concerns and market uncertainty.",
+        "sectors": ["Financials", "Technology"],
+        "marketSentiment": "negative",
+        "tickers": ["SPY", "AAPL"]
+      }
 
-              Be concise but thorough in your analysis.`
+      Focus on the most impactful stories and their broader market implications.
+      Return only the JSON object without any additional text.`
+          : `You are a financial analyst assistant. Analyse the provided news articles and provide a response as a JSON object with the following keys:
+      {
+        "analysis": "<A concise explanation of the key themes or events being discussed>",
+        "sectors": ["<list of impacted market sectors or industries>"],
+        "marketSentiment": "<one of: positive, negative, neutral>",
+        "tickers": ["<list of specific company names or stock tickers mentioned>"]
+      }
+
+      Example output:
+      {
+        "analysis": "Market uncertainty remains as trade tensions affect tech and financial sectors.",
+        "sectors": ["Technology", "Financials"],
+        "marketSentiment": "negative",
+        "tickers": ["GOOG", "MSFT"]
+      }
+
+      Be concise but thorough in your analysis.
+      Return only a valid JSON object with no extra commentary.`
       });
 
       // Format articles for the prompt with validation
@@ -89,6 +112,14 @@ export class NewsAnalyserService {
         userPromptLength: userPrompt.content.length
       });
 
+      // Add detailed content logging for development
+      this.logger.debug('System Prompt Content:', {
+        content: systemPrompt.content
+      });
+      this.logger.debug('User Prompt Content:', {
+        content: userPrompt.content
+      });
+
       // Get analysis from LLM
       const response = await this.llm.invoke([systemPrompt, userPrompt]);
 
@@ -108,11 +139,56 @@ export class NewsAnalyserService {
           analysisContent = String(response || '');
         }
 
-        this.logger.debug('Processed analysis content:', {
-          contentLength: analysisContent.length,
-          hasContent: !!analysisContent,
-          preview: analysisContent.substring(0, 100) + '...'
+        // Store raw analysis content
+        state.analysis = analysisContent;
+
+        // Try to parse the JSON response
+        try {
+          const parsedAnalysis = JSON.parse(analysisContent) as StructuredLLMResponse;
+          state.structuredAnalysis = parsedAnalysis;
+
+          // Update tickers from structured response
+          if (parsedAnalysis.tickers && parsedAnalysis.tickers.length > 0) {
+            state.tickers = parsedAnalysis.tickers;
+          }
+
+          // Update sentiment and sectors
+          if (parsedAnalysis.marketSentiment) {
+            state.sentiment = parsedAnalysis.marketSentiment;
+          }
+
+          if (parsedAnalysis.sectors && parsedAnalysis.sectors.length > 0) {
+            state.sectors = parsedAnalysis.sectors;
+          }
+
+          this.logger.debug('Parsed structured analysis:', {
+            hasAnalysis: !!parsedAnalysis.analysis,
+            sectorCount: parsedAnalysis.sectors.length,
+            tickerCount: parsedAnalysis.tickers.length,
+            sentiment: parsedAnalysis.marketSentiment,
+            sectors: parsedAnalysis.sectors.join(', ')
+          });
+        } catch (parseError) {
+          this.logger.warn('Failed to parse structured analysis - falling back to regex extraction:', {
+            error: parseError.message,
+            rawContent: analysisContent.substring(0, 100) + '...'
+          });
+
+          // Fallback to regex extraction for tickers
+          const tickerMatch = analysisContent.match(/\b[A-Z]{1,5}\b/g);
+          if (tickerMatch) {
+            state.tickers = [...new Set(tickerMatch)]; // Remove duplicates
+          }
+        }
+
+        this.logger.debug('Final analysis state:', {
+          hasStructuredAnalysis: !!state.structuredAnalysis,
+          tickersFound: state.tickers?.length || 0,
+          allTickers: state.tickers?.join(', ') || 'none',
+          sentiment: state.sentiment || 'unknown',
+          sectors: state.sectors?.join(', ') || 'none'
         });
+
       } catch (parseError) {
         this.logger.error('Error processing LLM response:', {
           error: parseError.message,
@@ -122,22 +198,12 @@ export class NewsAnalyserService {
         throw parseError;
       }
 
-      state.analysis = analysisContent;
-
-      // Try to extract stock tickers if not already provided
-      if (!state.ticker) {
-        const tickerMatch = analysisContent.match(/\b[A-Z]{1,5}\b/g); // Simple regex for tickers
-        if (tickerMatch) {
-          state.ticker = tickerMatch[0]; // Take the first match
-          this.logger.debug('Extracted stock ticker:', { ticker: state.ticker });
-        } else {
-          this.logger.debug('No stock ticker found in analysis');
-        }
-      }
-
       this.logger.log('News analysis completed successfully', {
         analysisLength: analysisContent.length,
-        extractedTicker: state.ticker
+        hasStructuredData: !!state.structuredAnalysis,
+        extractedTickers: state.tickers?.join(', ') || 'none',
+        sentiment: state.sentiment,
+        sectorCount: state.sectors?.length || 0
       });
 
       return state;
@@ -149,7 +215,7 @@ export class NewsAnalyserService {
         state: {
           articleCount: state.articles?.length,
           hasQuery: !!state.query,
-          hasTicker: !!state.ticker,
+          hasTickers: !!state.tickers?.length,
           responseState: {
             hasAnalysis: !!state.analysis,
             analysisLength: state.analysis?.length

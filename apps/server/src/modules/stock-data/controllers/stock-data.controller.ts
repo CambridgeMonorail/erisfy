@@ -22,7 +22,7 @@ export class StockDataController {
 
     const state: NewsAnalysisState = {
       query: ticker,
-      ticker,
+      tickers: [ticker],
       articles: [],
       analysis: '',
     };
