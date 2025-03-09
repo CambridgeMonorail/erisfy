@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query, Logger, NotFoundException } from '@nestjs/common';
 import { StockDataService } from '../services/stock-data.service';
-import { NewsAnalysisState } from '../../news-analysis/interfaces/news-analysis-state.interface';
+import { NewsAnalysisState } from '../../langgraph/interfaces/news-analysis-state.interface';
 
 /**
  * Controller for stock data related endpoints
@@ -23,6 +23,8 @@ export class StockDataController {
     const state: NewsAnalysisState = {
       query: ticker,
       ticker,
+      articles: [],
+      analysis: '',
     };
 
     const result = await this.stockDataService.fetchStock(state);
@@ -46,6 +48,7 @@ export class StockDataController {
 
     const state: NewsAnalysisState = {
       query,
+      articles: [],
       analysis: query, // Treating the query as analysis text to extract a ticker
     };
 

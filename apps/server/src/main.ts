@@ -29,7 +29,7 @@ async function bootstrap() {
     .setDescription('REST API documentation for the Erisfy market news analysis and data processing server')
     .setVersion('1.0')
     .addTag('market-insights', 'Market news and analysis endpoints')
-    .addTag('news-analysis', 'News content analysis endpoints')
+    .addTag('news-analysis', 'AI-powered financial news analysis and sentiment endpoints')
     .addTag('onboardings', 'User onboarding management endpoints')
     .addTag('news', 'General news endpoints')
     .addBearerAuth()

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NewsAnalysisState } from '../../news-analysis/interfaces/news-analysis-state.interface';
+import { NewsAnalysisState } from '../../langgraph/interfaces/news-analysis-state.interface';
 
 /**
  * Service for retrieving stock data from external APIs

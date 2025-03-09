@@ -1,66 +1,99 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { NewsArticle } from '../../openai/interfaces/news-analysis.interface';
 
-class NewsArticleDto {
-  @ApiProperty({ description: 'Article title' })
+export class NewsArticleDto implements NewsArticle {
+  @ApiProperty({
+    description: 'The title of the news article',
+    example: 'Tesla Beats Q4 Earnings Expectations'
+  })
   title: string;
 
-  @ApiProperty({ description: 'Article description or summary' })
+  @ApiProperty({
+    description: 'The description or content of the news article',
+    example: 'Tesla reported Q4 earnings of $2.50 per share, surpassing analyst estimates...'
+  })
   description: string;
 
-  @ApiProperty({ description: 'URL to the article', required: false })
+  @ApiPropertyOptional({
+    description: 'URL to the source article',
+    example: 'https://reuters.com/articles/tesla-q4-earnings-2024'
+  })
   url?: string;
 
-  @ApiProperty({ description: 'Publication date', required: false })
+  @ApiPropertyOptional({
+    description: 'Publication date of the article',
+    example: '2024-02-14T15:30:00Z'
+  })
   publishedAt?: string;
 }
 
 class StockInfoDto {
-  @ApiProperty({ description: 'Stock ticker symbol' })
+  @ApiProperty({
+    description: 'The stock market symbol/ticker',
+    example: 'TSLA'
+  })
   ticker: string;
 
-  @ApiProperty({ description: 'Current stock price' })
+  @ApiProperty({
+    description: 'Current market price of the stock',
+    example: 189.25
+  })
   price: number;
 
-  @ApiProperty({ description: 'Price change' })
+  @ApiProperty({
+    description: 'Absolute price change since previous close',
+    example: 2.75
+  })
   change: number;
 
-  @ApiProperty({ description: 'Percentage price change' })
+  @ApiProperty({
+    description: 'Percentage price change since previous close',
+    example: 1.48
+  })
   changePercent: number;
 
-  @ApiProperty({ description: 'Timestamp of the stock data' })
+  @ApiProperty({
+    description: 'ISO 8601 timestamp of when the stock data was retrieved',
+    example: '2024-02-14T15:30:00Z'
+  })
   timestamp: string;
 }
 
 export class NewsAnalysisResponseDto {
-  @ApiProperty({ description: 'Original search query' })
+  @ApiProperty({
+    description: 'The search query used to find news articles',
+    example: 'Tesla Q4 earnings'
+  })
   query: string;
 
-  @ApiProperty({ description: 'Stock ticker symbol', required: false })
+  @ApiPropertyOptional({
+    description: 'Stock ticker symbol if specified in the request or extracted from news',
+    example: 'TSLA'
+  })
   ticker?: string;
 
-  @ApiProperty({
-    description: 'Retrieved news articles',
-    type: [NewsArticleDto],
-    required: false
+  @ApiPropertyOptional({
+    description: 'Collection of news articles related to the query',
+    type: [NewsArticleDto]
   })
   articles?: NewsArticleDto[];
 
   @ApiProperty({
-    description: 'AI-generated analysis of the news',
-    required: false
+    description: 'AI-generated analysis summarizing key insights from the news articles',
+    example: 'Tesla\'s strong Q4 performance indicates continued market leadership in EVs. The earnings beat suggests robust demand and improving operational efficiency. This could have positive implications for the broader EV sector.'
   })
-  analysis?: string;
+  analysis: string;
+
+  @ApiPropertyOptional({
+    description: 'Error message if analysis failed',
+    example: 'Failed to fetch news data'
+  })
+  error?: string;
 
   @ApiProperty({
-    description: 'Stock market data',
+    description: 'Current market data for the related stock',
     type: StockInfoDto,
     required: false
   })
   stockInfo?: StockInfoDto;
-
-  @ApiProperty({
-    description: 'Error message if analysis failed',
-    required: false
-  })
-  error?: string;
 }

@@ -66,4 +66,9 @@ export interface SearchResult {
    * Raw content if requested, null by default
    */
   raw_content: string | null;
+
+  /**
+   * The publication date of the article
+   */
+  published_date?: string;
 }
