@@ -6,6 +6,7 @@ import {
   CreateMarketDataInsightsDto,
   UpdateMarketDataInsightsDto
 } from '../types/marketInsights';
+import { ApiError } from '../errors/ApiError';
 
 export class MarketInsightsEndpoint extends BaseApiClient {
   constructor(config: ConstructorParameters<typeof BaseApiClient>[0]) {
@@ -44,24 +45,48 @@ export class MarketInsightsEndpoint extends BaseApiClient {
   async getLatestMarketInsight(): Promise<ApiResponse<MarketDataInsights>> {
     console.log('[MarketInsightsEndpoint] Calling getLatestMarketInsight');
     try {
-      const response = await this.get<MarketDataInsights>('market-insights/latest');
+      const response = await this.get<MarketDataInsights>('/market-insights/latest');
       console.log('[MarketInsightsEndpoint] Raw response:', response);
 
-      // Ensure we're returning the response in the correct format
-      if (response && typeof response === 'object' && !('data' in response)) {
-        // If the response is the data itself, wrap it in the expected format with all required properties
+      // If response is already in ApiResponse format, return it
+      if (response && typeof response === 'object' && 'data' in response && response.data) {
+        return response as ApiResponse<MarketDataInsights>;
+      }
+
+      // If response is the direct data (has required MarketDataInsights properties)
+      if (
+        response &&
+        typeof response === 'object' &&
+        'date' in response &&
+        typeof response.date === 'string' &&
+        'stories' in response &&
+        Array.isArray(response.stories)
+      ) {
+        const marketDataInsights: MarketDataInsights = {
+          date: response.date,
+          stories: response.stories
+        };
+
         return {
-          data: response as MarketDataInsights,
+          data: marketDataInsights,
           status: 200,
           message: 'Latest market insight retrieved successfully'
         };
       }
 
-      console.log('[MarketInsightsEndpoint] Formatted response:', response);
-      return response;
+      // If response is invalid
+      throw new ApiError(500, 'Invalid response format from market insights endpoint');
     } catch (error) {
       console.error('[MarketInsightsEndpoint] Error fetching latest market insight:', error);
-      throw error;
+
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      throw new ApiError(
+        500,
+        `Failed to fetch market insights: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 }

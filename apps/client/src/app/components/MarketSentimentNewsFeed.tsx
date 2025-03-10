@@ -47,15 +47,6 @@ type MarketSentimentNewsFeedProps = {
   marketData?: MarketData;
 };
 
-const getSentimentEmoji = (
-  sentiment: SentimentType,
-): { emoji: string; label: string } =>
-  ({
-    bullish: { emoji: '🟢', label: 'Bullish' },
-    bearish: { emoji: '🔴', label: 'Bearish' },
-    neutral: { emoji: '⚪', label: 'Neutral' },
-  })[sentiment];
-
 export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   className,
   isLoading = false,
@@ -63,7 +54,39 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   news = [],
   marketData,
 }) => {
+  console.log('[MarketSentimentNewsFeed] Rendering with props:', {
+    isLoading,
+    hasError: !!error,
+    hasNews: news.length > 0,
+    marketData: marketData ? {
+      hasStructuredAnalysis: !!marketData.structuredAnalysis,
+      sentiment: marketData.structuredAnalysis?.marketSentiment,
+      analysis: marketData.structuredAnalysis?.analysis?.substring(0, 50) + '...',
+      sectors: marketData.structuredAnalysis?.sectors?.length
+    } : 'undefined'
+  });
+
+  const getSentimentEmoji = (
+    sentiment: SentimentType | undefined
+  ): { emoji: string; label: string } => {
+    console.log('[MarketSentimentNewsFeed] Getting emoji for sentiment:', sentiment);
+
+    const sentimentMap = {
+      bullish: { emoji: '🟢', label: 'Bullish' },
+      bearish: { emoji: '🔴', label: 'Bearish' },
+      neutral: { emoji: '⚪', label: 'Neutral' },
+    };
+
+    const result = sentiment && sentiment in sentimentMap
+      ? sentimentMap[sentiment]
+      : sentimentMap.neutral;
+
+    console.log('[MarketSentimentNewsFeed] Sentiment emoji result:', result);
+    return result;
+  };
+
   if (isLoading) {
+    console.log('[MarketSentimentNewsFeed] Rendering loading state');
     return (
       <Card className={cn('market-sentiment-feed', className)}>
         <CardHeader>
@@ -77,6 +100,7 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   }
 
   if (error) {
+    console.log('[MarketSentimentNewsFeed] Rendering error state:', error);
     return (
       <Card className={cn('market-sentiment-feed', className)} role="alert">
         <CardHeader>
@@ -89,9 +113,50 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
     );
   }
 
+  // If no market data is available, show a placeholder
+  if (!marketData) {
+    console.log('[MarketSentimentNewsFeed] Rendering no market data state');
+    return (
+      <Card className={cn('market-sentiment-feed', className)}>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold mb-2">
+            Market Sentiment & News Feed
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">No market data available</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  console.log('[MarketSentimentNewsFeed] Market data analysis:', {
+    structuredAnalysis: marketData.structuredAnalysis,
+    marketSentiment: marketData.structuredAnalysis?.marketSentiment
+  });
+
   const sentimentEmoji = getSentimentEmoji(
-    marketData?.structuredAnalysis.marketSentiment || 'neutral',
+    marketData.structuredAnalysis?.marketSentiment
   );
+
+  console.log('[MarketSentimentNewsFeed] Calculated sentiment emoji:', sentimentEmoji);
+
+  // Extra safety check - if somehow we still don't have a valid sentiment emoji
+  if (!sentimentEmoji || typeof sentimentEmoji.label === 'undefined') {
+    console.error('[MarketSentimentNewsFeed] Invalid sentiment emoji:', sentimentEmoji);
+    return (
+      <Card className={cn('market-sentiment-feed', className)}>
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold mb-2">
+            Market Sentiment & News Feed
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">Invalid market sentiment data</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -105,7 +170,7 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
         >
           <span>Market Sentiment & News Feed</span>
           <span role="img" aria-label={sentimentEmoji.label}>
-            {sentimentEmoji.emoji} - {sentimentEmoji.label}
+            {sentimentEmoji.emoji} {sentimentEmoji.label}
           </span>
         </CardTitle>
       </CardHeader>
@@ -114,77 +179,81 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
           <section aria-label="AI Analysis">
             <h3 className="text-xl font-semibold mb-2">AI Market Analysis</h3>
             <p className="text-sm leading-relaxed">
-              {marketData?.structuredAnalysis.analysis}
+              {marketData.structuredAnalysis.analysis || 'No analysis available'}
             </p>
           </section>
 
-          <section aria-label="Highlighted Sectors" className="my-4">
-            <h3 className="text-lg font-semibold mb-2">Key Sectors</h3>
-            <div className="flex flex-wrap gap-2">
-              {marketData?.structuredAnalysis.sectors.map((sector) => (
-                <span
-                  key={sector}
-                  className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
-                >
-                  {sector}
-                </span>
-              ))}
-            </div>
-          </section>
+          {marketData.structuredAnalysis.sectors.length > 0 && (
+            <section aria-label="Highlighted Sectors" className="my-4">
+              <h3 className="text-lg font-semibold mb-2">Key Sectors</h3>
+              <div className="flex flex-wrap gap-2">
+                {marketData.structuredAnalysis.sectors.map((sector) => (
+                  <span
+                    key={sector}
+                    className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
+                  >
+                    {sector}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
 
-          <section aria-label="Tickers Table" className="my-4">
-            <h3 className="text-lg font-semibold mb-2">Tracked Tickers</h3>
-            <table className="w-full table-auto border-collapse">
-              <thead>
-                <tr className="bg-muted text-muted-foreground">
-                  <th className="px-4 py-2 text-left">Ticker</th>
-                  <th className="px-4 py-2 text-left">Price</th>
-                  <th className="px-4 py-2 text-left">Day Change</th>
-                  <th className="px-4 py-2 text-left">Change %</th>
-                  <th className="px-4 py-2 text-left">Market Cap</th>
-                  <th className="px-4 py-2 text-left">Last Updated</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.values(marketData?.stockInfoMap || {}).map((info) => {
-                  const isPositive = info.dayChange > 0;
-                  return (
-                    <tr key={info.ticker} className="border-b">
-                      <td className="px-4 py-2 font-medium">{info.ticker}</td>
-                      <td className="px-4 py-2">${info.price.toFixed(2)}</td>
-                      <td
-                        className={cn(
-                          'px-4 py-2',
-                          isPositive ? 'text-green-600' : 'text-red-600',
-                        )}
-                      >
-                        {isPositive
-                          ? `+${info.dayChange.toFixed(2)}`
-                          : info.dayChange.toFixed(2)}
-                      </td>
-                      <td
-                        className={cn(
-                          'px-4 py-2',
-                          isPositive ? 'text-green-600' : 'text-red-600',
-                        )}
-                      >
-                        {isPositive
-                          ? `+${info.dayChangePercent.toFixed(2)}`
-                          : info.dayChangePercent.toFixed(2)}
-                        %
-                      </td>
-                      <td className="px-4 py-2">
-                        {(info.marketCap / 1_000_000_000).toFixed(2)}B
-                      </td>
-                      <td className="px-4 py-2">
-                        {new Date(info.time).toLocaleString()}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
+          {Object.keys(marketData.stockInfoMap || {}).length > 0 && (
+            <section aria-label="Tickers Table" className="my-4">
+              <h3 className="text-lg font-semibold mb-2">Tracked Tickers</h3>
+              <table className="w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-muted text-muted-foreground">
+                    <th className="px-4 py-2 text-left">Ticker</th>
+                    <th className="px-4 py-2 text-left">Price</th>
+                    <th className="px-4 py-2 text-left">Day Change</th>
+                    <th className="px-4 py-2 text-left">Change %</th>
+                    <th className="px-4 py-2 text-left">Market Cap</th>
+                    <th className="px-4 py-2 text-left">Last Updated</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.values(marketData.stockInfoMap).map((info) => {
+                    const isPositive = info.dayChange > 0;
+                    return (
+                      <tr key={info.ticker} className="border-b">
+                        <td className="px-4 py-2 font-medium">{info.ticker}</td>
+                        <td className="px-4 py-2">${info.price.toFixed(2)}</td>
+                        <td
+                          className={cn(
+                            'px-4 py-2',
+                            isPositive ? 'text-green-600' : 'text-red-600',
+                          )}
+                        >
+                          {isPositive
+                            ? `+${info.dayChange.toFixed(2)}`
+                            : info.dayChange.toFixed(2)}
+                        </td>
+                        <td
+                          className={cn(
+                            'px-4 py-2',
+                            isPositive ? 'text-green-600' : 'text-red-600',
+                          )}
+                        >
+                          {isPositive
+                            ? `+${info.dayChangePercent.toFixed(2)}`
+                            : info.dayChangePercent.toFixed(2)}
+                          %
+                        </td>
+                        <td className="px-4 py-2">
+                          {(info.marketCap / 1_000_000_000).toFixed(2)}B
+                        </td>
+                        <td className="px-4 py-2">
+                          {new Date(info.time).toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </section>
+          )}
 
           {news.length === 0 && (
             <p

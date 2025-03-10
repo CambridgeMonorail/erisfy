@@ -3,10 +3,10 @@ import { http, HttpResponse } from 'msw';
 import { createMarketDataInsights } from '../factories/marketInsights';
 import { MarketDataInsights } from '@erisfy/api';
 
-// Update API base URL to match the actual API URL used in the application
-const API_BASE_URL = 'https://api.erisfy.com';
+// Use relative path for API endpoints since we're in a browser context
+const API_BASE_URL = '';
 
-console.log('[MSW] Setting up market insights handlers with BASE_URL:', API_BASE_URL);
+console.log('[MSW] Setting up market insights handlers');
 
 export const marketInsightsHandlers = [
   // Handler for /api/market-insights/latest endpoint
