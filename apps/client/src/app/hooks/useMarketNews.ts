@@ -47,8 +47,8 @@ const useNewsData = <T extends NewsData>(
       if (err instanceof ApiError) {
         console.error('[useNewsData] API Error details:', {
           message: err.message,
-          statusCode: err.statusCode, // Fixed: Using statusCode instead of status
-          responseData: err.responseData // Fixed: Using responseData instead of details
+          status: err.status,
+          data: err.data
         });
         setError(err.message);
       } else {
