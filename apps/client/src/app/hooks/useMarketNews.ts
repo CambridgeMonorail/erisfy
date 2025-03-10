@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ApiError, MarketInsightsEndpoint, NewsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
+import { ApiError, MarketInsightsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
 import { createApiConfig } from '../utils/apiConfig';
 
 type NewsData = MarketDataInsights | NewsArticle[];
@@ -47,8 +47,8 @@ const useNewsData = <T extends NewsData>(
       if (err instanceof ApiError) {
         console.error('[useNewsData] API Error details:', {
           message: err.message,
-          statusCode: err.statusCode, // Fixed: Using statusCode instead of status
-          responseData: err.responseData // Fixed: Using responseData instead of details
+          status: err.status,
+          data: err.data
         });
         setError(err.message);
       } else {
@@ -88,8 +88,4 @@ export const useMarketNews = () => {
   );
 };
 
-export const useGeneralNews = () => {
-  return useNewsData<NewsArticle[]>(() =>
-    new NewsEndpoint(createApiConfig())
-  );
-};
+

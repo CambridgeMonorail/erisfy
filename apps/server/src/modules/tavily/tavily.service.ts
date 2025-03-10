@@ -36,10 +36,16 @@ export class TavilyService {
         searchParams.query = 'today financial market headlines';
       }
 
-      this.logger.log(`Sending search request to Tavily API: ${searchParams.query}`);
+      // Create payload with CNBC finance domain excluded
+      const payload = {
+        ...searchParams,
+        exclude_domains: [
+          ...(searchParams.exclude_domains || []),
+          'www.cnbc.com/finance'
+        ]
+      };
 
-      // Create the request payload (without API key in the body)
-      const payload = { ...searchParams };
+      this.logger.log(`Sending search request to Tavily API: ${payload.query}`);
 
       // Send the request to Tavily API with Bearer token authentication
       const response = await fetch(this.apiUrl, {

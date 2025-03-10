@@ -1,4 +1,9 @@
-import { Controller, Get, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { MarketNewsService } from './market-news.service';
 import { PrismaService } from '../../prisma.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -8,12 +13,44 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class MarketNewsController {
   constructor(
     private readonly marketNewsService: MarketNewsService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
   ) {}
 
-  @ApiOperation({ summary: 'Trigger market news update', description: 'Manually triggers the market news fetch process' })
-  @ApiResponse({ status: 200, description: 'Market news update triggered successfully', schema: { properties: { message: { type: 'string', example: 'Market news update triggered' } } } })
-  @ApiResponse({ status: 500, description: 'Failed to fetch market news' })
+  @ApiOperation({
+    summary: 'Trigger market news update',
+    description:
+      'Manually triggers the market news fetch process from configured sources and processes them through OpenAI',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Market news update triggered successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Market news update triggered',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Failed to fetch or process market news',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Failed to fetch market news',
+        },
+        statusCode: {
+          type: 'number',
+          example: 500,
+        },
+      },
+    },
+  })
   @Get('trigger')
   async triggerNewsUpdate() {
     try {
@@ -24,10 +61,72 @@ export class MarketNewsController {
     }
   }
 
-  @ApiOperation({ summary: 'Get latest market data', description: 'Returns the most recent market data record with associated stories' })
-  @ApiResponse({ status: 200, description: 'Latest market news retrieved successfully' })
-  @ApiResponse({ status: 404, description: 'No market news data found' })
-  @ApiResponse({ status: 500, description: 'Failed to fetch market news data' })
+  @ApiOperation({
+    summary: 'Get latest market data',
+    description:
+      'Returns the most recent market data record with associated news stories and analysis',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Latest market news retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        date: { type: 'string', format: 'date-time' },
+        createdAt: { type: 'string', format: 'date-time' },
+        stories: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              title: { type: 'string' },
+              one_line_summary: { type: 'string' },
+              whats_happening: { type: 'string' },
+              market_impact: { type: 'string' },
+              market_sector: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No market news data found',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'No market news data found',
+        },
+        statusCode: {
+          type: 'number',
+          example: 404,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description:
+      'Internal server error occurred while fetching market news data',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Failed to fetch market news data',
+        },
+        statusCode: {
+          type: 'number',
+          example: 500,
+        },
+      },
+    },
+  })
   @Get()
   async getLatestNews() {
     try {
@@ -49,29 +148,78 @@ export class MarketNewsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException('Failed to fetch market news data');
+      throw new InternalServerErrorException(
+        'Failed to fetch market news data',
+      );
     }
   }
 
-  @ApiOperation({ summary: 'Get latest market news (alternative)', description: 'Returns the latest market news using an alternative service method' })
-  @ApiResponse({ status: 200, description: 'Latest market news retrieved successfully' })
-  @ApiResponse({ status: 404, description: 'No market news data found' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiOperation({
+    summary: 'Get latest market news',
+    description:
+      'Returns the most recent market news and analysis using optimized service method',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Latest market news retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        date: { type: 'string', format: 'date-time' },
+        stories: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              title: { type: 'string' },
+              one_line_summary: { type: 'string' },
+              whats_happening: { type: 'string' },
+              market_impact: { type: 'string' },
+              market_sector: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No market news data available',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'No market news available',
+        },
+        statusCode: {
+          type: 'number',
+          example: 404,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error occurred',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Internal server error',
+        },
+        statusCode: {
+          type: 'number',
+          example: 500,
+        },
+      },
+    },
+  })
   @Get('latest')
   async getLatest() {
     return this.marketNewsService.getLatestMarketNews();
-  }
-
-  @ApiOperation({ summary: 'Trigger general news update', description: 'Triggers an update for general news' })
-  @ApiResponse({ status: 200, description: 'General news update triggered successfully', schema: { properties: { message: { type: 'string', example: 'General news update triggered' } } } })
-  @ApiResponse({ status: 500, description: 'Failed to fetch general news' })
-  @Get('news-trigger')
-  async triggerGeneralNewsUpdate() {
-    try {
-      await this.marketNewsService.triggerNewsUpdate();
-      return { message: 'General news update triggered' };
-    } catch {
-      throw new InternalServerErrorException('Failed to fetch general news');
-    }
   }
 }

@@ -11,23 +11,7 @@ All information is presented in British English and aims to help you choose the 
 
 ## 1. API Key Setup Documentation
 
-### 1.1 The News API
-
-To use The News API in your web application, follow these steps:
-
-1. **Create an Account or Log In**  
-   Visit [The News API website](https://www.thenewsapi.com) and sign up for a new account or log in to your existing one.
-
-2. **Access Your Dashboard**  
-   Navigate to your [Account Dashboard](https://www.thenewsapi.com/account/dashboard) where your API key is displayed.
-
-3. **Copy Your API Key**  
-   Locate and copy the API key for use in your application.
-
-4. **Keep Your API Key Secure**  
-   Store the API key securely and avoid exposing it publicly.
-
-### 1.2 OpenAI Platform
+### 1.1 OpenAI Platform
 
 To obtain an API key from the OpenAI Platform, follow these steps:
 
@@ -43,7 +27,7 @@ To obtain an API key from the OpenAI Platform, follow these steps:
 4. **Implement Security Best Practices**  
    Keep your secret API key private. Use environment variables or secure storage methods in your application.
 
-### 1.3 Financial Datasets API
+### 1.2 Financial Datasets API
 
 Financial Datasets provides a developer-friendly stock market API with comprehensive market data. To obtain an API key:
 

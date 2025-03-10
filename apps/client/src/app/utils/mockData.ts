@@ -1,17 +1,30 @@
 import { faker } from '@faker-js/faker';
+import type { MarketSector } from '@erisfy/api';
 
-const SECTORS = ['Technology', 'Finance', 'Healthcare', 'Energy'] as const;
+const SECTORS: MarketSector[] = [
+  "Energy",
+  "Materials",
+  "Industrials",
+  "Utilities",
+  "Healthcare",
+  "Financials",
+  "Consumer Discretionary",
+  "Consumer Staples",
+  "Information Technology",
+  "Communication Services",
+  "Real Estate"
+];
+
 const INDUSTRIES = ['Software', 'Banking', 'Pharmaceuticals', 'Oil & Gas'] as const;
 const COUNTRIES = ['USA', 'Canada', 'UK', 'Germany'] as const;
 
-type Sector = (typeof SECTORS)[number];
 type Industry = (typeof INDUSTRIES)[number];
 type Country = (typeof COUNTRIES)[number];
 
 export type StockData = {
   ticker: string;
   companyName: string;
-  sector: Sector;
+  sector: MarketSector;
   industry: Industry;
   country: Country;
   currentPrice: number;
@@ -37,9 +50,9 @@ export const generateMockData = (count: number): StockData[] => {
     sector: faker.helpers.arrayElement(SECTORS),
     industry: faker.helpers.arrayElement(INDUSTRIES),
     country: faker.helpers.arrayElement(COUNTRIES),
-    currentPrice: Number(faker.number.float({ min: 10, max: 1000 }).toFixed(2)),
-    marketCap: Number(faker.number.float({ min: 1e6, max: 1e9 }).toFixed(0)),
-    historicalPerformance: generateHistoricalData(30)
+    currentPrice: faker.number.float({ min: 10, max: 1000, fractionDigits: 2 }),
+    marketCap: faker.number.float({ min: 1e6, max: 1e12, fractionDigits: 2 }),
+    historicalPerformance: generateHistoricalData(30),
   }));
 };
 
@@ -65,7 +78,7 @@ export const getHistoricalPerformance = (
   stocks: StockData[]
 ): Array<{ date: string; price: number }> => {
   if (!Array.isArray(stocks) || stocks.length === 0) return [];
-  
+
   return stocks[0].historicalPerformance.map(({ date, value }) => ({
     date,
     price: value
