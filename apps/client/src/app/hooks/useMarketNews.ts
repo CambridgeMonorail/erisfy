@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ApiError, MarketInsightsEndpoint, NewsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
+import { ApiError, MarketInsightsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
 import { createApiConfig } from '../utils/apiConfig';
 
 type NewsData = MarketDataInsights | NewsArticle[];
@@ -88,8 +88,4 @@ export const useMarketNews = () => {
   );
 };
 
-export const useGeneralNews = () => {
-  return useNewsData<NewsArticle[]>(() =>
-    new NewsEndpoint(createApiConfig())
-  );
-};
+

@@ -1,4 +1,9 @@
-import { Controller, Get, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { MarketNewsService } from './market-news.service';
 import { PrismaService } from '../../prisma.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -8,12 +13,13 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class MarketNewsController {
   constructor(
     private readonly marketNewsService: MarketNewsService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
   ) {}
 
   @ApiOperation({
     summary: 'Trigger market news update',
-    description: 'Manually triggers the market news fetch process from configured sources and processes them through OpenAI'
+    description:
+      'Manually triggers the market news fetch process from configured sources and processes them through OpenAI',
   })
   @ApiResponse({
     status: 200,
@@ -23,10 +29,10 @@ export class MarketNewsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Market news update triggered'
-        }
-      }
-    }
+          example: 'Market news update triggered',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 500,
@@ -36,14 +42,14 @@ export class MarketNewsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Failed to fetch market news'
+          example: 'Failed to fetch market news',
         },
         statusCode: {
           type: 'number',
-          example: 500
-        }
-      }
-    }
+          example: 500,
+        },
+      },
+    },
   })
   @Get('trigger')
   async triggerNewsUpdate() {
@@ -57,7 +63,8 @@ export class MarketNewsController {
 
   @ApiOperation({
     summary: 'Get latest market data',
-    description: 'Returns the most recent market data record with associated news stories and analysis'
+    description:
+      'Returns the most recent market data record with associated news stories and analysis',
   })
   @ApiResponse({
     status: 200,
@@ -78,12 +85,12 @@ export class MarketNewsController {
               one_line_summary: { type: 'string' },
               whats_happening: { type: 'string' },
               market_impact: { type: 'string' },
-              market_sector: { type: 'string' }
-            }
-          }
-        }
-      }
-    }
+              market_sector: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 404,
@@ -93,31 +100,32 @@ export class MarketNewsController {
       properties: {
         message: {
           type: 'string',
-          example: 'No market news data found'
+          example: 'No market news data found',
         },
         statusCode: {
           type: 'number',
-          example: 404
-        }
-      }
-    }
+          example: 404,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'Internal server error occurred while fetching market news data',
+    description:
+      'Internal server error occurred while fetching market news data',
     schema: {
       type: 'object',
       properties: {
         message: {
           type: 'string',
-          example: 'Failed to fetch market news data'
+          example: 'Failed to fetch market news data',
         },
         statusCode: {
           type: 'number',
-          example: 500
-        }
-      }
-    }
+          example: 500,
+        },
+      },
+    },
   })
   @Get()
   async getLatestNews() {
@@ -140,13 +148,16 @@ export class MarketNewsController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException('Failed to fetch market news data');
+      throw new InternalServerErrorException(
+        'Failed to fetch market news data',
+      );
     }
   }
 
   @ApiOperation({
     summary: 'Get latest market news',
-    description: 'Returns the most recent market news and analysis using optimized service method'
+    description:
+      'Returns the most recent market news and analysis using optimized service method',
   })
   @ApiResponse({
     status: 200,
@@ -166,12 +177,12 @@ export class MarketNewsController {
               one_line_summary: { type: 'string' },
               whats_happening: { type: 'string' },
               market_impact: { type: 'string' },
-              market_sector: { type: 'string' }
-            }
-          }
-        }
-      }
-    }
+              market_sector: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 404,
@@ -181,14 +192,14 @@ export class MarketNewsController {
       properties: {
         message: {
           type: 'string',
-          example: 'No market news available'
+          example: 'No market news available',
         },
         statusCode: {
           type: 'number',
-          example: 404
-        }
-      }
-    }
+          example: 404,
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 500,
@@ -198,61 +209,17 @@ export class MarketNewsController {
       properties: {
         message: {
           type: 'string',
-          example: 'Internal server error'
+          example: 'Internal server error',
         },
         statusCode: {
           type: 'number',
-          example: 500
-        }
-      }
-    }
+          example: 500,
+        },
+      },
+    },
   })
   @Get('latest')
   async getLatest() {
     return this.marketNewsService.getLatestMarketNews();
-  }
-
-  @ApiOperation({
-    summary: 'Trigger general news update',
-    description: 'Initiates a fetch and analysis of general market-related news from configured sources'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'General news update triggered successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-          example: 'General news update triggered'
-        }
-      }
-    }
-  })
-  @ApiResponse({
-    status: 500,
-    description: 'Failed to fetch or process general news',
-    schema: {
-      type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-          example: 'Failed to fetch general news'
-        },
-        statusCode: {
-          type: 'number',
-          example: 500
-        }
-      }
-    }
-  })
-  @Get('news-trigger')
-  async triggerGeneralNewsUpdate() {
-    try {
-      await this.marketNewsService.triggerNewsUpdate();
-      return { message: 'General news update triggered' };
-    } catch {
-      throw new InternalServerErrorException('Failed to fetch general news');
-    }
   }
 }

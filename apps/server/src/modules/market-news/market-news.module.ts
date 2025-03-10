@@ -3,11 +3,10 @@ import { MarketNewsService } from './market-news.service';
 import { MarketNewsController } from './market-news.controller';
 import { OpenAiModule } from '../openai/openai.module';
 import { PrismaService } from '../../prisma.service';
-import { NewsModule } from '../news/news.module';
 import { TavilyModule } from '../tavily/tavily.module';
 
 @Module({
-  imports: [OpenAiModule, NewsModule, TavilyModule],
+  imports: [OpenAiModule, TavilyModule],
   providers: [MarketNewsService, PrismaService],
   controllers: [MarketNewsController],
 })
