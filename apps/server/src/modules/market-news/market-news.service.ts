@@ -3,6 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { OpenAiService } from '../openai/openai.service';
 import { PrismaService } from '../../prisma.service';
 import { NewsService } from '../news/news.service';
+import { TavilyService } from '../tavily/tavily.service';
 
 @Injectable()
 export class MarketNewsService {
@@ -11,7 +12,8 @@ export class MarketNewsService {
   constructor(
     private openAiService: OpenAiService,
     private prisma: PrismaService,
-    private newsService: NewsService
+    private newsService: NewsService,
+    private tavilyService: TavilyService
   ) {}
 
   @Cron('0 8 * * *', {
@@ -20,10 +22,21 @@ export class MarketNewsService {
   async fetchDailyMarketNews() {
     this.logger.log('Running daily market news fetch...');
 
-    // 1) Query OpenAI
     try {
-      // The getMarketStories method already returns a parsed object
-      const marketStories = await this.openAiService.getMarketStories();
+      // 1) Fetch news from Tavily
+      const searchResult = await this.tavilyService.search({
+        query: 'today financial market important news',
+        search_depth: 'advanced',
+        include_domains: ['reuters.com', 'bloomberg.com', 'wsj.com', 'ft.com', 'marketwatch.com'],
+      });
+
+      // 2) Process through OpenAI
+      const marketStories = await this.openAiService.interpretMarketStories(
+        searchResult.results.map(result => ({
+          title: result.title,
+          description: result.description || result.content
+        }))
+      );
 
       // 3) Save to Postgres
       await this.prisma.marketDataRecord.create({

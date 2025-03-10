@@ -1,74 +1,81 @@
-/**
- * Data Transfer Object for Tavily search responses
- */
-export interface SearchResponseDto {
-  /**
-   * The unique identifier for the search request
-   */
-  id: string;
-
-  /**
-   * The search query that was processed
-   */
-  query: string;
-
-  /**
-   * The results from the search
-   */
-  results: SearchResult[];
-
-  /**
-   * Answer generated from the search results (if requested)
-   */
-  answer?: string;
-
-  /**
-   * The total number of tokens used
-   */
-  tokens_used?: number;
-
-  /**
-   * Array of image URLs if any are included in the results
-   */
-  images: string[];
-
-  /**
-   * The time taken to process the search request in seconds
-   */
-  response_time: string;
-}
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
  * Represents a single search result from Tavily API
  */
-export interface SearchResult {
-  /**
-   * The title of the search result
-   */
+export class SearchResult {
+  @ApiProperty({
+    description: 'The title of the search result'
+  })
   title: string;
 
-  /**
-   * The URL of the search result
-   */
+  @ApiProperty({
+    description: 'The URL of the search result'
+  })
   url: string;
 
-  /**
-   * The text content of the search result
-   */
+  @ApiProperty({
+    description: 'The text content of the search result'
+  })
   content: string;
 
-  /**
-   * The score or relevance ranking of the result (0-1)
-   */
+  @ApiPropertyOptional({
+    description: 'A brief description or summary of the content'
+  })
+  description?: string;
+
+  @ApiProperty({
+    description: 'The score or relevance ranking of the result (0-1)'
+  })
   score: number;
 
-  /**
-   * Raw content if requested, null by default
-   */
-  raw_content: string | null;
+  @ApiPropertyOptional({
+    description: 'Raw content if requested, null by default'
+  })
+  raw_content: null | string;
 
-  /**
-   * The publication date of the article
-   */
+  @ApiPropertyOptional({
+    description: 'The publication date of the article'
+  })
   published_date?: string;
+
+  @ApiPropertyOptional({
+    description: 'The source/author of the article'
+  })
+  source?: string;
+}
+
+/**
+ * Data Transfer Object for Tavily search responses
+ */
+export class SearchResponseDto {
+  @ApiProperty({
+    description: 'The search query that was executed'
+  })
+  query: string;
+
+  @ApiPropertyOptional({
+    description: 'Generated answer if include_answer was requested'
+  })
+  answer?: string;
+
+  @ApiProperty({
+    description: 'List of search results, ranked by relevancy',
+    type: [SearchResult]
+  })
+  results: SearchResult[];
+
+  @ApiProperty({
+    description: 'Array of image URLs and descriptions if requested',
+    type: [Object]
+  })
+  images: Array<{
+    url: string;
+    description?: string;
+  }>;
+
+  @ApiProperty({
+    description: 'Time taken to complete the request in seconds'
+  })
+  response_time: string;
 }
