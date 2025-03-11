@@ -37,101 +37,64 @@ export class NewsAnalyserService {
     try {
       if (!state.articles || state.articles.length === 0) {
         this.logger.warn('No articles provided for analysis');
-        state.analysis = "No news articles found for analysis.";
-        return state;
+        return {
+          ...state,
+          analysis: "No news articles found for analysis.",
+          error: "No articles provided"
+        };
       }
 
-      // Start timing for performance monitoring
-      const startTime = Date.now();
-
-      // Check for existing recent analysis, skip if bypass cache is enabled
-      if (state.bypassCache) {
-        this.logger.debug('Cache bypass requested, skipping database lookup');
-      } else {
+      // Check for existing recent analysis
+      if (!state.bypassCache) {
         const existingAnalysis = await this.findRecentAnalysis(state);
         if (existingAnalysis) {
-          this.logger.log('Found recent analysis in database', {
-            analysisId: existingAnalysis.id,
-            query: existingAnalysis.query,
-            isDefaultQuery: existingAnalysis.isDefaultQuery,
-            hasSectors: existingAnalysis.sectors?.length > 0,
-            sectorCount: existingAnalysis.sectors?.length || 0,
-            retrievalTime: `${Date.now() - startTime}ms`
-          });
+          this.logger.log('Found recent analysis in database');
 
           // Get associated stock data snapshots
           const stockSnapshots = await this.prisma.stockDataSnapshot.findMany({
             where: {
               analysisResults: {
-                some: {
-                  id: existingAnalysis.id
-                }
+                some: { id: existingAnalysis.id }
               }
             }
           });
 
-          // Convert to StockInfo format
-          if (stockSnapshots.length > 0) {
-            state.stockInfoMap = {};
-            stockSnapshots.forEach(snapshot => {
-              state.stockInfoMap[snapshot.ticker] = {
-                ticker: snapshot.ticker,
-                price: snapshot.price,
-                dayChange: snapshot.dayChange,
-                dayChangePercent: snapshot.dayChangePercent,
-                marketCap: snapshot.marketCap,
-                time: snapshot.snapshotTime.toISOString()
-              };
-            });
-            // Set first snapshot as primary stockInfo
-            state.stockInfo = state.stockInfoMap[stockSnapshots[0].ticker];
-          }
+          // Process stock snapshots into required format
+          const stockInfoMap = stockSnapshots.reduce((acc, snapshot) => {
+            acc[snapshot.ticker] = {
+              ticker: snapshot.ticker,
+              price: snapshot.price,
+              dayChange: snapshot.dayChange,
+              dayChangePercent: snapshot.dayChangePercent,
+              marketCap: snapshot.marketCap,
+              time: snapshot.snapshotTime.toISOString()
+            };
+            return acc;
+          }, {} as Record<string, {
+            ticker: string;
+            price: number;
+            dayChange: number;
+            dayChangePercent: number;
+            marketCap: number;
+            time: string;
+          }>);
 
-          state.analysis = existingAnalysis.analysis;
-
-          // Get tickers from stock data
-          const tickersFromStockData = stockSnapshots.map(s => s.ticker);
-
-          this.logger.debug('Tickers from cached analysis', {
-            fromState: state.tickers,
-            fromStockData: tickersFromStockData
-          });
-
-          // Try multiple sources for tickers, prioritizing existing data
-          const combinedTickers = [
-            ...tickersFromStockData,
-            ...(state.tickers || [])
-          ];
-
-          // Filter out duplicates
-          const uniqueTickers = [...new Set(combinedTickers)];
-
-          // If still no tickers, extract from analysis text
-          if (uniqueTickers.length === 0 && existingAnalysis.analysis) {
-            this.logger.debug('Attempting ticker extraction from cached analysis text');
-            const extractedTickers = this.extractTickersFromText(existingAnalysis.analysis);
-            if (extractedTickers.length > 0) {
-              uniqueTickers.push(...extractedTickers);
-              this.logger.debug(`Extracted ${extractedTickers.length} tickers from cached analysis`);
-            }
-          }
-
-          state.structuredAnalysis = {
+          // Return structured response
+          return {
+            ...state,
             analysis: existingAnalysis.analysis,
+            structuredAnalysis: {
+              analysis: existingAnalysis.analysis,
+              sectors: existingAnalysis.sectors || [],
+              marketSentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
+              tickers: existingAnalysis.tickers || []
+            },
             sectors: existingAnalysis.sectors || [],
-            marketSentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
-            tickers: uniqueTickers
+            sentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
+            tickers: existingAnalysis.tickers || [],
+            stockInfoMap,
+            stockInfo: Object.values(stockInfoMap)[0] || null
           };
-
-          // Ensure state.tickers is set for downstream processing
-          state.tickers = uniqueTickers;
-
-          this.logger.debug('Final tickers after cache retrieval', {
-            tickerCount: uniqueTickers.length,
-            tickers: uniqueTickers.join(', ')
-          });
-
-          return state;
         }
       }
 
@@ -280,13 +243,16 @@ export class NewsAnalyserService {
                   where: {
                     ticker: stockInfo.ticker,
                     snapshotTime: new Date(stockInfo.time)
+                  },
+                  select: {
+                    id: true
                   }
                 })
               )
             );
           }
 
-          // Store analysis result without assigning to unused variable
+          // Store analysis result with filtered snapshots
           await this.prisma.newsAnalysisResult.create({
             data: {
               query: state.query,
@@ -299,7 +265,7 @@ export class NewsAnalyserService {
               },
               stockData: {
                 connect: stockSnapshots
-                  .filter(snapshot => snapshot !== null)
+                  .filter((snapshot): snapshot is { id: string } => snapshot !== null && typeof snapshot.id === 'string')
                   .map(snapshot => ({ id: snapshot.id }))
               }
             }
@@ -379,24 +345,61 @@ export class NewsAnalyserService {
         sectorCount: state.sectors?.length || 0
       });
 
-      return state;
+      // When storing new analysis, ensure consistent structure
+      const structuredResponse = JSON.parse(analysisContent) as StructuredLLMResponse;
+      const validatedSentiment = this.validateMarketSentiment(structuredResponse.marketSentiment);
 
-    } catch (error) {
-      this.logger.error('Error analyzing news:', {
-        error: error.message,
-        stack: error.stack,
-        state: {
-          articleCount: state.articles?.length,
-          hasQuery: !!state.query,
-          hasTickers: !!state.tickers?.length,
-          responseState: {
-            hasAnalysis: !!state.analysis,
-            analysisLength: state.analysis?.length
-          }
+      // Store analysis result with consistent structure
+      await this.prisma.newsAnalysisResult.create({
+        data: {
+          query: state.query || '',
+          isDefaultQuery: state.isDefaultQuery || false,
+          analysis: structuredResponse.analysis,
+          marketSentiment: validatedSentiment,
+          sectors: structuredResponse.sectors || [],
+          articles: {
+            connect: await this.findOrCreateArticles(state.articles)
+          },
+          stockData: state.stockInfoMap ? {
+            connect: (await Promise.all(
+              Object.values(state.stockInfoMap).map(info =>
+                this.prisma.stockDataSnapshot.findFirst({
+                  where: {
+                    ticker: info.ticker,
+                    snapshotTime: new Date(info.time)
+                  },
+                  select: {
+                    id: true
+                  }
+                })
+              )
+            )).filter((snapshot): snapshot is { id: string } => snapshot !== null && typeof snapshot.id === 'string')
+            .map(snapshot => ({ id: snapshot.id }))
+          } : undefined
         }
       });
-      state.error = `Failed to analyze news: ${error.message}`;
-      return state;
+
+      // Return consistent state structure
+      return {
+        ...state,
+        analysis: structuredResponse.analysis,
+        structuredAnalysis: {
+          analysis: structuredResponse.analysis,
+          sectors: structuredResponse.sectors || [],
+          marketSentiment: validatedSentiment,
+          tickers: structuredResponse.tickers || []
+        },
+        sectors: structuredResponse.sectors || [],
+        sentiment: validatedSentiment,
+        tickers: structuredResponse.tickers || []
+      };
+
+    } catch (error) {
+      this.logger.error('Error analyzing news:', error);
+      return {
+        ...state,
+        error: `Failed to analyze news: ${error.message}`
+      };
     }
   }
 
