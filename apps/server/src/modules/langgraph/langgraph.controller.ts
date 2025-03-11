@@ -14,21 +14,46 @@ export class LangGraphController {
 
   @Post('analyze')
   @ApiOperation({
-    summary: 'AI-powered financial news analysis',
-    description: `
-      Performs comprehensive analysis of financial news using an advanced multi-agent AI workflow:
-      1. Intelligent news fetching and relevancy scoring
-      2. In-depth AI analysis using GPT-4 for market insights
-      3. Automated stock data correlation and ticker extraction
+    summary: 'Multi-agent AI news analysis pipeline',
+    description: `Primary endpoint for comprehensive financial news analysis using an advanced multi-agent system.
+
+      Data Sources:
+      - Real-time news APIs (primary source)
+      - Market data integration
+      - Historical analysis database
+
+      Pipeline Steps:
+      1. Smart News Fetching
+         - Automatic query enhancement
+         - Relevancy scoring
+         - Duplicate detection
+
+      2. AI Analysis (GPT-4)
+         - Deep market sentiment analysis
+         - Sector impact assessment
+         - Forward-looking predictions
+
+      3. Market Data Integration
+         - Automatic stock ticker extraction
+         - Real-time price correlation
+         - Trading volume analysis
 
       Features:
-      - Sophisticated news relevancy scoring
-      - Deep market sentiment analysis
-      - Automated stock ticker detection
-      - Real-time market data integration
+      - Most comprehensive analysis endpoint
+      - Real-time data enrichment
+      - Multi-source verification
+      - Historical pattern matching
 
-      If no query is provided, analyzes trending financial news of the day.
-    `
+      Use Cases:
+      - Market trend analysis
+      - Stock screening
+      - Sector analysis
+      - Risk assessment
+
+      For simpler alternatives:
+      - Use /basic-news-analysis for quick text analysis
+      - Use /openai/news-analysis for direct GPT access
+      - Use /market-insights for pre-analyzed news`
   })
   @ApiResponse({
     status: 200,
@@ -71,8 +96,27 @@ export class LangGraphController {
 
   @Get('market-sentiment')
   @ApiOperation({
-    summary: 'Get latest market sentiment and news analysis',
-    description: 'Retrieves the most recent market sentiment analysis and related stock data'
+    summary: 'Latest AI-powered market sentiment',
+    description: `Retrieves current market sentiment from multi-agent analysis system.
+
+      Data Sources:
+      - Aggregated news analysis results
+      - Real-time market indicators
+      - Trading volume patterns
+
+      Features:
+      - Overall market sentiment score
+      - Sector-specific sentiment
+      - Key market drivers
+      - Risk indicators
+
+      Updates:
+      - Real-time during market hours
+      - End-of-day summary after hours
+
+      For historical trends:
+      - Use /basic-news-analysis/history endpoint
+      - Use /market-insights for daily summaries`
   })
   @ApiResponse({
     status: 200,

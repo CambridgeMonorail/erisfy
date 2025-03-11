@@ -18,8 +18,21 @@ export class MarketNewsController {
 
   @ApiOperation({
     summary: 'Trigger market news update',
-    description:
-      'Manually triggers the market news fetch process from configured sources and processes them through OpenAI',
+    description: `Manually triggers the market news curation pipeline.
+
+      Process:
+      - Fetches from multiple news sources
+      - Applies AI analysis pipeline
+      - Updates market insights database
+      - Generates curated story summaries
+
+      Frequency:
+      - Auto-updates every market day
+      - Manual trigger for immediate update
+
+      Access Level:
+      - Admin/internal use only
+      - Rate limited to prevent API abuse`
   })
   @ApiResponse({
     status: 200,
@@ -62,9 +75,34 @@ export class MarketNewsController {
   }
 
   @ApiOperation({
-    summary: 'Get latest market data',
-    description:
-      'Returns the most recent market data record with associated news stories and analysis',
+    summary: 'Get latest market insights',
+    description: `Returns comprehensive market insights with curated analysis.
+
+      Data Sources:
+      - Aggregated financial news
+      - AI analysis results
+      - Market data correlation
+      - Expert validations
+
+      Content Types:
+      - Market summaries
+      - Key story analysis
+      - Sector impacts
+      - Trading implications
+
+      Features:
+      - Premium curated content
+      - Expert-reviewed insights
+      - Market context included
+
+      Update Schedule:
+      - Real-time critical updates
+      - Regular daily summaries
+      - End-of-day wrap-up
+
+      For raw analysis:
+      - Use /news-analysis/analyze for AI pipeline
+      - Use /openai/news-analysis for GPT access`
   })
   @ApiResponse({
     status: 200,
@@ -156,8 +194,28 @@ export class MarketNewsController {
 
   @ApiOperation({
     summary: 'Get latest market news',
-    description:
-      'Returns the most recent market news and analysis using optimized service method',
+    description: `Returns optimized market news and analysis feed.
+
+      Optimizations:
+      - Smart content caching
+      - Relevancy filtering
+      - Duplicate removal
+      - Priority sorting
+
+      Content Includes:
+      - Breaking market news
+      - Impact summaries
+      - Sector analysis
+      - Trading signals
+
+      Performance:
+      - Fast response times
+      - Bandwidth efficient
+      - Cache-optimized
+
+      For deeper analysis:
+      - Use /news-analysis/analyze for full AI pipeline
+      - Use /basic-news-analysis for simple analysis`
   })
   @ApiResponse({
     status: 200,
