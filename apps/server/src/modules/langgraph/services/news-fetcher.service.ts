@@ -12,10 +12,20 @@ interface EnrichedNewsArticle extends NewsArticle {
   relevancyScore?: number;
 }
 
+interface ArticleData {
+  title: string;
+  description: string;
+  url: string;
+  publishedAt: Date;
+  source: string;
+  relevancyScore?: number;
+}
+
 @Injectable()
 export class NewsFetcherService {
   private readonly logger = new Logger(NewsFetcherService.name);
   private inFlightRequests = new Map<string, Promise<NewsAnalysisState>>();
+  private readonly DEFAULT_QUERY = 'top financial news today';
 
   constructor(
     private readonly tavilyService: TavilyService,
@@ -24,13 +34,11 @@ export class NewsFetcherService {
   ) {}
 
   async fetchNews(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    const effectiveQuery = state.isDefaultQuery ? 'top financial news today' : state.query;
+    // Set default query if none provided or if using default query flag
+    const effectiveQuery = state.isDefaultQuery || !state.query ? this.DEFAULT_QUERY : state.query;
 
-    if (!effectiveQuery) {
-      this.logger.error('No query available for news lookup');
-      state.error = 'Invalid news query configuration';
-      return state;
-    }
+    // Update state with effective query
+    state.query = effectiveQuery;
 
     const tickersKey = state.tickers?.length ? state.tickers.sort().join(',') : 'notickers';
     const cacheKey = `news:${effectiveQuery}:${tickersKey}`;
@@ -54,10 +62,10 @@ export class NewsFetcherService {
     if (this.inFlightRequests.has(cacheKey)) {
       this.logger.log(`Using existing in-flight request for query: ${effectiveQuery}`);
       const request = this.inFlightRequests.get(cacheKey);
-      return request ? request : this.performNewsFetch({ ...state, query: effectiveQuery }, cacheKey);
+      return request ? request : this.performNewsFetch(state, cacheKey);
     }
 
-    const requestPromise = this.performNewsFetch({ ...state, query: effectiveQuery }, cacheKey);
+    const requestPromise = this.performNewsFetch(state, cacheKey);
     this.inFlightRequests.set(cacheKey, requestPromise);
 
     try {
@@ -112,42 +120,40 @@ export class NewsFetcherService {
     }));
   }
 
-  private async createOrUpdateArticle(articleData: any, state: NewsAnalysisState) {
+  private async createOrUpdateArticle(articleData: ArticleData): Promise<void> {
     const { url, ...articleDetails } = articleData;
 
     // Check for existing article
-    let article = await this.prisma.newsArticle.findFirst({
+    const article = await this.prisma.newsArticle.findFirst({
       where: { url }
     });
 
     if (article) {
       // Update existing article if needed
       if (articleDetails.relevancyScore !== undefined) {
-        article = await this.prisma.newsArticle.update({
+        await this.prisma.newsArticle.update({
           where: { id: article.id },
           data: { relevancyScore: articleDetails.relevancyScore }
         });
       }
     } else {
       // Create new article
-      article = await this.prisma.newsArticle.create({
+      await this.prisma.newsArticle.create({
         data: {
           url,
           ...articleDetails
         }
       });
     }
-
-    return article;
   }
 
   private async performNewsFetch(state: NewsAnalysisState, cacheKey: string): Promise<NewsAnalysisState> {
-    this.logger.log(`Fetching news for ${state.isDefaultQuery ? 'top financial news' : `query: ${state.query}`}`);
+    this.logger.log(`Fetching news for query: ${state.query}`);
     const startTime = Date.now();
 
     try {
       const tavilyParams = {
-        query: state.query || 'top financial news today',
+        query: state.query,
         search_depth: state.isDefaultQuery ? "basic" : "advanced" as "basic" | "advanced",
         include_answer: false,
         include_raw_content: false,
@@ -160,7 +166,7 @@ export class NewsFetcherService {
 
       // Process and store articles with proper association
       const articles = await Promise.all(tavilyResponse.results.map(async result => {
-        const articleData = {
+        const articleData: ArticleData = {
           title: result.title,
           description: result.content,
           url: result.url,
@@ -169,7 +175,7 @@ export class NewsFetcherService {
         };
 
         // Store or update in database
-        const storedArticle = await this.createOrUpdateArticle(articleData, state);
+        await this.createOrUpdateArticle(articleData);
 
         return {
           ...articleData,

@@ -41,47 +41,98 @@ export class NewsAnalyserService {
         return state;
       }
 
-      // Check for existing recent analysis
-      const existingAnalysis = await this.findRecentAnalysis(state);
-      if (existingAnalysis) {
-        this.logger.log('Found recent analysis in database');
+      // Start timing for performance monitoring
+      const startTime = Date.now();
 
-        // Get associated stock data snapshots
-        const stockSnapshots = await this.prisma.stockDataSnapshot.findMany({
-          where: {
-            analysisResults: {
-              some: {
-                id: existingAnalysis.id
+      // Check for existing recent analysis, skip if bypass cache is enabled
+      if (state.bypassCache) {
+        this.logger.debug('Cache bypass requested, skipping database lookup');
+      } else {
+        const existingAnalysis = await this.findRecentAnalysis(state);
+        if (existingAnalysis) {
+          this.logger.log('Found recent analysis in database', {
+            analysisId: existingAnalysis.id,
+            query: existingAnalysis.query,
+            isDefaultQuery: existingAnalysis.isDefaultQuery,
+            hasSectors: existingAnalysis.sectors?.length > 0,
+            sectorCount: existingAnalysis.sectors?.length || 0,
+            retrievalTime: `${Date.now() - startTime}ms`
+          });
+
+          // Get associated stock data snapshots
+          const stockSnapshots = await this.prisma.stockDataSnapshot.findMany({
+            where: {
+              analysisResults: {
+                some: {
+                  id: existingAnalysis.id
+                }
               }
             }
-          }
-        });
-
-        // Convert to StockInfo format
-        if (stockSnapshots.length > 0) {
-          state.stockInfoMap = {};
-          stockSnapshots.forEach(snapshot => {
-            state.stockInfoMap[snapshot.ticker] = {
-              ticker: snapshot.ticker,
-              price: snapshot.price,
-              dayChange: snapshot.dayChange,
-              dayChangePercent: snapshot.dayChangePercent,
-              marketCap: snapshot.marketCap,
-              time: snapshot.snapshotTime.toISOString()
-            };
           });
-          // Set first snapshot as primary stockInfo
-          state.stockInfo = state.stockInfoMap[stockSnapshots[0].ticker];
-        }
 
-        state.analysis = existingAnalysis.analysis;
-        state.structuredAnalysis = {
-          analysis: existingAnalysis.analysis,
-          sectors: existingAnalysis.sectors,
-          marketSentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
-          tickers: state.tickers || []
-        };
-        return state;
+          // Convert to StockInfo format
+          if (stockSnapshots.length > 0) {
+            state.stockInfoMap = {};
+            stockSnapshots.forEach(snapshot => {
+              state.stockInfoMap[snapshot.ticker] = {
+                ticker: snapshot.ticker,
+                price: snapshot.price,
+                dayChange: snapshot.dayChange,
+                dayChangePercent: snapshot.dayChangePercent,
+                marketCap: snapshot.marketCap,
+                time: snapshot.snapshotTime.toISOString()
+              };
+            });
+            // Set first snapshot as primary stockInfo
+            state.stockInfo = state.stockInfoMap[stockSnapshots[0].ticker];
+          }
+
+          state.analysis = existingAnalysis.analysis;
+          
+          // Get tickers from stock data
+          const tickersFromStockData = stockSnapshots.map(s => s.ticker);
+          
+          this.logger.debug('Tickers from cached analysis', {
+            fromState: state.tickers,
+            fromStockData: tickersFromStockData
+          });
+          
+          // Try multiple sources for tickers, prioritizing existing data
+          const combinedTickers = [
+            ...tickersFromStockData,
+            ...(state.tickers || [])
+          ];
+          
+          // Filter out duplicates
+          const uniqueTickers = [...new Set(combinedTickers)];
+          
+          // If still no tickers, extract from analysis text
+          if (uniqueTickers.length === 0 && existingAnalysis.analysis) {
+            this.logger.debug('Attempting ticker extraction from cached analysis text');
+            const extractedTickers = this.extractTickersFromText(existingAnalysis.analysis);
+            if (extractedTickers.length > 0) {
+              uniqueTickers.push(...extractedTickers);
+              this.logger.debug(`Extracted ${extractedTickers.length} tickers from cached analysis`);
+            }
+          }
+
+          state.structuredAnalysis = {
+            analysis: existingAnalysis.analysis,
+            sectors: existingAnalysis.sectors || [],
+            marketSentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
+            tickers: uniqueTickers
+          };
+          
+          // Ensure state.tickers is set for downstream processing
+          state.tickers = uniqueTickers;
+          
+          this.logger.debug('Final tickers after cache retrieval', { 
+            tickerCount: uniqueTickers.length,
+            tickers: uniqueTickers.join(', ')
+          });
+          
+          return state;
+        }
       }
 
       this.logger.log(`Starting analysis of ${state.articles.length} news articles`);
@@ -114,7 +165,7 @@ export class NewsAnalyserService {
         "analysis": "<A concise overview of the major market themes or events today>",
         "sectors": ["<list of key sectors or industries affected>"],
         "marketSentiment": "<one of: positive, negative, neutral>",
-        "tickers": ["<list of notable company mentions or stock tickers>"]
+        "tickers": ["<list of notable company mentions or stock tickers, pay special attention to finding ALL stock symbols like AAPL, MSFT, TSLA in the articles>"]
       }
 
       Example output:
@@ -122,17 +173,18 @@ export class NewsAnalyserService {
         "analysis": "The S&P 500 experienced a decline due to tariff concerns and market uncertainty.",
         "sectors": ["Financials", "Technology"],
         "marketSentiment": "negative",
-        "tickers": ["SPY", "AAPL"]
+        "tickers": ["SPY", "AAPL", "MSFT", "TSLA"]
       }
 
       Focus on the most impactful stories and their broader market implications.
+      IMPORTANT: Always extract ALL stock ticker symbols mentioned in the articles. Stock tickers are uppercase letters like AAPL, MSFT, TSLA, NVDA, etc.
       Return only the JSON object without any additional text.`
           : `You are a financial analyst assistant. Analyse the provided news articles and provide a response as a JSON object with the following keys:
       {
         "analysis": "<A concise explanation of the key themes or events being discussed>",
         "sectors": ["<list of impacted market sectors or industries>"],
         "marketSentiment": "<one of: positive, negative, neutral>",
-        "tickers": ["<list of specific company names or stock tickers mentioned>"]
+        "tickers": ["<list of specific company names or stock tickers mentioned, be thorough in extracting ALL stock ticker symbols like AAPL, MSFT, TSLA>"]
       }
 
       Example output:
@@ -140,10 +192,11 @@ export class NewsAnalyserService {
         "analysis": "Market uncertainty remains as trade tensions affect tech and financial sectors.",
         "sectors": ["Technology", "Financials"],
         "marketSentiment": "negative",
-        "tickers": ["GOOG", "MSFT"]
+        "tickers": ["GOOG", "MSFT", "AAPL", "NVDA"]
       }
 
       Be concise but thorough in your analysis.
+      IMPORTANT: Make sure to extract ALL stock ticker symbols (uppercase letters like AAPL, MSFT) mentioned in the articles.
       Return only a valid JSON object with no extra commentary.`
       });
 
@@ -197,8 +250,26 @@ export class NewsAnalyserService {
 
           // Validate market sentiment before storing
           parsedAnalysis.marketSentiment = this.validateMarketSentiment(parsedAnalysis.marketSentiment);
-
+          
+          // Store the structured analysis in state
           state.structuredAnalysis = parsedAnalysis;
+          
+          // Update state tickers with those from parsed analysis, ensuring sync between the two
+          if (parsedAnalysis.tickers && parsedAnalysis.tickers.length > 0) {
+            state.tickers = parsedAnalysis.tickers;
+          } else if (state.tickers && state.tickers.length > 0) {
+            // If structuredAnalysis doesn't have tickers but state does, synchronize them
+            parsedAnalysis.tickers = state.tickers;
+            state.structuredAnalysis = parsedAnalysis;
+          }
+
+          // Log the LLM response analysis for debugging
+          this.logger.debug('LLM response analysis:', {
+            hasStructuredAnalysis: !!parsedAnalysis,
+            structuredAnalysisKeys: parsedAnalysis ? Object.keys(parsedAnalysis) : [],
+            tickersFromLLM: parsedAnalysis?.tickers,
+            tickersInState: state.tickers
+          });
 
           // Create analysis result and connect existing stock snapshots
           let stockSnapshots = [];
@@ -234,10 +305,28 @@ export class NewsAnalyserService {
             }
           });
 
-          // Update state with validated sentiment
-          if (parsedAnalysis.tickers) state.tickers = parsedAnalysis.tickers;
+          // Update state with validated sentiment and sectors
           if (parsedAnalysis.marketSentiment) state.sentiment = parsedAnalysis.marketSentiment;
           if (parsedAnalysis.sectors) state.sectors = parsedAnalysis.sectors;
+
+          // Add fallback ticker extraction if structuredAnalysis.tickers is empty
+          if (!state.tickers?.length || (state.structuredAnalysis && (!state.structuredAnalysis.tickers || state.structuredAnalysis.tickers.length === 0))) {
+            this.logger.debug('No tickers found in structuredAnalysis, attempting fallback extraction');
+            
+            // Extract potential tickers from the analysis text and article content
+            const extractedTickers = this.extractTickersFromText(
+              state.analysis + ' ' + state.articles.map(a => a.title + ' ' + a.description).join(' ')
+            );
+            
+            if (extractedTickers.length > 0) {
+              this.logger.debug(`Fallback extraction found ${extractedTickers.length} tickers: ${extractedTickers.join(', ')}`);
+              if (state.structuredAnalysis) {
+                state.structuredAnalysis.tickers = extractedTickers;
+              }
+              // Also update state.tickers for API compatibility
+              state.tickers = extractedTickers;
+            }
+          }
 
         } catch (parseError) {
           this.logger.warn('Failed to parse structured analysis - falling back to regex extraction:', {
@@ -263,6 +352,11 @@ export class NewsAnalyserService {
             state.tickers = [...new Set(tickerMatch)];
           }
         }
+
+        this.logger.debug('Final state after news analysis:', {
+          structuredAnalysisTickers: state.structuredAnalysis?.tickers,
+          stateTickers: state.tickers
+        });
 
         this.logger.debug('Final analysis state:', {
           hasStructuredAnalysis: !!state.structuredAnalysis,
@@ -310,18 +404,46 @@ export class NewsAnalyserService {
     // Look for analysis from last hour with same query
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-    return this.prisma.newsAnalysisResult.findFirst({
-      where: {
-        query: state.query,
-        isDefaultQuery: state.isDefaultQuery || false,
-        createdAt: {
-          gte: oneHourAgo
+    try {
+      const analysis = await this.prisma.newsAnalysisResult.findFirst({
+        where: {
+          query: state.query,
+          isDefaultQuery: state.isDefaultQuery || false,
+          createdAt: {
+            gte: oneHourAgo
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          stockData: {
+            select: {
+              ticker: true
+            }
+          }
         }
-      },
-      orderBy: {
-        createdAt: 'desc'
+      });
+
+      if (analysis) {
+        // Add tickers property from stock data
+        const tickers = analysis.stockData.map(s => s.ticker);
+        const result = {
+          ...analysis,
+          tickers
+        };
+        
+        // Remove the stockData to avoid type issues
+        delete result.stockData;
+        
+        return result;
       }
-    });
+
+      return null;
+    } catch (error) {
+      this.logger.error('Error retrieving recent analysis', error);
+      return null;
+    }
   }
 
   private async findOrCreateArticles(articles: NewsArticle[]) {
@@ -352,5 +474,17 @@ export class NewsAnalyserService {
 
       return { id: created.id };
     }));
+  }
+
+  private extractTickersFromText(text: string): string[] {
+    // Basic regex for stock tickers (uppercase 1-5 letters)
+    const tickerRegex = /\b[A-Z]{1,5}\b/g;
+    const matches = text.match(tickerRegex) || [];
+    
+    // Filter common words that look like tickers but aren't
+    const commonWords = new Set(['A', 'I', 'AT', 'BE', 'DO', 'GO', 'IN', 'IS', 'IT', 'ME', 'MY', 'NO', 'OF', 'ON', 'OR', 'SO', 'TO', 'UP', 'US', 'WE', 'CEO', 'CFO', 'CTO', 'COO', 'THE', 'AND', 'FOR', 'GDP', 'CPI', 'FED', 'ECB', 'AI', 'API', 'USA', 'UK', 'EU', 'GDP', 'IMF', 'SEC', 'ETF', 'IPO']);
+    
+    // Return unique tickers (removing duplicates)
+    return [...new Set(matches)].filter(t => !commonWords.has(t));
   }
 }

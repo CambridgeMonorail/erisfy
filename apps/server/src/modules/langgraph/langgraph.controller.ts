@@ -57,18 +57,14 @@ export class LangGraphController {
       }
     }
   })
-  async analyzeNews(@Body() analyzeNewsDto: AnalyzeNewsDto): Promise<NewsAnalysisState> {
+  async analyzeNews(@Body() analyzeNewsDto: AnalyzeNewsDto = {}): Promise<NewsAnalysisState> {
     const initialState: NewsAnalysisState = {
-      query: '', // Will be set to default query by NewsFetcherService if empty
+      query: analyzeNewsDto.query || '',
       articles: [],
       analysis: '',
-      tickers: analyzeNewsDto.tickers || [], // Initialize with provided tickers array
-      isDefaultQuery: !analyzeNewsDto.query // Flag indicating if we should use default query
+      tickers: analyzeNewsDto.tickers || [],
+      isDefaultQuery: !analyzeNewsDto.query // Set to true when no query is provided
     };
-
-    if (analyzeNewsDto.query) {
-      initialState.query = analyzeNewsDto.query;
-    }
 
     return this.langGraphService.runWorkflow(initialState);
   }
