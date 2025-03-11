@@ -4,6 +4,7 @@ import { NewsAnalysisState } from './interfaces/news-analysis-state.interface';
 import { NewsFetcherService } from './services/news-fetcher.service';
 import { NewsAnalyserService } from './services/news-analyser.service';
 import { StockDataService } from './services/stock-data.service';
+import { MarketSentimentResponseDto, SentimentType } from './dto/market-sentiment-response.dto';
 
 @Injectable()
 export class LangGraphService {
@@ -41,6 +42,50 @@ export class LangGraphService {
     ]);
   }
 
+  private mapSentiment(backendSentiment: string | undefined): SentimentType {
+    switch (backendSentiment) {
+      case 'positive':
+        return 'bullish';
+      case 'negative':
+        return 'bearish';
+      default:
+        return 'neutral';
+    }
+  }
+
+  private transformToMarketSentimentResponse(state: NewsAnalysisState): MarketSentimentResponseDto {
+    // Create a default analysis if missing
+    const defaultAnalysis = {
+      analysis: 'No market analysis available',
+      sectors: [],
+      marketSentiment: 'neutral' as const,
+      tickers: [],
+    };
+
+    // Create a default stock info if missing
+    const defaultStockInfo = {
+      ticker: 'N/A',
+      price: 0,
+      dayChange: 0,
+      dayChangePercent: 0,
+      marketCap: 0,
+      time: new Date().toISOString(),
+    };
+
+    const structuredAnalysis = state.structuredAnalysis ? {
+      ...state.structuredAnalysis,
+      marketSentiment: this.mapSentiment(state.structuredAnalysis.marketSentiment)
+    } : defaultAnalysis;
+
+    return {
+      structuredAnalysis,
+      sentiment: this.mapSentiment(state.sentiment),
+      stockInfoMap: state.stockInfoMap || {},
+      stockInfo: state.stockInfo || defaultStockInfo,
+      error: state.error || (!state.structuredAnalysis ? 'No market analysis data available' : undefined),
+    };
+  }
+
   async runWorkflow(initialState: NewsAnalysisState): Promise<NewsAnalysisState> {
     try {
       const result = await this.workflow.invoke(initialState);
@@ -54,6 +99,23 @@ export class LangGraphService {
         articles: [],
         analysis: ''
       };
+    }
+  }
+
+  async getMarketSentiment(): Promise<MarketSentimentResponseDto> {
+    const initialState: NewsAnalysisState = {
+      query: '',
+      articles: [],
+      analysis: '',
+      isDefaultQuery: true
+    };
+
+    try {
+      const result = await this.workflow.invoke(initialState);
+      return this.transformToMarketSentimentResponse(result.state);
+    } catch (err) {
+      this.logger.error('Error getting market sentiment', err);
+      throw err;
     }
   }
 }

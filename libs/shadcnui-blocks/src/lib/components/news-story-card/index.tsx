@@ -53,30 +53,25 @@ const categoryIcons: Record<MarketSector, LucideIcon> = {
 };
 
 export function NewsStoryCard({ story, className }: NewsStoryCardProps) {
-  const CategoryIcon = categoryIcons[story.market_sector] || Newspaper;  
-
-console.log('story', story);
- // log story.market_sector
- console.log('story.market_sector', story.market_sector);
-
+  const CategoryIcon = categoryIcons[story.market_sector] || Newspaper;
 
   return (
     <Card className={`h-full flex flex-col transition-all duration-300 hover:shadow-lg overflow-hidden ${className ?? ''}`}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between mb-2">
-          <Badge 
-            variant="secondary" 
+          <Badge
+            variant="secondary"
             className="text-xs font-medium px-2 py-1"
             data-testid="news-story-category-badge"
           >
-            {story.market_sector}  
+            {story.market_sector}
           </Badge>
-          <CategoryIcon 
-            className="w-5 h-5 text-blue-500" 
-            aria-label={`${story.market_sector} sector icon`}  
+          <CategoryIcon
+            className="w-5 h-5 text-blue-500"
+            aria-label={`${story.market_sector} sector icon`}
           />
         </div>
-        <CardTitle 
+        <CardTitle
           className="text-xl font-bold leading-tight mb-2 line-clamp-2"
           aria-label={story.title}
         >

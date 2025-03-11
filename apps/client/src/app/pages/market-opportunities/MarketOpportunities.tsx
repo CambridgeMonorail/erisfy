@@ -3,6 +3,7 @@ import { cn } from '@erisfy/shadcnui';
 import { ErrorBoundary } from '@erisfy/shadcnui-blocks';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useMarketOpportunities } from '../../hooks/useMarketOpportunities';
+import { useMarketSentiment } from '../../hooks/useMarketSentiment';
 import { ApiErrorAlert } from '../../components/ApiErrorAlert';
 import { DashboardContent } from '../../components/market/DashboardContent';
 import { MarketOpportunitiesSkeleton } from '../../components/market/MarketOpportunitiesSkeleton';
@@ -12,10 +13,24 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({
   className,
 }) => {
   const isMobile = useMediaQuery('(max-width: 780px)');
-  const { stocks, marketData, isLoading, error, refetch } = useMarketOpportunities();
+  const { stocks, isLoading: isStocksLoading, error: stocksError, refetch: refetchStocks } = useMarketOpportunities();
+  const { marketData, isLoading: isMarketDataLoading, error: marketDataError, refetch: refetchMarketData } = useMarketSentiment();
+
+  console.log('[MarketOpportunitiesPage] Hook results:', {
+    hasMarketData: !!marketData,
+    marketDataContent: marketData,
+    isMarketDataLoading,
+    marketDataError
+  });
 
   // Apply search only
   const filteredStocks = useMemo(() => stocks, [stocks]);
+
+  const isLoading = isStocksLoading || isMarketDataLoading;
+  const error = stocksError || marketDataError;
+  const refetch = async () => {
+    await Promise.all([refetchStocks(), refetchMarketData()]);
+  };
 
   return (
     <div

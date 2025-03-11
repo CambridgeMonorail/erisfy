@@ -4,14 +4,18 @@ import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { BaseMessage } from "@langchain/core/messages";
 import { NewsAnalysisState } from '../interfaces/news-analysis-state.interface';
-import { StructuredLLMResponse } from '../../openai/interfaces/news-analysis.interface';
+import { StructuredLLMResponse, MarketSentiment, NewsArticle } from '../../openai/interfaces/news-analysis.interface';
+import { PrismaService } from '../../../prisma.service';
 
 @Injectable()
 export class NewsAnalyserService {
   private readonly logger = new Logger(NewsAnalyserService.name);
   private readonly llm: ChatOpenAI;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService
+  ) {
     const apiKey = this.configService.getOrThrow<string>('OPENAI_API_KEY');
     this.llm = new ChatOpenAI({
       modelName: "gpt-4",
@@ -20,11 +24,63 @@ export class NewsAnalyserService {
     });
   }
 
+  private validateMarketSentiment(sentiment: unknown): MarketSentiment {
+    if (sentiment === 'positive' || sentiment === 'negative' || sentiment === 'neutral') {
+      return sentiment;
+    }
+    // Default to neutral if invalid value is provided
+    this.logger.warn(`Invalid market sentiment value: ${String(sentiment)}, defaulting to neutral`);
+    return 'neutral';
+  }
+
   async analyseNews(state: NewsAnalysisState): Promise<NewsAnalysisState> {
     try {
       if (!state.articles || state.articles.length === 0) {
         this.logger.warn('No articles provided for analysis');
         state.analysis = "No news articles found for analysis.";
+        return state;
+      }
+
+      // Check for existing recent analysis
+      const existingAnalysis = await this.findRecentAnalysis(state);
+      if (existingAnalysis) {
+        this.logger.log('Found recent analysis in database');
+
+        // Get associated stock data snapshots
+        const stockSnapshots = await this.prisma.stockDataSnapshot.findMany({
+          where: {
+            analysisResults: {
+              some: {
+                id: existingAnalysis.id
+              }
+            }
+          }
+        });
+
+        // Convert to StockInfo format
+        if (stockSnapshots.length > 0) {
+          state.stockInfoMap = {};
+          stockSnapshots.forEach(snapshot => {
+            state.stockInfoMap[snapshot.ticker] = {
+              ticker: snapshot.ticker,
+              price: snapshot.price,
+              dayChange: snapshot.dayChange,
+              dayChangePercent: snapshot.dayChangePercent,
+              marketCap: snapshot.marketCap,
+              time: snapshot.snapshotTime.toISOString()
+            };
+          });
+          // Set first snapshot as primary stockInfo
+          state.stockInfo = state.stockInfoMap[stockSnapshots[0].ticker];
+        }
+
+        state.analysis = existingAnalysis.analysis;
+        state.structuredAnalysis = {
+          analysis: existingAnalysis.analysis,
+          sectors: existingAnalysis.sectors,
+          marketSentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
+          tickers: state.tickers || []
+        };
         return state;
       }
 
@@ -123,12 +179,7 @@ export class NewsAnalyserService {
       // Get analysis from LLM
       const response = await this.llm.invoke([systemPrompt, userPrompt]);
 
-      this.logger.debug('Raw LLM response:', {
-        type: response instanceof BaseMessage ? 'BaseMessage' : typeof response,
-        hasContent: response instanceof BaseMessage ? !!response.content : false
-      });
-
-      // Safely extract text content from the response
+      // Process response and create analysis result
       let analysisContent: string;
       try {
         if (response instanceof BaseMessage) {
@@ -139,45 +190,77 @@ export class NewsAnalyserService {
           analysisContent = String(response || '');
         }
 
-        // Store raw analysis content
         state.analysis = analysisContent;
 
-        // Try to parse the JSON response
         try {
           const parsedAnalysis = JSON.parse(analysisContent) as StructuredLLMResponse;
+
+          // Validate market sentiment before storing
+          parsedAnalysis.marketSentiment = this.validateMarketSentiment(parsedAnalysis.marketSentiment);
+
           state.structuredAnalysis = parsedAnalysis;
 
-          // Update tickers from structured response
-          if (parsedAnalysis.tickers && parsedAnalysis.tickers.length > 0) {
-            state.tickers = parsedAnalysis.tickers;
+          // Create analysis result and connect existing stock snapshots
+          let stockSnapshots = [];
+          if (state.stockInfoMap) {
+            stockSnapshots = await Promise.all(
+              Object.values(state.stockInfoMap).map(stockInfo =>
+                this.prisma.stockDataSnapshot.findFirst({
+                  where: {
+                    ticker: stockInfo.ticker,
+                    snapshotTime: new Date(stockInfo.time)
+                  }
+                })
+              )
+            );
           }
 
-          // Update sentiment and sectors
-          if (parsedAnalysis.marketSentiment) {
-            state.sentiment = parsedAnalysis.marketSentiment;
-          }
-
-          if (parsedAnalysis.sectors && parsedAnalysis.sectors.length > 0) {
-            state.sectors = parsedAnalysis.sectors;
-          }
-
-          this.logger.debug('Parsed structured analysis:', {
-            hasAnalysis: !!parsedAnalysis.analysis,
-            sectorCount: parsedAnalysis.sectors.length,
-            tickerCount: parsedAnalysis.tickers.length,
-            sentiment: parsedAnalysis.marketSentiment,
-            sectors: parsedAnalysis.sectors.join(', ')
+          // Store analysis result without assigning to unused variable
+          await this.prisma.newsAnalysisResult.create({
+            data: {
+              query: state.query,
+              isDefaultQuery: state.isDefaultQuery || false,
+              analysis: parsedAnalysis.analysis,
+              marketSentiment: parsedAnalysis.marketSentiment,
+              sectors: parsedAnalysis.sectors,
+              articles: {
+                connect: await this.findOrCreateArticles(state.articles)
+              },
+              stockData: {
+                connect: stockSnapshots
+                  .filter(snapshot => snapshot !== null)
+                  .map(snapshot => ({ id: snapshot.id }))
+              }
+            }
           });
+
+          // Update state with validated sentiment
+          if (parsedAnalysis.tickers) state.tickers = parsedAnalysis.tickers;
+          if (parsedAnalysis.marketSentiment) state.sentiment = parsedAnalysis.marketSentiment;
+          if (parsedAnalysis.sectors) state.sectors = parsedAnalysis.sectors;
+
         } catch (parseError) {
           this.logger.warn('Failed to parse structured analysis - falling back to regex extraction:', {
             error: parseError.message,
             rawContent: analysisContent.substring(0, 100) + '...'
           });
 
+          // Store unstructured analysis without assigning to unused variable
+          await this.prisma.newsAnalysisResult.create({
+            data: {
+              query: state.query,
+              isDefaultQuery: state.isDefaultQuery || false,
+              analysis: analysisContent,
+              articles: {
+                connect: await this.findOrCreateArticles(state.articles)
+              }
+            }
+          });
+
           // Fallback to regex extraction for tickers
           const tickerMatch = analysisContent.match(/\b[A-Z]{1,5}\b/g);
           if (tickerMatch) {
-            state.tickers = [...new Set(tickerMatch)]; // Remove duplicates
+            state.tickers = [...new Set(tickerMatch)];
           }
         }
 
@@ -190,11 +273,7 @@ export class NewsAnalyserService {
         });
 
       } catch (parseError) {
-        this.logger.error('Error processing LLM response:', {
-          error: parseError.message,
-          responseType: typeof response,
-          response: response instanceof BaseMessage ? 'BaseMessage' : response
-        });
+        this.logger.error('Error processing LLM response:', parseError);
         throw parseError;
       }
 
@@ -225,5 +304,53 @@ export class NewsAnalyserService {
       state.error = `Failed to analyze news: ${error.message}`;
       return state;
     }
+  }
+
+  private async findRecentAnalysis(state: NewsAnalysisState) {
+    // Look for analysis from last hour with same query
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+    return this.prisma.newsAnalysisResult.findFirst({
+      where: {
+        query: state.query,
+        isDefaultQuery: state.isDefaultQuery || false,
+        createdAt: {
+          gte: oneHourAgo
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+  }
+
+  private async findOrCreateArticles(articles: NewsArticle[]) {
+    if (!articles) return [];
+
+    return Promise.all(articles.map(async article => {
+      const existing = await this.prisma.newsArticle.findFirst({
+        where: { url: article.url }
+      });
+
+      if (existing) {
+        return { id: existing.id };
+      }
+
+      type EnrichedArticle = NewsArticle & { relevancyScore?: number };
+      const articleWithScore = article as EnrichedArticle;
+
+      const created = await this.prisma.newsArticle.create({
+        data: {
+          title: article.title,
+          description: article.description,
+          url: article.url,
+          publishedAt: new Date(article.publishedAt),
+          source: new URL(article.url).hostname,
+          relevancyScore: articleWithScore.relevancyScore
+        }
+      });
+
+      return { id: created.id };
+    }));
   }
 }

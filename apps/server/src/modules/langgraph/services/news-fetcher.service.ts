@@ -5,6 +5,7 @@ import { Cache } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { NewsArticle } from '../../openai/interfaces/news-analysis.interface';
 import { TavilyService } from '../../tavily/tavily.service';
+import { PrismaService } from '../../../prisma.service';
 
 // Extending the NewsArticle interface to include our enrichment properties
 interface EnrichedNewsArticle extends NewsArticle {
@@ -18,21 +19,19 @@ export class NewsFetcherService {
 
   constructor(
     private readonly tavilyService: TavilyService,
+    private readonly prisma: PrismaService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async fetchNews(state: NewsAnalysisState): Promise<NewsAnalysisState> {
-    // For default query (no specific query provided), use a predefined query
     const effectiveQuery = state.isDefaultQuery ? 'top financial news today' : state.query;
 
-    // Validate query after considering default case
     if (!effectiveQuery) {
       this.logger.error('No query available for news lookup');
       state.error = 'Invalid news query configuration';
       return state;
     }
 
-    // Create cache key from query and tickers if present
     const tickersKey = state.tickers?.length ? state.tickers.sort().join(',') : 'notickers';
     const cacheKey = `news:${effectiveQuery}:${tickersKey}`;
 
@@ -43,14 +42,21 @@ export class NewsFetcherService {
       return cached;
     }
 
-    // Deduplicate in-flight requests
+    // Check database for recent articles
+    const recentArticles = await this.getRecentArticles(effectiveQuery);
+    if (recentArticles.length > 0) {
+      this.logger.log(`Found ${recentArticles.length} recent articles in database`);
+      state.articles = recentArticles;
+      return state;
+    }
+
+    // Handle in-flight requests
     if (this.inFlightRequests.has(cacheKey)) {
       this.logger.log(`Using existing in-flight request for query: ${effectiveQuery}`);
       const request = this.inFlightRequests.get(cacheKey);
       return request ? request : this.performNewsFetch({ ...state, query: effectiveQuery }, cacheKey);
     }
 
-    // Create new request
     const requestPromise = this.performNewsFetch({ ...state, query: effectiveQuery }, cacheKey);
     this.inFlightRequests.set(cacheKey, requestPromise);
 
@@ -61,12 +67,85 @@ export class NewsFetcherService {
     }
   }
 
+  private async getRecentArticles(query: string): Promise<NewsArticle[]> {
+    // Get articles from last 24 hours
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const articles = await this.prisma.newsArticle.findMany({
+      where: {
+        publishedAt: {
+          gte: oneDayAgo
+        },
+        // Find articles through their analysis results matching the query
+        analysisResults: {
+          some: {
+            query: query
+          }
+        }
+      },
+      include: {
+        analysisResults: {
+          where: {
+            query: query
+          },
+          take: 1,
+          orderBy: {
+            createdAt: 'desc'
+          }
+        }
+      },
+      orderBy: {
+        publishedAt: 'desc'
+      },
+      take: 10 // Limit to 10 most recent articles
+    });
+
+    return articles.map(article => ({
+      title: article.title,
+      description: article.description,
+      url: article.url,
+      publishedAt: article.publishedAt.toISOString(),
+      relevancyScore: article.relevancyScore || undefined,
+      // Include analysis data if available
+      analysis: article.analysisResults[0]?.analysis,
+      marketSentiment: article.analysisResults[0]?.marketSentiment
+    }));
+  }
+
+  private async createOrUpdateArticle(articleData: any, state: NewsAnalysisState) {
+    const { url, ...articleDetails } = articleData;
+
+    // Check for existing article
+    let article = await this.prisma.newsArticle.findFirst({
+      where: { url }
+    });
+
+    if (article) {
+      // Update existing article if needed
+      if (articleDetails.relevancyScore !== undefined) {
+        article = await this.prisma.newsArticle.update({
+          where: { id: article.id },
+          data: { relevancyScore: articleDetails.relevancyScore }
+        });
+      }
+    } else {
+      // Create new article
+      article = await this.prisma.newsArticle.create({
+        data: {
+          url,
+          ...articleDetails
+        }
+      });
+    }
+
+    return article;
+  }
+
   private async performNewsFetch(state: NewsAnalysisState, cacheKey: string): Promise<NewsAnalysisState> {
     this.logger.log(`Fetching news for ${state.isDefaultQuery ? 'top financial news' : `query: ${state.query}`}`);
     const startTime = Date.now();
 
     try {
-      // Adjust Tavily search parameters based on whether it's default or specific query
       const tavilyParams = {
         query: state.query || 'top financial news today',
         search_depth: state.isDefaultQuery ? "basic" : "advanced" as "basic" | "advanced",
@@ -74,17 +153,28 @@ export class NewsFetcherService {
         include_raw_content: false,
         include_domains: ["reuters.com", "bloomberg.com", "cnbc.com", "wsj.com", "ft.com", "marketwatch.com", "finance.yahoo.com"],
         exclude_domains: ["www.cnbc.com/finance/"],
-        max_results: state.isDefaultQuery ? 10 : 5 // More results for top news, fewer for specific queries
+        max_results: state.isDefaultQuery ? 10 : 5
       };
 
       const tavilyResponse = await this.tavilyService.search(tavilyParams);
 
-      // Convert Tavily results to NewsArticle format
-      const articles = tavilyResponse.results.map(result => ({
-        title: result.title,
-        description: result.content,
-        url: result.url,
-        publishedAt: result.published_date || new Date().toISOString()
+      // Process and store articles with proper association
+      const articles = await Promise.all(tavilyResponse.results.map(async result => {
+        const articleData = {
+          title: result.title,
+          description: result.content,
+          url: result.url,
+          publishedAt: new Date(result.published_date || Date.now()),
+          source: new URL(result.url).hostname
+        };
+
+        // Store or update in database
+        const storedArticle = await this.createOrUpdateArticle(articleData, state);
+
+        return {
+          ...articleData,
+          publishedAt: articleData.publishedAt.toISOString()
+        };
       }));
 
       // Filter and enrich articles
@@ -97,7 +187,6 @@ export class NewsFetcherService {
       const duration = Date.now() - startTime;
       this.logger.log(`Retrieved ${enrichedArticles.length} news articles in ${duration}ms`);
 
-      // Cache successful results
       await this.cacheManager.set(cacheKey, state, 5 * 60 * 1000); // 5 minutes
 
       return state;

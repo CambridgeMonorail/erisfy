@@ -1,12 +1,13 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 import { LangGraphService } from './langgraph.service';
 import { AnalyzeNewsDto } from './dto/analyze-news.dto';
 import { NewsAnalysisResponseDto } from './dto/news-analysis-response.dto';
 import { NewsAnalysisState } from './interfaces/news-analysis-state.interface';
+import { MarketSentimentResponseDto } from './dto/market-sentiment-response.dto';
 
 @ApiTags('news-analysis')
-@ApiExtraModels(NewsAnalysisResponseDto)
+@ApiExtraModels(NewsAnalysisResponseDto, MarketSentimentResponseDto)
 @Controller('news-analysis')
 export class LangGraphController {
   constructor(private readonly langGraphService: LangGraphService) {}
@@ -70,5 +71,19 @@ export class LangGraphController {
     }
 
     return this.langGraphService.runWorkflow(initialState);
+  }
+
+  @Get('market-sentiment')
+  @ApiOperation({
+    summary: 'Get latest market sentiment and news analysis',
+    description: 'Retrieves the most recent market sentiment analysis and related stock data'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Latest market sentiment analysis retrieved successfully',
+    type: MarketSentimentResponseDto
+  })
+  async getMarketSentiment(): Promise<MarketSentimentResponseDto> {
+    return this.langGraphService.getMarketSentiment();
   }
 }

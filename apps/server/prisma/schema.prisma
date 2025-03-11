@@ -7,6 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum MarketSentiment {
+  positive
+  negative
+  neutral
+}
+
 model MarketDataRecord {
   id       String        @id @default(uuid())
   date     String        // Store the date as a string or ISO date
@@ -31,11 +37,71 @@ model MarketStory {
   updatedAt DateTime @updatedAt
 }
 
+// New models for storing news and analysis data
+model NewsArticle {
+  id          String   @id @default(uuid())
+  title       String
+  description String   @db.Text
+  url         String
+  publishedAt DateTime
+  source      String?  // e.g., "reuters.com", "bloomberg.com"
+
+  // Enrichment data
+  relevancyScore Float?
+
+  // Relations
+  analysisResults NewsAnalysisResult[]
+
+  // Metadata
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([publishedAt])
+}
+
+model NewsAnalysisResult {
+  id              String          @id @default(uuid())
+  query           String?         @db.Text // Original search query
+  isDefaultQuery  Boolean         @default(false)
+  analysis        String          @db.Text
+  marketSentiment MarketSentiment @default(neutral)
+  sectors         String[] // Array of affected sectors
+
+  // Relations
+  articles    NewsArticle[]
+  stockData   StockDataSnapshot[]
+
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
+model StockDataSnapshot {
+  id               String   @id @default(uuid())
+  ticker           String
+  price            Float
+  dayChange        Float
+  dayChangePercent Float
+  marketCap        Float
+  snapshotTime     DateTime
+
+  // Relations
+  analysisResults  NewsAnalysisResult[]
+
+  // Metadata
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([ticker, snapshotTime])
+}
+
 model Onboarding {
   id            Int      @id @default(autoincrement())
   userId        String
   hasViewed     Boolean  @default(false)
   chosenOptions String[] // Storing array of options
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime @default(now())
 }

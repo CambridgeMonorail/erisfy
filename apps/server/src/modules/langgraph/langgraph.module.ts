@@ -7,11 +7,11 @@ import { NewsAnalyserService } from './services/news-analyser.service';
 import { StockDataService } from './services/stock-data.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TavilyModule } from '../tavily/tavily.module';
+import { PrismaService } from '../../prisma.service';
 
 @Module({
   imports: [
     ConfigModule,
-
     TavilyModule,
     CacheModule.register({
       ttl: 5 * 60 * 1000, // 5 minutes
@@ -24,6 +24,7 @@ import { TavilyModule } from '../tavily/tavily.module';
     NewsFetcherService,
     NewsAnalyserService,
     StockDataService,
+    PrismaService,
   ],
   exports: [LangGraphService],
 })

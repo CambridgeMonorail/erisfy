@@ -54,6 +54,15 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   news = [],
   marketData,
 }) => {
+  console.log('[MarketSentimentNewsFeed] Component mounted');
+  console.log('[MarketSentimentNewsFeed] Props received:', {
+    className,
+    isLoading,
+    error,
+    newsCount: news?.length,
+    hasMarketData: !!marketData,
+  });
+
   console.log('[MarketSentimentNewsFeed] Rendering with props:', {
     isLoading,
     hasError: !!error,
@@ -115,7 +124,7 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
 
   // If no market data is available, show a placeholder
   if (!marketData) {
-    console.log('[MarketSentimentNewsFeed] Rendering no market data state');
+    console.log('[MarketSentimentNewsFeed] No market data available');
     return (
       <Card className={cn('market-sentiment-feed', className)}>
         <CardHeader>
@@ -138,6 +147,14 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
   const sentimentEmoji = getSentimentEmoji(
     marketData.structuredAnalysis?.marketSentiment
   );
+
+  console.log('[MarketSentimentNewsFeed] Market data state:', {
+    hasStructuredAnalysis: !!marketData?.structuredAnalysis,
+    sectors: marketData?.structuredAnalysis?.sectors,
+    sentiment: marketData?.structuredAnalysis?.marketSentiment,
+    stockInfoCount: Object.keys(marketData?.stockInfoMap || {}).length,
+    sentimentEmoji
+  });
 
   console.log('[MarketSentimentNewsFeed] Calculated sentiment emoji:', sentimentEmoji);
 
