@@ -88,24 +88,24 @@ export class NewsAnalyserService {
           }
 
           state.analysis = existingAnalysis.analysis;
-          
+
           // Get tickers from stock data
           const tickersFromStockData = stockSnapshots.map(s => s.ticker);
-          
+
           this.logger.debug('Tickers from cached analysis', {
             fromState: state.tickers,
             fromStockData: tickersFromStockData
           });
-          
+
           // Try multiple sources for tickers, prioritizing existing data
           const combinedTickers = [
             ...tickersFromStockData,
             ...(state.tickers || [])
           ];
-          
+
           // Filter out duplicates
           const uniqueTickers = [...new Set(combinedTickers)];
-          
+
           // If still no tickers, extract from analysis text
           if (uniqueTickers.length === 0 && existingAnalysis.analysis) {
             this.logger.debug('Attempting ticker extraction from cached analysis text');
@@ -122,15 +122,15 @@ export class NewsAnalyserService {
             marketSentiment: this.validateMarketSentiment(existingAnalysis.marketSentiment),
             tickers: uniqueTickers
           };
-          
+
           // Ensure state.tickers is set for downstream processing
           state.tickers = uniqueTickers;
-          
-          this.logger.debug('Final tickers after cache retrieval', { 
+
+          this.logger.debug('Final tickers after cache retrieval', {
             tickerCount: uniqueTickers.length,
             tickers: uniqueTickers.join(', ')
           });
-          
+
           return state;
         }
       }
@@ -250,10 +250,10 @@ export class NewsAnalyserService {
 
           // Validate market sentiment before storing
           parsedAnalysis.marketSentiment = this.validateMarketSentiment(parsedAnalysis.marketSentiment);
-          
+
           // Store the structured analysis in state
           state.structuredAnalysis = parsedAnalysis;
-          
+
           // Update state tickers with those from parsed analysis, ensuring sync between the two
           if (parsedAnalysis.tickers && parsedAnalysis.tickers.length > 0) {
             state.tickers = parsedAnalysis.tickers;
@@ -312,12 +312,12 @@ export class NewsAnalyserService {
           // Add fallback ticker extraction if structuredAnalysis.tickers is empty
           if (!state.tickers?.length || (state.structuredAnalysis && (!state.structuredAnalysis.tickers || state.structuredAnalysis.tickers.length === 0))) {
             this.logger.debug('No tickers found in structuredAnalysis, attempting fallback extraction');
-            
+
             // Extract potential tickers from the analysis text and article content
             const extractedTickers = this.extractTickersFromText(
               state.analysis + ' ' + state.articles.map(a => a.title + ' ' + a.description).join(' ')
             );
-            
+
             if (extractedTickers.length > 0) {
               this.logger.debug(`Fallback extraction found ${extractedTickers.length} tickers: ${extractedTickers.join(', ')}`);
               if (state.structuredAnalysis) {
@@ -432,10 +432,10 @@ export class NewsAnalyserService {
           ...analysis,
           tickers
         };
-        
+
         // Remove the stockData to avoid type issues
         delete result.stockData;
-        
+
         return result;
       }
 
@@ -477,14 +477,16 @@ export class NewsAnalyserService {
   }
 
   private extractTickersFromText(text: string): string[] {
-    // Basic regex for stock tickers (uppercase 1-5 letters)
-    const tickerRegex = /\b[A-Z]{1,5}\b/g;
-    const matches = text.match(tickerRegex) || [];
-    
-    // Filter common words that look like tickers but aren't
-    const commonWords = new Set(['A', 'I', 'AT', 'BE', 'DO', 'GO', 'IN', 'IS', 'IT', 'ME', 'MY', 'NO', 'OF', 'ON', 'OR', 'SO', 'TO', 'UP', 'US', 'WE', 'CEO', 'CFO', 'CTO', 'COO', 'THE', 'AND', 'FOR', 'GDP', 'CPI', 'FED', 'ECB', 'AI', 'API', 'USA', 'UK', 'EU', 'GDP', 'IMF', 'SEC', 'ETF', 'IPO']);
-    
-    // Return unique tickers (removing duplicates)
-    return [...new Set(matches)].filter(t => !commonWords.has(t));
+    if (!text) return [];
+
+    // Match stock ticker pattern: 1-5 uppercase letters not part of a larger word
+    const matches = text.match(/\b[A-Z]{1,5}\b/g) || [];
+
+    // Filter out common English words and abbreviations that might match the pattern
+    const commonWords = new Set(['I', 'A', 'AN', 'THE', 'IN', 'ON', 'AT', 'TO', 'FOR', 'OF', 'CEO', 'CFO', 'COO', 'CTO', 'USA', 'UK', 'EU']);
+    const tickers = matches.filter(match => !commonWords.has(match));
+
+    this.logger.debug(`Extracted ${tickers.length} potential tickers from text`, { tickers });
+    return tickers;
   }
 }

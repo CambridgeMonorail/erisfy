@@ -22,7 +22,7 @@ export class LangGraphService {
     this.workflow = RunnableSequence.from([
       // Step 0: Log initial state for debugging
       async (state: NewsAnalysisState) => {
-        this.logger.debug('Starting workflow with initial state', { 
+        this.logger.debug('Starting workflow with initial state', {
           query: state.query || '(empty)',
           isDefaultQuery: state.isDefaultQuery || false,
           tickerCount: state.tickers?.length || 0,
@@ -35,7 +35,7 @@ export class LangGraphService {
       async (state: NewsAnalysisState) => {
         const startTime = Date.now();
         const newsState = await this.newsFetcher.fetchNews(state);
-        this.logger.debug('News fetcher completed', { 
+        this.logger.debug('News fetcher completed', {
           duration: `${Date.now() - startTime}ms`,
           articleCount: newsState.articles?.length || 0,
           hasError: !!newsState.error
@@ -86,13 +86,9 @@ export class LangGraphService {
   }
 
   private transformToMarketSentimentResponse(state: NewsAnalysisState): MarketSentimentResponseDto {
-    // Create a default analysis if missing
-    const defaultAnalysis = {
-      analysis: 'No market analysis available',
-      sectors: [],
-      marketSentiment: 'neutral' as const,
-      tickers: [],
-    };
+    if (!state.structuredAnalysis) {
+      this.logger.warn('No structured analysis available for market sentiment response');
+    }
 
     // Create a default stock info if missing
     const defaultStockInfo = {
@@ -104,21 +100,32 @@ export class LangGraphService {
       time: new Date().toISOString(),
     };
 
-    const structuredAnalysis = state.structuredAnalysis ? {
+    const mapSentiment = (sentiment: string | undefined): SentimentType => {
+      switch (sentiment?.toLowerCase()) {
+        case 'positive':
+          return 'bullish';
+        case 'negative':
+          return 'bearish';
+        default:
+          return 'neutral';
+      }
+    };
+
+    const mappedStructuredAnalysis = state.structuredAnalysis ? {
       ...state.structuredAnalysis,
-      // Use tickers from either structuredAnalysis or the main state, preferring non-empty arrays
-      tickers: (state.structuredAnalysis.tickers && state.structuredAnalysis.tickers.length > 0) 
-        ? state.structuredAnalysis.tickers 
-        : (state.tickers || []),
-      marketSentiment: this.mapSentiment(state.structuredAnalysis.marketSentiment)
-    } : defaultAnalysis;
+      marketSentiment: mapSentiment(state.structuredAnalysis.marketSentiment)
+    } : {
+      analysis: 'No market analysis available',
+      sectors: [],
+      marketSentiment: 'neutral' as SentimentType,
+      tickers: []
+    };
 
     return {
-      structuredAnalysis,
-      sentiment: this.mapSentiment(state.sentiment),
+      structuredAnalysis: mappedStructuredAnalysis,
+      sentiment: mapSentiment(state.sentiment),
       stockInfoMap: state.stockInfoMap || {},
-      stockInfo: state.stockInfo || defaultStockInfo,
-      error: state.error || (!state.structuredAnalysis ? 'No market analysis data available' : undefined),
+      stockInfo: state.stockInfo || defaultStockInfo
     };
   }
 
@@ -138,32 +145,33 @@ export class LangGraphService {
     }
   }
 
-  async getMarketSentiment(includeDebugInfo = false): Promise<MarketSentimentResponseDto> {
-    const initialState: NewsAnalysisState = {
-      query: '',
-      articles: [],
-      analysis: '',
-      isDefaultQuery: true,
-      bypassCache: includeDebugInfo  // Add bypass cache flag if debug is enabled
-    };
-
+  async getMarketSentiment(): Promise<MarketSentimentResponseDto> {
     try {
-      this.logger.log('Starting market sentiment analysis with default query');
-      const startTime = Date.now();
-      
-      const result = await this.workflow.invoke(initialState);
-      
-      this.logger.log('Market sentiment analysis completed', {
-        duration: `${Date.now() - startTime}ms`,
-        hasAnalysis: !!result.state.analysis,
-        tickerCount: result.state.tickers?.length || 0,
-        stockInfoCount: result.state.stockInfoMap ? Object.keys(result.state.stockInfoMap).length : 0
+      // Initialize state with default query for market overview
+      const state: NewsAnalysisState = {
+        articles: [],
+        analysis: '',
+        query: '',
+        isDefaultQuery: true,
+        bypassCache: false // Allow cache for performance
+      };
+
+      // Run the full workflow to get latest market sentiment
+      const analysisResult = await this.runWorkflow(state);
+      return this.transformToMarketSentimentResponse(analysisResult);
+    } catch (error) {
+      this.logger.error('Failed to get market sentiment:', error);
+      // Return a valid response even in error case
+      return this.transformToMarketSentimentResponse({
+        articles: [],
+        analysis: `Failed to analyze market sentiment: ${error.message}`,
+        structuredAnalysis: {
+          analysis: 'Market analysis temporarily unavailable',
+          sectors: [],
+          marketSentiment: 'neutral',
+          tickers: []
+        }
       });
-      
-      return this.transformToMarketSentimentResponse(result.state);
-    } catch (err) {
-      this.logger.error('Error getting market sentiment', err);
-      throw err;
     }
   }
 
@@ -172,7 +180,7 @@ export class LangGraphService {
     try {
       // Delete recent analysis results (last 2 hours)
       const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-      
+
       const result = await this.prisma.newsAnalysisResult.deleteMany({
         where: {
           createdAt: {
@@ -180,7 +188,7 @@ export class LangGraphService {
           }
         }
       });
-      
+
       this.logger.log(`Cache cleared: deleted ${result.count} analysis records`);
       return { message: `Cache cleared: deleted ${result.count} analysis records` };
     } catch (error) {

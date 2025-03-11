@@ -126,4 +126,26 @@ export class LangGraphController {
   async getMarketSentiment(): Promise<MarketSentimentResponseDto> {
     return this.langGraphService.getMarketSentiment();
   }
+
+  @Post('clear-cache')
+  @ApiOperation({
+    summary: 'Clear news analysis cache',
+    description: 'Clears cached news analysis results from the last 2 hours'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Cache cleared successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Cache cleared: deleted 5 analysis records'
+        }
+      }
+    }
+  })
+  async clearCache(): Promise<{ message: string }> {
+    return this.langGraphService.clearCache();
+  }
 }
