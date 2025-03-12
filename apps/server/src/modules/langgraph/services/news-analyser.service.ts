@@ -5,6 +5,8 @@ import { StructuredLLMResponse, StockInfo } from '../../openai/interfaces/news-a
 import { LLMAnalyzerService } from './llm-analyzer.service';
 import { ArticleManagerService } from './article-manager.service';
 import { TickerExtractorService } from './ticker-extractor.service';
+import { MarketSentimentResponseDto } from '../dto/market-sentiment-response.dto';
+import { SentimentType } from '@erisfy/api';
 
 interface PrismaAnalysisResult {
   id: string;
@@ -133,6 +135,15 @@ export class NewsAnalyserService {
   private async processExistingAnalysis(state: NewsAnalysisState, existingAnalysis: StoredAnalysis) {
     this.logger.log('Found recent analysis in database');
 
+    // Extract any additional tickers from the articles' content
+    const extractedTickers = this.tickerExtractor.extractTickersFromArticles(state.articles);
+
+    // Combine existing and newly extracted tickers
+    const allTickers = Array.from(new Set([
+      ...existingAnalysis.tickers,
+      ...extractedTickers
+    ]));
+
     const stockSnapshots = await this.getStockSnapshots(existingAnalysis.id);
     const stockInfoMap = this.processStockSnapshots(stockSnapshots);
 
@@ -143,11 +154,11 @@ export class NewsAnalyserService {
         analysis: existingAnalysis.analysis,
         sectors: existingAnalysis.sectors || [],
         marketSentiment: this.llmAnalyzer.validateMarketSentiment(existingAnalysis.marketSentiment),
-        tickers: existingAnalysis.tickers || []
+        tickers: allTickers
       },
       sectors: existingAnalysis.sectors || [],
       sentiment: this.llmAnalyzer.validateMarketSentiment(existingAnalysis.marketSentiment),
-      tickers: existingAnalysis.tickers || [],
+      tickers: allTickers,
       stockInfoMap,
       stockInfo: Object.values(stockInfoMap)[0] || null
     };
@@ -181,23 +192,55 @@ export class NewsAnalyserService {
   }
 
   private async storeAnalysisResult(state: NewsAnalysisState, analysis: StructuredLLMResponse) {
-    const articleIds = await this.articleManager.findOrCreateArticles(state.articles);
+    try {
+      const articleIds = await this.articleManager.findOrCreateArticles(state.articles);
+      const tickers = analysis.tickers || [];
 
-    await this.prisma.newsAnalysisResult.create({
-      data: {
-        query: state.query || '',
-        isDefaultQuery: state.isDefaultQuery || false,
-        analysis: analysis.analysis,
-        marketSentiment: analysis.marketSentiment,
-        sectors: analysis.sectors || [],
-        articles: {
-          connect: articleIds
-        },
-        stockData: state.stockInfoMap ? {
-          connect: await this.getStockSnapshotIds(state.stockInfoMap)
-        } : undefined
+      // Create stock snapshots for each ticker if we have market data
+      const stockSnapshots = [];
+      for (const ticker of tickers) {
+        const stockInfo = state.stockInfoMap?.[ticker];
+        if (stockInfo) {
+          const snapshot = await this.prisma.stockDataSnapshot.create({
+            data: {
+              ticker: stockInfo.ticker,
+              price: stockInfo.price,
+              dayChange: stockInfo.dayChange,
+              dayChangePercent: stockInfo.dayChangePercent,
+              marketCap: stockInfo.marketCap,
+              snapshotTime: new Date(stockInfo.time)
+            }
+          });
+          stockSnapshots.push({ id: snapshot.id });
+        }
       }
-    });
+
+      // Create the analysis result with all relationships
+      await this.prisma.newsAnalysisResult.create({
+        data: {
+          query: state.query || '',
+          isDefaultQuery: state.isDefaultQuery || false,
+          analysis: analysis.analysis,
+          marketSentiment: analysis.marketSentiment,
+          sectors: analysis.sectors || [],
+          articles: {
+            connect: articleIds
+          },
+          stockData: {
+            connect: stockSnapshots
+          }
+        }
+      });
+
+      this.logger.debug('Stored analysis result with relationships', {
+        articleCount: articleIds.length,
+        stockSnapshotCount: stockSnapshots.length,
+        tickerCount: tickers.length
+      });
+    } catch (error) {
+      this.logger.error('Failed to store analysis result:', error);
+      throw error;
+    }
   }
 
   private async getStockSnapshots(analysisId: string) {
@@ -252,5 +295,76 @@ export class NewsAnalyserService {
       tickers: state.tickers,
       isDefaultQuery: state.isDefaultQuery
     });
+  }
+
+  private transformToMarketSentimentResponse(state: NewsAnalysisState): MarketSentimentResponseDto {
+    if (!state.structuredAnalysis) {
+      this.logger.warn('No structured analysis available for market sentiment response');
+    }
+
+    // Create a default stock info if missing
+    const defaultStockInfo = {
+      ticker: 'N/A',
+      price: 0,
+      dayChange: 0,
+      dayChangePercent: 0,
+      marketCap: 0,
+      time: new Date().toISOString(),
+    };
+
+    const mapSentiment = (sentiment: string | undefined): SentimentType => {
+      switch (sentiment?.toLowerCase()) {
+        case 'positive':
+          return 'bullish';
+        case 'negative':
+          return 'bearish';
+        default:
+          return 'neutral';
+      }
+    };
+
+    // Ensure we have valid tickers from all possible sources
+    const tickers = Array.from(new Set([
+      ...(state.tickers || []),
+      ...(state.structuredAnalysis?.tickers || []),
+      ...Object.keys(state.stockInfoMap || {})
+    ])).filter(ticker => ticker && ticker !== 'N/A');
+
+    // Create stock info map from available stock data
+    const stockInfoMap: Record<string, StockInfo> = state.stockInfoMap ? { ...state.stockInfoMap } : {};
+
+    // Add placeholder entries for any tickers without stock info
+    tickers.forEach(ticker => {
+      if (!stockInfoMap[ticker]) {
+        stockInfoMap[ticker] = {
+          ticker,
+          price: 0,
+          dayChange: 0,
+          dayChangePercent: 0,
+          marketCap: 0,
+          time: new Date().toISOString()
+        };
+      }
+    });
+
+    const response: MarketSentimentResponseDto = {
+      structuredAnalysis: {
+        analysis: state.structuredAnalysis?.analysis || state.analysis || 'No analysis available',
+        sectors: state.structuredAnalysis?.sectors || state.sectors || [],
+        marketSentiment: mapSentiment(state.structuredAnalysis?.marketSentiment || state.sentiment),
+        tickers: tickers
+      },
+      sentiment: mapSentiment(state.structuredAnalysis?.marketSentiment || state.sentiment),
+      stockInfoMap,
+      stockInfo: Object.values(stockInfoMap)[0] || defaultStockInfo
+    };
+
+    this.logger.debug('Transformed market sentiment response:', {
+      tickerCount: tickers.length,
+      stockInfoMapSize: Object.keys(stockInfoMap).length,
+      sentiment: response.sentiment
+    });
+
+    return response;
   }
 }
