@@ -28,6 +28,12 @@
       "autoAttachChildProcesses": true,
       "restart": true,
       "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+        "webpack:///./src/*": "${workspaceFolder}/apps/server/src/*",
+        "webpack:///./*": "${workspaceFolder}/apps/server/*",
+        "webpack:///*": "*"
+      },
       "stopOnEntry": false,
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",

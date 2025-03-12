@@ -5,6 +5,7 @@ module.exports = {
   output: {
     path: join(__dirname, '../../dist/apps/server'),
   },
+  devtool: 'source-map',
   plugins: [
     new NxAppWebpackPlugin({
       target: 'node',
@@ -15,6 +16,10 @@ module.exports = {
       optimization: false,
       outputHashing: 'none',
       generatePackageJson: true,
+      sourceMap: true // Fixed formatting
     }),
   ],
+  optimization: {
+    minimize: false // Disable minimization for better debugging
+  }
 };
