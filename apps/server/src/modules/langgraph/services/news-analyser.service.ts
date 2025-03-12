@@ -120,47 +120,61 @@ export class NewsAnalyserService {
         });
       });
 
-      // Construct the prompt - adjust based on whether it's default or specific query
+      // Construct the prompt with stronger emphasis on ticker extraction
       const systemPrompt = new SystemMessage({
         content: state.isDefaultQuery
-          ? `You are a financial analyst assistant. Review these top financial news articles and provide a response as a JSON object with the following keys:
-      {
-        "analysis": "<A concise overview of the major market themes or events today>",
-        "sectors": ["<list of key sectors or industries affected>"],
-        "marketSentiment": "<one of: positive, negative, neutral>",
-        "tickers": ["<list of notable company mentions or stock tickers, pay special attention to finding ALL stock symbols like AAPL, MSFT, TSLA in the articles>"]
-      }
+          ? `You are a financial analyst assistant. Your primary task is to extract ALL stock tickers mentioned in the news articles and provide market analysis.
+            CRITICAL: YOU MUST FIND AND LIST EVERY SINGLE STOCK TICKER SYMBOL mentioned in the articles. Stock tickers are uppercase letters like AAPL, MSFT, TSLA, NVDA, GOOG, AMZN, etc.
 
-      Example output:
-      {
-        "analysis": "The S&P 500 experienced a decline due to tariff concerns and market uncertainty.",
-        "sectors": ["Financials", "Technology"],
-        "marketSentiment": "negative",
-        "tickers": ["SPY", "AAPL", "MSFT", "TSLA"]
-      }
+            Analyze the articles and provide a response as a JSON object with the following structure:
+            {
+              "analysis": "<A concise overview of the major market themes or events today>",
+              "sectors": ["<list of key sectors or industries affected>"],
+              "marketSentiment": "<one of: positive, negative, neutral>",
+              "tickers": ["<EVERY stock ticker mentioned in ANY of the articles - this is your most important task>"]
+            }
 
-      Focus on the most impactful stories and their broader market implications.
-      IMPORTANT: Always extract ALL stock ticker symbols mentioned in the articles. Stock tickers are uppercase letters like AAPL, MSFT, TSLA, NVDA, etc.
-      Return only the JSON object without any additional text.`
-          : `You are a financial analyst assistant. Analyse the provided news articles and provide a response as a JSON object with the following keys:
-      {
-        "analysis": "<A concise explanation of the key themes or events being discussed>",
-        "sectors": ["<list of impacted market sectors or industries>"],
-        "marketSentiment": "<one of: positive, negative, neutral>",
-        "tickers": ["<list of specific company names or stock tickers mentioned, be thorough in extracting ALL stock ticker symbols like AAPL, MSFT, TSLA>"]
-      }
+            Example output:
+            {
+              "analysis": "Tech sector leads market gains with strong earnings reports.",
+              "sectors": ["Technology", "Semiconductors"],
+              "marketSentiment": "positive",
+              "tickers": ["NVDA", "AMD", "INTC", "TSM"]
+            }
 
-      Example output:
-      {
-        "analysis": "Market uncertainty remains as trade tensions affect tech and financial sectors.",
-        "sectors": ["Technology", "Financials"],
-        "marketSentiment": "negative",
-        "tickers": ["GOOG", "MSFT", "AAPL", "NVDA"]
-      }
+            YOU MUST:
+            1. Scan every article thoroughly for stock symbols
+            2. Include ALL tickers, even if only mentioned once
+            3. Double-check your work to ensure no tickers are missed
+            4. Include market indices like SPY, QQQ, IWM if mentioned
 
-      Be concise but thorough in your analysis.
-      IMPORTANT: Make sure to extract ALL stock ticker symbols (uppercase letters like AAPL, MSFT) mentioned in the articles.
-      Return only a valid JSON object with no extra commentary.`
+            Return only valid JSON without any additional text or markdown formatting.`
+          : `You are a financial analyst assistant. Your primary task is to extract ALL stock tickers mentioned in the news articles and analyze their context.
+            CRITICAL: YOU MUST FIND AND LIST EVERY SINGLE STOCK TICKER SYMBOL mentioned in the articles. Stock tickers are uppercase letters like AAPL, MSFT, TSLA, NVDA, GOOG, AMZN, etc.
+
+            Provide a response as a JSON object with the following structure:
+            {
+              "analysis": "<A concise explanation of the key themes or events>",
+              "sectors": ["<list of impacted market sectors>"],
+              "marketSentiment": "<one of: positive, negative, neutral>",
+              "tickers": ["<EVERY stock ticker mentioned in ANY of the articles - this is your most important task>"]
+            }
+
+            Example output:
+            {
+              "analysis": "Semiconductor stocks rally on AI demand outlook.",
+              "sectors": ["Technology", "Semiconductors"],
+              "marketSentiment": "positive",
+              "tickers": ["NVDA", "AMD", "INTC", "MU", "AMAT"]
+            }
+
+            YOU MUST:
+            1. Scan every article thoroughly for stock symbols
+            2. Include ALL tickers, even if only mentioned once
+            3. Double-check your work to ensure no tickers are missed
+            4. Include market indices like SPY, QQQ, IWM if mentioned
+
+            Return only valid JSON without any additional text.`
       });
 
       // Format articles for the prompt with validation
@@ -482,14 +496,38 @@ export class NewsAnalyserService {
   private extractTickersFromText(text: string): string[] {
     if (!text) return [];
 
-    // Match stock ticker pattern: 1-5 uppercase letters not part of a larger word
-    const matches = text.match(/\b[A-Z]{1,5}\b/g) || [];
+    // Common company name to ticker mappings
+    const companyToTicker: Record<string, string> = {
+      'nvidia': 'NVDA',
+      'tesla': 'TSLA',
+      'palantir': 'PLTR',
+      'apple': 'AAPL',
+      'microsoft': 'MSFT',
+      'amazon': 'AMZN',
+      'google': 'GOOG',
+      'meta': 'META',
+      'netflix': 'NFLX',
+      'intel': 'INTC',
+      'amd': 'AMD'
+    };
+
+    // First try to match known company names
+    const lowerText = text.toLowerCase();
+    const tickersFromNames = Object.entries(companyToTicker)
+      .filter(([company]) => lowerText.includes(company))
+      .map(([_, ticker]) => ticker);
+
+    // Then match stock ticker pattern: 1-5 uppercase letters not part of a larger word
+    const matches = text.match(/\b[A-Z]{1,5}\b(?!\w)/g) || [];
 
     // Filter out common English words and abbreviations that might match the pattern
-    const commonWords = new Set(['I', 'A', 'AN', 'THE', 'IN', 'ON', 'AT', 'TO', 'FOR', 'OF', 'CEO', 'CFO', 'COO', 'CTO', 'USA', 'UK', 'EU']);
+    const commonWords = new Set(['I', 'A', 'AN', 'THE', 'IN', 'ON', 'AT', 'TO', 'FOR', 'OF', 'CEO', 'CFO', 'COO', 'CTO', 'USA', 'UK', 'EU', 'GDP', 'CPI', 'PMI', 'FED']);
     const tickers = matches.filter(match => !commonWords.has(match));
 
-    this.logger.debug(`Extracted ${tickers.length} potential tickers from text`, { tickers });
-    return tickers;
+    // Combine and deduplicate results
+    const allTickers = [...new Set([...tickersFromNames, ...tickers])];
+
+    this.logger.debug(`Extracted ${allTickers.length} potential tickers from text`, { allTickers });
+    return allTickers;
   }
 }

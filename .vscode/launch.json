@@ -20,6 +20,23 @@
   ],
   "configurations": [
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug NestJS Server",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nx", "serve", "server", "--inspect-brk"],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Debug Client in Chrome",

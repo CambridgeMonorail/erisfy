@@ -111,21 +111,43 @@ export class LangGraphService {
       }
     };
 
+    // Ensure we have valid tickers
+    const tickers = state.tickers || state.structuredAnalysis?.tickers || [];
+
+    // Create stock info map from available stock data
+    const stockInfoMap = state.stockInfoMap || {};
+
+    // If we have tickers but no stock info, create placeholder entries
+    tickers.forEach(ticker => {
+      if (!stockInfoMap[ticker]) {
+        stockInfoMap[ticker] = {
+          ticker,
+          price: 0,
+          dayChange: 0,
+          dayChangePercent: 0,
+          marketCap: 0,
+          time: new Date().toISOString()
+        };
+      }
+    });
+
     const mappedStructuredAnalysis = state.structuredAnalysis ? {
-      ...state.structuredAnalysis,
-      marketSentiment: mapSentiment(state.structuredAnalysis.marketSentiment)
+      analysis: state.structuredAnalysis.analysis,
+      sectors: state.structuredAnalysis.sectors || [],
+      marketSentiment: mapSentiment(state.structuredAnalysis.marketSentiment),
+      tickers: tickers
     } : {
       analysis: 'No market analysis available',
       sectors: [],
       marketSentiment: 'neutral' as SentimentType,
-      tickers: []
+      tickers: tickers
     };
 
     return {
       structuredAnalysis: mappedStructuredAnalysis,
       sentiment: mapSentiment(state.sentiment),
-      stockInfoMap: state.stockInfoMap || {},
-      stockInfo: state.stockInfo || defaultStockInfo
+      stockInfoMap,
+      stockInfo: Object.values(stockInfoMap)[0] || defaultStockInfo
     };
   }
 
@@ -151,14 +173,33 @@ export class LangGraphService {
       const state: NewsAnalysisState = {
         articles: [],
         analysis: '',
-        query: '',
+        query: 'latest market news about major stocks like AAPL MSFT NVDA TSLA GOOG AMZN', // More specific query
+        tickers: ['SPY', 'QQQ', 'DIA'], // Include major market indices by default
         isDefaultQuery: true,
-        bypassCache: false // Allow cache for performance
+        bypassCache: false
       };
+
+      this.logger.debug('Initial state for market sentiment:', state);
 
       // Run the full workflow to get latest market sentiment
       const analysisResult = await this.runWorkflow(state);
-      return this.transformToMarketSentimentResponse(analysisResult);
+
+      this.logger.debug('Analysis result before transformation:', {
+        hasTickers: !!analysisResult.tickers?.length,
+        tickerCount: analysisResult.tickers?.length || 0,
+        hasStructuredAnalysis: !!analysisResult.structuredAnalysis,
+        structuredAnalysisTickers: analysisResult.structuredAnalysis?.tickers?.length || 0
+      });
+
+      const response = this.transformToMarketSentimentResponse(analysisResult);
+
+      this.logger.debug('Final market sentiment response:', {
+        hasTickers: !!response.structuredAnalysis.tickers?.length,
+        tickerCount: response.structuredAnalysis.tickers?.length || 0,
+        hasStockInfo: Object.keys(response.stockInfoMap || {}).length > 0
+      });
+
+      return response;
     } catch (error) {
       this.logger.error('Failed to get market sentiment:', error);
       // Return a valid response even in error case
