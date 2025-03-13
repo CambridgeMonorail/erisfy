@@ -11,6 +11,9 @@ import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { useMarketNews } from '../hooks/useMarketNews';
 import { StockData } from '../utils/mockData';
+import { MarketSector } from '@erisfy/api';
+
+const DEFAULT_SECTOR: MarketSector = "Information Technology";
 
 export interface AIPoweredMarketOverviewProps {
   className?: string;
@@ -57,13 +60,13 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-destructive/80">{error}</p>
+          <p className="text-sm text-destructive/80">{error.message}</p>
         </CardContent>
       </Card>
     );
   }
 
-  if (!news || !news.stories) {
+  if (!news || news.length === 0) {
     console.log('[AIPoweredMarketOverview] No news data available:', { news });
     return (
       <Card className={cn('border-muted bg-muted/5', className)}>
@@ -76,9 +79,11 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
     );
   }
 
+  const latestNewsDate = news[0]?.publishedAt ? new Date(news[0].publishedAt) : new Date();
+
   console.log('[AIPoweredMarketOverview] Rendering news data:', {
-    date: news.date,
-    storiesCount: news.stories.length
+    date: latestNewsDate,
+    newsCount: news.length
   });
 
   return (
@@ -101,7 +106,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
             </Button>
           </div>
           <p className="text-sm text-muted-foreground font-medium">
-            {new Date(news.date).toLocaleDateString('en-US', {
+            {latestNewsDate.toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
@@ -111,7 +116,13 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <NewsCarousel stories={news.stories} />
+        <NewsCarousel stories={news.map(item => ({
+          title: item.title,
+          one_line_summary: item.summary,
+          whats_happening: item.summary,
+          market_impact: '',
+          market_sector: (item.relevance?.[0] as MarketSector) || DEFAULT_SECTOR
+        }))} />
       </CardContent>
     </Card>
   );

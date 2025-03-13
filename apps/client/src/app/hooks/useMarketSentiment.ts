@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { MarketData, ApiError } from '@erisfy/api';
+import { ApiError } from '@erisfy/api';
 import { marketSentimentApi } from '../api/clients';
+import type { MarketData } from '../components/MarketSentimentNewsFeed';
 
 export function useMarketSentiment() {
   const [isLoading, setIsLoading] = useState(true);
@@ -8,13 +9,13 @@ export function useMarketSentiment() {
   const [marketData, setMarketData] = useState<MarketData | null>(null);
 
   const fetchMarketSentiment = async () => {
-    console.log('[useMarketSentiment] Starting fetch...');
     try {
       setIsLoading(true);
-      console.log('[useMarketSentiment] Making API request...');
       const response = await marketSentimentApi.getMarketSentiment();
-      console.log('[useMarketSentiment] Received response:', response);
-      setMarketData(response.data);
+
+      if (response.data) {
+        setMarketData(response.data);
+      }
       setError(null);
     } catch (err) {
       console.error('[useMarketSentiment] Error fetching market sentiment:', err);

@@ -7,25 +7,8 @@ import {
   Skeleton,
 } from '@erisfy/shadcnui';
 import { cn } from '@erisfy/shadcnui';
-
-export type SentimentType = 'bullish' | 'bearish' | 'neutral';
-
-type NewsItem = {
-  id: string;
-  title: string;
-  summary: string;
-  sentiment: SentimentType;
-  relevance?: string[];
-};
-
-export type StockInfo = {
-  ticker: string;
-  price: number;
-  dayChange: number;
-  dayChangePercent: number;
-  marketCap: number;
-  time: string;
-};
+import { SentimentType, StockInfo } from '@erisfy/api';
+import type { NewsItem } from '@erisfy/api';
 
 export type MarketData = {
   structuredAnalysis: {
@@ -212,6 +195,7 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
                     {sector}
                   </span>
                 ))}
+
               </div>
             </section>
           )}
@@ -267,6 +251,7 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
                       </tr>
                     );
                   })}
+
                 </tbody>
               </table>
             </section>
@@ -284,4 +269,5 @@ export const MarketSentimentNewsFeed: FC<MarketSentimentNewsFeedProps> = ({
       </CardContent>
     </Card>
   );
+
 };

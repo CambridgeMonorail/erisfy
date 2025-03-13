@@ -25,13 +25,45 @@ export abstract class BaseApiClient {
     this.delete = this.delete.bind(this);
     this.patch = this.patch.bind(this);
 
-    console.log('Axios instance created with config:', axiosConfig);
+    console.log('[BaseApiClient] Created with config:', axiosConfig);
   }
 
   private setupInterceptors(): void {
-    this.client.interceptors.response.use(
-      (response) => response.data,
+    // Request interceptor
+    this.client.interceptors.request.use(
+      (config) => {
+        console.log('[BaseApiClient] Making request:', {
+          method: config.method?.toUpperCase(),
+          url: config.url,
+          baseURL: config.baseURL,
+          headers: config.headers
+        });
+        return config;
+      },
       (error) => {
+        console.error('[BaseApiClient] Request error:', error);
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor
+    this.client.interceptors.response.use(
+      (response) => {
+        console.log('[BaseApiClient] Received response:', {
+          status: response.status,
+          url: response.config.url,
+          data: response.data
+        });
+        return response.data;
+      },
+      (error) => {
+        console.error('[BaseApiClient] Response error:', {
+          status: error.response?.status,
+          url: error.config?.url,
+          message: error.message,
+          data: error.response?.data
+        });
+
         if (error.response) {
           throw new ApiError(
             error.response?.status,
@@ -45,7 +77,7 @@ export abstract class BaseApiClient {
   }
 
   protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    console.log('Making GET request to:', path);
+    console.log('[BaseApiClient] Making GET request to:', path);
     const response = await this.client.get<T>(path, config);
     return response as ApiResponse<T>;
   }

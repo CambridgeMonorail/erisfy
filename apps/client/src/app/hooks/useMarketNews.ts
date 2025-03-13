@@ -1,91 +1,63 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { ApiError, MarketInsightsEndpoint, MarketDataInsights, NewsArticle } from '@erisfy/api';
-import { createApiConfig } from '../utils/apiConfig';
+import { useState, useEffect } from 'react';
+import { NewsItem, ApiError } from '@erisfy/api';
+import { marketInsightsApi } from '../api/clients';
 
-type NewsData = MarketDataInsights | NewsArticle[];
-type NewsClient<T> = {
-  getLatestMarketInsight?: () => Promise<{ data: T }>;
-  getLatestNews?: () => Promise<{ data: T }>;
-};
-
-const useNewsData = <T extends NewsData>(
-  clientFactory: () => NewsClient<T>
-) => {
-  const [news, setNews] = useState<T | null>(null);
+export function useMarketNews() {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
-  const client = useRef(clientFactory()).current;
 
-  const fetchNews = useCallback(async () => {
-    console.log('[useNewsData] Starting news fetch...');
+  const fetchNews = async () => {
     try {
       setIsLoading(true);
+      console.log('[useMarketNews] Fetching latest market insights...');
+      const response = await marketInsightsApi.getLatestMarketInsight();
+
+      if (response.data) {
+        // Transform market stories into NewsItem format and generate unique ids
+        const newsItems: NewsItem[] = response.data.stories.map((story, index) => ({
+          id: `${response.data.date}-${index}`, // Generate unique id using date and index
+          title: story.title,
+          summary: story.one_line_summary,
+          relevance: [story.market_sector],
+          publishedAt: response.data.date
+        }));
+        setNews(newsItems);
+      }
       setError(null);
-
-      let response;
-      if ('getLatestMarketInsight' in client && client.getLatestMarketInsight) {
-        console.log('[useNewsData] Calling getLatestMarketInsight...');
-        response = await client.getLatestMarketInsight();
-        console.log('[useNewsData] Market insight response:', response);
-      } else if (client.getLatestNews) {
-        console.log('[useNewsData] Calling getLatestNews...');
-        response = await client.getLatestNews();
-        console.log('[useNewsData] News response:', response);
-      }
-
-      if (!response) {
-        throw new Error('No valid news fetching method available');
-      }
-
-      // Extract data from the response directly
-      const newsData = response.data;
-      console.log('[useNewsData] Setting news data:', newsData);
-      setNews(newsData);
     } catch (err) {
-      console.error('[useNewsData] Error fetching news:', err);
-      if (err instanceof ApiError) {
-        console.error('[useNewsData] API Error details:', {
-          message: err.message,
-          status: err.status,
-          data: err.data
-        });
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+      console.error('[useMarketNews] Error fetching market news:', err);
+      setError(err instanceof ApiError ? err : new ApiError(500, 'Failed to fetch market news'));
     } finally {
       setIsLoading(false);
     }
-  }, [client]);
+  };
 
-  const triggerUpdate = useCallback(async () => {
-    if (isUpdating) return; // Prevent multiple simultaneous updates
+  const triggerUpdate = async () => {
     try {
       setIsUpdating(true);
+      await marketInsightsApi.getMarketInsights();
       await fetchNews();
+    } catch (err) {
+      console.error('[useMarketNews] Error triggering update:', err);
+      setError(err instanceof ApiError ? err : new ApiError(500, 'Failed to trigger news update'));
     } finally {
       setIsUpdating(false);
     }
-  }, [fetchNews, isUpdating]);
+  };
 
   useEffect(() => {
-    void fetchNews();
-  }, [fetchNews]);
+    fetchNews();
+  }, []);
 
   return {
     news,
     isLoading,
     error,
     isUpdating,
-    triggerUpdate,
+    triggerUpdate
   };
-};
-
-export const useMarketNews = () => {
-  return useNewsData<MarketDataInsights>(() =>
-    new MarketInsightsEndpoint(createApiConfig())
-  );
-};
+}
 
 

@@ -22,8 +22,34 @@ export class MarketInsightsEndpoint extends BaseApiClient {
     return this.get<MarketDataInsights[]>('/market-insights', { params: filter });
   }
 
-  async getMarketInsightByDate(date: string): Promise<ApiResponse<MarketDataInsights>> {
-    return this.get<MarketDataInsights>(`/market-insights/${date}`);
+  async getLatestMarketInsight(): Promise<ApiResponse<MarketDataInsights>> {
+    console.log('[MarketInsightsEndpoint] Calling getLatestMarketInsight');
+    try {
+      const response = await this.get<MarketDataInsights>('/market-insights/latest');
+      console.log('[MarketInsightsEndpoint] Raw response:', response);
+
+      // Check if response is already in ApiResponse format
+      if (response && typeof response === 'object' && 'data' in response) {
+        return response;
+      }
+
+      // If we get raw MarketDataInsights, wrap it in ApiResponse format
+      if (response && typeof response === 'object' && 'date' in response && 'stories' in response) {
+        return {
+          data: response as MarketDataInsights,
+          status: 200,
+          message: 'Latest market insight retrieved successfully'
+        };
+      }
+
+      throw new ApiError(500, 'Invalid response format from market insights endpoint');
+    } catch (error) {
+      console.error('[MarketInsightsEndpoint] Error fetching latest market insight:', error);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(500, 'Failed to fetch market insights');
+    }
   }
 
   async createMarketInsight(data: CreateMarketDataInsightsDto): Promise<ApiResponse<MarketDataInsights>> {
@@ -40,53 +66,5 @@ export class MarketInsightsEndpoint extends BaseApiClient {
 
   async deleteMarketInsight(date: string): Promise<ApiResponse<void>> {
     return this.delete<void>(`/market-insights/${date}`);
-  }
-
-  async getLatestMarketInsight(): Promise<ApiResponse<MarketDataInsights>> {
-    console.log('[MarketInsightsEndpoint] Calling getLatestMarketInsight');
-    try {
-      const response = await this.get<MarketDataInsights>('/market-insights/latest');
-      console.log('[MarketInsightsEndpoint] Raw response:', response);
-
-      // If response is already in ApiResponse format, return it
-      if (response && typeof response === 'object' && 'data' in response && response.data) {
-        return response as ApiResponse<MarketDataInsights>;
-      }
-
-      // If response is the direct data (has required MarketDataInsights properties)
-      if (
-        response &&
-        typeof response === 'object' &&
-        'date' in response &&
-        typeof response.date === 'string' &&
-        'stories' in response &&
-        Array.isArray(response.stories)
-      ) {
-        const marketDataInsights: MarketDataInsights = {
-          date: response.date,
-          stories: response.stories
-        };
-
-        return {
-          data: marketDataInsights,
-          status: 200,
-          message: 'Latest market insight retrieved successfully'
-        };
-      }
-
-      // If response is invalid
-      throw new ApiError(500, 'Invalid response format from market insights endpoint');
-    } catch (error) {
-      console.error('[MarketInsightsEndpoint] Error fetching latest market insight:', error);
-
-      if (error instanceof ApiError) {
-        throw error;
-      }
-
-      throw new ApiError(
-        500,
-        `Failed to fetch market insights: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
   }
 }

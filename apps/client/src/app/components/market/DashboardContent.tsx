@@ -19,10 +19,18 @@ export const DashboardContent: FC<DashboardContentProps> = ({
   isLoading,
   marketData,
 }) => {
-  console.log('[DashboardContent] About to render MarketSentimentNewsFeed with:', {
+  console.log('[DashboardContent] Rendering with props:', {
+    hasFilteredStocks: !!filteredStocks?.length,
+    filteredStocksCount: filteredStocks?.length,
     isLoading,
     hasMarketData: !!marketData,
-    marketDataContent: marketData
+    marketDataDetails: marketData ? {
+      hasStructuredAnalysis: !!marketData.structuredAnalysis,
+      sentiment: marketData.structuredAnalysis?.marketSentiment,
+      sectorsCount: marketData.structuredAnalysis?.sectors?.length,
+      tickersCount: marketData.structuredAnalysis?.tickers?.length,
+      stockInfoMapSize: Object.keys(marketData.stockInfoMap || {}).length
+    } : 'null'
   });
 
   return (
@@ -72,24 +80,6 @@ export const DashboardContent: FC<DashboardContentProps> = ({
           <MainWorkspace />
         </div>
       </ErrorBoundary>
-
-      {/* Footer Section */}
-      <footer className="bg-background text-foreground p-4">
-        <div className="space-y-4">
-          <div>
-            <strong>Learning & Community Resources:</strong>
-            <ul className="list-disc list-inside">
-              <li>Glossary of financial terms</li>
-              <li>Tutorials on how to use filters effectively</li>
-              <li>Community forum or expert discussion groups</li>
-            </ul>
-          </div>
-          <div>
-            <strong>Elite Upgrade Prompt:</strong>
-            <p>Unlock real-time alerts and advanced AI insights with Elite.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

@@ -1,202 +1,83 @@
-import { useState, useEffect, useCallback } from 'react';
-import { MarketInsightsEndpoint, ApiError, type MarketSector } from '@erisfy/api';
-import { shouldUseMocks } from '../../utils/environment';
-import type { StockData } from '../utils/mockData';
-import type { MarketData, SentimentType } from '../components/MarketSentimentNewsFeed';
+import { useState, useCallback, useEffect } from 'react';
+import { ApiError, MarketDataInsights, MarketInsightsEndpoint, getApiBaseUrl } from '@erisfy/api';
 
-const SECTORS: MarketSector[] = [
-  "Energy",
-  "Materials",
-  "Industrials",
-  "Utilities",
-  "Healthcare",
-  "Financials",
-  "Consumer Discretionary",
-  "Consumer Staples",
-  "Information Technology",
-  "Communication Services",
-  "Real Estate"
-];
-
-// Maximum number of retries for API calls
 const MAX_RETRIES = 3;
-// Base delay for exponential backoff (in ms)
-const BASE_DELAY = 1000;
+const BASE_RETRY_DELAY = 2000; // 2 seconds
 
 /**
- * Implements exponential backoff delay
- * @param retryCount Current retry attempt number
- * @returns Delay in milliseconds
+ * Hook for fetching market opportunities data from the latest market insights
  */
-const getBackoffDelay = (retryCount: number) => {
-  return Math.min(BASE_DELAY * Math.pow(2, retryCount), 10000);
-};
-
-// Temporary mock data generator until API is ready
-const generateMockData = (count: number): StockData[] => {
-  return Array.from({ length: count }, (_, i) => {
-    const basePrice = Math.random() * 1000;
-    return {
-      ticker: `TKR${i}`,
-      companyName: `Company ${i}`,
-      sector: SECTORS[i % SECTORS.length],
-      industry: 'Software',
-      country: 'USA',
-      currentPrice: basePrice,
-      marketCap: Math.random() * 1000000000,
-      historicalPerformance: Array.from({ length: 30 }, (_, j) => ({
-        date: new Date(Date.now() - j * 24 * 60 * 60 * 1000).toISOString(),
-        value: basePrice * (1 + (Math.random() * 0.2 - 0.1)) // +/- 10% variance
-      }))
-    };
-  });
-};
-
-/**
- * Validates the API configuration and returns any errors
- */
-const validateApiConfig = () => {
-  if (shouldUseMocks()) {
-    return null;
-  }
-
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-  if (!baseURL) {
-    return new ApiError(500, 'API base URL not configured. Please set VITE_API_BASE_URL environment variable.');
-  }
-  return null;
-};
-
 export function useMarketOpportunities() {
-  const [stocks, setStocks] = useState<StockData[]>([]);
-  const [marketData, setMarketData] = useState<MarketData | null>(null);
+  const [data, setData] = useState<MarketDataInsights | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<ApiError | null>(null);
 
-  const fetchMarketInsights = useCallback(async (attempt = 0): Promise<MarketData | null> => {
+  const fetchOpportunities = useCallback(async (attempt = 1): Promise<void> => {
     try {
-      // If mocks are enabled, return mock data
-      if (shouldUseMocks()) {
-        return {
-          structuredAnalysis: {
-            analysis: "Mock market analysis: Tech stocks showing strong momentum.",
-            sectors: SECTORS.slice(0, 3),
-            marketSentiment: "bullish" as SentimentType,
-            tickers: ["MOCK1", "MOCK2", "MOCK3"]
-          },
-          sentiment: "bullish" as SentimentType,
-          stockInfoMap: {},
-          stockInfo: {
-            ticker: "MOCK1",
-            price: 150.00,
-            dayChange: 2.5,
-            dayChangePercent: 1.67,
-            marketCap: 2000000000,
-            time: new Date().toISOString()
-          }
-        };
-      }
+      setIsLoading(true);
+      setError(null);
 
-      // Validate configuration before making request
-      const configError = validateApiConfig();
-      if (configError) {
-        throw configError;
-      }
-
+      console.log('[useMarketOpportunities] Creating client with base URL:', getApiBaseUrl());
       const client = new MarketInsightsEndpoint({
-        baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
-        timeout: 10000,
+        baseURL: getApiBaseUrl(),
+        timeout: 30000, // Increased timeout to 30s
       });
 
-      console.log('[useMarketOpportunities] Fetching market insights...');
+      console.log(`[useMarketOpportunities] Attempt ${attempt} of ${MAX_RETRIES}`);
       const response = await client.getLatestMarketInsight();
-      console.log('[useMarketOpportunities] Market insights response:', response);
+      console.log('[useMarketOpportunities] Raw response:', response);
 
       if (!response?.data) {
         throw new ApiError(500, 'Invalid market insights data received');
       }
 
-      // Transform MarketDataInsights into MarketData format with null checks
-      return {
-        structuredAnalysis: {
-          analysis: response.data.stories?.[0]?.whats_happening || 'No market analysis available',
-          sectors: response.data.stories ? Array.from(new Set(response.data.stories.map(s => s.market_sector))) : [],
-          marketSentiment: (response.data.stories?.[0]?.market_sector as SentimentType) || 'neutral',
-          tickers: []
-        },
-        sentiment: 'neutral',
-        stockInfoMap: {},
-        stockInfo: {
-          ticker: '',
-          price: 0,
-          dayChange: 0,
-          dayChangePercent: 0,
-          marketCap: 0,
-          time: new Date().toISOString()
-        }
-      };
-    } catch (err) {
-      console.error(`[useMarketOpportunities] Attempt ${attempt + 1} failed:`, err);
-
-      if (err instanceof ApiError) {
-        // Only retry on network errors or 5xx errors
-        if (err.status >= 500 && attempt < MAX_RETRIES) {
-          const delay = getBackoffDelay(attempt);
-          console.log(`[useMarketOpportunities] Retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
-          return fetchMarketInsights(attempt + 1);
-        }
-      }
-      throw err;
-    }
-  }, []);
-
-  const fetchData = useCallback(async () => {
-    try {
-      setIsLoading(true);
+      console.log('[useMarketOpportunities] Setting data:', response.data);
+      setData(response.data);
       setError(null);
+    } catch (err) {
+      console.error(`[useMarketOpportunities] Attempt ${attempt} failed:`, err);
 
-      // Fetch market insights with retry logic
-      try {
-        const marketInsightsData = await fetchMarketInsights();
-        if (marketInsightsData) {
-          setMarketData(marketInsightsData);
-        }
-      } catch (err) {
-        console.error('[useMarketOpportunities] Market insights fetch failed:', err);
+      // Only retry on network errors or 5xx server errors
+      const shouldRetry = attempt < MAX_RETRIES && (
+        !(err instanceof ApiError) || // Network error
+        (err instanceof ApiError && err.status >= 500) // Server error
+      );
 
-        if (err instanceof ApiError) {
-          setError(err);
-        } else {
-          setError(new ApiError(500, 'Failed to fetch market insights'));
-        }
+      if (shouldRetry) {
+        const retryDelay = BASE_RETRY_DELAY * attempt;
+        console.log(`[useMarketOpportunities] Retrying in ${retryDelay}ms...`);
+        setTimeout(() => {
+          void fetchOpportunities(attempt + 1);
+        }, retryDelay);
+        return;
       }
 
-      // Always generate mock stocks even if market insights fail
-      const mockStocks = generateMockData(100);
-      setStocks(mockStocks);
+      setError(err instanceof ApiError ? err : new ApiError(500, 'Failed to fetch market opportunities'));
+      setData(null);
     } finally {
       setIsLoading(false);
     }
-  }, [fetchMarketInsights]);
-
-  const reset = useCallback(() => {
-    setError(null);
-    setIsLoading(false);
-    setStocks([]);
-    setMarketData(null);
   }, []);
 
+  const reset = useCallback(() => {
+    console.log('[useMarketOpportunities] Resetting state and fetching fresh data');
+    setData(null);
+    setIsLoading(true);
+    setError(null);
+    void fetchOpportunities(1);
+  }, [fetchOpportunities]);
+
+  // Add initial fetch on mount
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    console.log('[useMarketOpportunities] Initiating initial fetch');
+    void fetchOpportunities(1);
+  }, [fetchOpportunities]);
 
   return {
-    stocks,
-    marketData,
+    data,
     isLoading,
     error,
-    refetch: fetchData,
+    refetch: fetchOpportunities,
     reset,
   };
 }
