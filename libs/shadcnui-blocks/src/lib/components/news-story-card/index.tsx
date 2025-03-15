@@ -31,6 +31,7 @@ import {
 } from '@erisfy/shadcnui';
 
 import { type MarketSector } from '@erisfy/api';  // Import the shared type
+import { useEffect } from 'react';
 
 export type Story = {
   title: string;
@@ -68,6 +69,23 @@ const categoryIcons: Record<MarketSector, LucideIcon> = {
 };
 
 export function NewsStoryCard({ story, className }: NewsStoryCardProps) {
+  // Debug the incoming story prop
+  useEffect(() => {
+    console.log('[NewsStoryCard] Received story:', {
+      story,
+      title: story?.title,
+      hasRequiredFields: !!(
+        story?.title && 
+        story?.one_line_summary && 
+        story?.whats_happening && 
+        story?.market_impact && 
+        story?.market_sector
+      ),
+      market_sector: story?.market_sector,
+      hasValidSector: !!categoryIcons[story?.market_sector]
+    });
+  }, [story]);
+  
   const CategoryIcon = categoryIcons[story.market_sector] || Newspaper;
 
   return (

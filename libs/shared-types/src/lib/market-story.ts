@@ -1,4 +1,4 @@
-// 1) A union of allowed market sectors
+// Define the allowed market sectors as a union type
 export type MarketSector =
   | "Energy"
   | "Materials"
@@ -10,19 +10,34 @@ export type MarketSector =
   | "Consumer Staples"
   | "Information Technology"
   | "Communication Services"
-  | "Real Estate";
+  | "Real Estate"
+  | "Overall stock market"
+  | "Bond market"
+  | "Automotive sector"
+  | "Multiple sectors"
+  | "Overall U.S. stock market"
+  | "Equity market"
+  | "Commodity market"
+  | "General financial market";
 
-// 2) A single market story
+// A single market story
 export interface MarketStory {
+  id: string;
   title: string;
   one_line_summary: string;
   whats_happening: string;
   market_impact: string;
   market_sector: MarketSector;
+  marketDataRecordId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// 3) The overall data structure (e.g., for a given day)
+// The overall data structure (e.g., for a given day)
 export interface MarketData {
-  date: string; // e.g., "2025-02-16"
+  id: string;
+  date: string;
   stories: MarketStory[];
+  createdAt: string;
+  updatedAt: string;
 }

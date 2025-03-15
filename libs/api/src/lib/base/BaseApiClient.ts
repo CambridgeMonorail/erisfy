@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ApiError } from '../errors/ApiError';
 import { ApiConfig, ApiResponse } from '../types/api';
 
@@ -14,6 +14,11 @@ export abstract class BaseApiClient {
         ...(config as ApiConfig).headers,
       },
     } : config;
+
+    console.log('[BaseApiClient] Initializing with config:', {
+      baseURL: axiosConfig.baseURL,
+      timeout: axiosConfig.timeout
+    });
 
     this.client = axios.create(axiosConfig);
     this.setupInterceptors();
@@ -46,7 +51,7 @@ export abstract class BaseApiClient {
       }
     );
 
-    // Response interceptor
+    // Response interceptor - only log the response, don't transform it
     this.client.interceptors.response.use(
       (response) => {
         console.log('[BaseApiClient] Received response:', {
@@ -54,7 +59,7 @@ export abstract class BaseApiClient {
           url: response.config.url,
           data: response.data
         });
-        return response.data;
+        return response; // Return the full response, not just response.data
       },
       (error) => {
         console.error('[BaseApiClient] Response error:', {
@@ -77,28 +82,83 @@ export abstract class BaseApiClient {
   }
 
   protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    console.log('[BaseApiClient] Making GET request to:', path);
-    const response = await this.client.get<T>(path, config);
-    return response as ApiResponse<T>;
+    try {
+      console.log(`[BaseApiClient] Making GET request to: ${path}`);
+      const response: AxiosResponse<T> = await this.client.get<T>(path, config);
+      console.log(`[BaseApiClient] Response received from ${path}:`, response.data);
+      
+      // Return proper ApiResponse format
+      return { 
+        data: response.data,
+        status: response.status,
+        message: response.statusText
+      } as ApiResponse<T>;
+    } catch (error) {
+      console.error(`[BaseApiClient] Error in GET request to ${path}:`, error);
+      throw this.handleError(error);
+    }
   }
 
   protected async post<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    const response = await this.client.post<T>(path, data, config);
-    return response as ApiResponse<T>;
+    try {
+      const response = await this.client.post<T>(path, data, config);
+      return { 
+        data: response.data,
+        status: response.status,
+        message: response.statusText
+      } as ApiResponse<T>;
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 
   protected async put<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    const response = await this.client.put<T>(path, data, config);
-    return response as ApiResponse<T>;
+    try {
+      const response = await this.client.put<T>(path, data, config);
+      return { 
+        data: response.data,
+        status: response.status,
+        message: response.statusText
+      } as ApiResponse<T>;
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 
   protected async delete<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    const response = await this.client.delete<T>(path, config);
-    return response as ApiResponse<T>;
+    try {
+      const response = await this.client.delete<T>(path, config);
+      return { 
+        data: response.data,
+        status: response.status,
+        message: response.statusText
+      } as ApiResponse<T>;
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 
   protected async patch<T>(path: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    const response = await this.client.patch<T>(path, data, config);
-    return response as ApiResponse<T>;
+    try {
+      const response = await this.client.patch<T>(path, data, config);
+      return { 
+        data: response.data,
+        status: response.status,
+        message: response.statusText
+      } as ApiResponse<T>;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  private handleError(error: any): ApiError {
+    if (error.response) {
+      return new ApiError(
+        error.response?.status,
+        error.response?.data?.message || 'An unexpected error occurred',
+        error.response?.data
+      );
+    }
+    return new ApiError(500, 'Network Error');
   }
 }

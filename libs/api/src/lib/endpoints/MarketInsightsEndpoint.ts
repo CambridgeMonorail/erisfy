@@ -28,30 +28,13 @@ export class MarketInsightsEndpoint extends BaseApiClient {
       const response = await this.get<MarketDataInsights>('/market-insights/latest');
       console.log('[MarketInsightsEndpoint] Raw response:', response);
 
-      // Check if response is already in ApiResponse format
-      if (response && typeof response === 'object' && 'data' in response) {
-        return response;
+      // Check if the response has data
+      if (!response.data) {
+        console.error('[MarketInsightsEndpoint] Invalid response - missing data:', response);
+        throw new ApiError(500, 'Invalid response format from market insights endpoint');
       }
 
-      // Validate that the response has the required properties of MarketDataInsights
-      if (
-        response &&
-        typeof response === 'object' &&
-        'id' in response &&
-        'stories' in response &&
-        'date' in response &&
-        'createdAt' in response &&
-        'updatedAt' in response
-      ) {
-        // Use type assertion only after validating the required properties
-        return {
-          data: response as unknown as MarketDataInsights,
-          status: 200,
-          message: 'Latest market insight retrieved successfully'
-        };
-      }
-
-      throw new ApiError(500, 'Invalid response format from market insights endpoint');
+      return response;
     } catch (error) {
       console.error('[MarketInsightsEndpoint] Error fetching latest market insight:', error);
       if (error instanceof ApiError) {

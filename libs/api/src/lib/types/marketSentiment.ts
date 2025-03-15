@@ -7,15 +7,18 @@ export type StockInfo = {
   dayChangePercent: number;
   marketCap: number;
   time: string;
+  error?: string;
+};
+
+export type StructuredAnalysis = {
+  analysis: string;
+  sectors: string[];
+  marketSentiment: SentimentType;
+  tickers: string[];
 };
 
 export type MarketData = {
-  structuredAnalysis: {
-    analysis: string;
-    sectors: string[];
-    marketSentiment: SentimentType;
-    tickers: string[];
-  };
+  structuredAnalysis: StructuredAnalysis;
   sentiment: SentimentType;
   stockInfoMap: Record<string, StockInfo>;
   stockInfo: StockInfo;

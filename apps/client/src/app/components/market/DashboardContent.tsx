@@ -1,37 +1,46 @@
-import { FC } from 'react';
+import { FC, memo, useEffect } from 'react';
 import { Button } from '@erisfy/shadcnui';
 import { Download } from 'lucide-react';
 import { CalendarDateRangePicker, ErrorBoundary } from '@erisfy/shadcnui-blocks';
-import { AIPoweredMarketOverview } from '../AIPoweredMarketOverview';
+import { LatestMarketInsights } from '../../components/LatestMarketInsights';
 import { MainWorkspace } from '../MainWorkspace';
 import { MarketSentimentNewsFeed } from '../MarketSentimentNewsFeed';
-import type { StockData } from '../../utils/mockData';
-import type { MarketData } from '../MarketSentimentNewsFeed';
+import { MarketData } from '@erisfy/api';
+import type { MarketDataInsights } from '@erisfy/api';
 
 type DashboardContentProps = {
-  filteredStocks: StockData[];
-  isLoading: boolean;
-  marketData: MarketData | null;
+  /**
+   * Props for market opportunities data
+   */
+  marketOpportunities: {
+    marketInsights?: MarketDataInsights;
+    isLoading: boolean;
+    error?: Error | null;
+  };
+  /**
+   * Props for market sentiment data
+   */
+  marketSentiment: {
+    marketData?: MarketData;
+    isLoading: boolean;
+    error?: Error | null;
+  };
 };
 
-export const DashboardContent: FC<DashboardContentProps> = ({
-  filteredStocks,
-  isLoading,
-  marketData,
+export const DashboardContent: FC<DashboardContentProps> = memo(({
+  marketOpportunities,
+  marketSentiment,
 }) => {
-  console.log('[DashboardContent] Rendering with props:', {
-    hasFilteredStocks: !!filteredStocks?.length,
-    filteredStocksCount: filteredStocks?.length,
-    isLoading,
-    hasMarketData: !!marketData,
-    marketDataDetails: marketData ? {
-      hasStructuredAnalysis: !!marketData.structuredAnalysis,
-      sentiment: marketData.structuredAnalysis?.marketSentiment,
-      sectorsCount: marketData.structuredAnalysis?.sectors?.length,
-      tickersCount: marketData.structuredAnalysis?.tickers?.length,
-      stockInfoMapSize: Object.keys(marketData.stockInfoMap || {}).length
-    } : 'null'
-  });
+  // Debug logging for marketOpportunities prop
+  useEffect(() => {
+    console.log('[DashboardContent] Market Opportunities props:', {
+      marketInsights: marketOpportunities.marketInsights,
+      hasData: !!marketOpportunities.marketInsights,
+      storiesCount: marketOpportunities.marketInsights?.stories?.length || 0,
+      isLoading: marketOpportunities.isLoading,
+      hasError: !!marketOpportunities.error
+    });
+  }, [marketOpportunities]);
 
   return (
     <div
@@ -53,7 +62,7 @@ export const DashboardContent: FC<DashboardContentProps> = ({
           <CalendarDateRangePicker data-testid="date-range-picker" />
           <Button variant="default" data-testid="download-button">
             <span className="hidden sm:inline">Download</span>
-            <Download className="sm:hidden" />
+            <Download className="sm:ml-2 h-4 w-4 sm:hidden" />
           </Button>
         </div>
       </div>
@@ -61,9 +70,10 @@ export const DashboardContent: FC<DashboardContentProps> = ({
       {/* Market Analysis Section */}
       <ErrorBoundary>
         <div className="space-y-4">
-          <AIPoweredMarketOverview
-            filteredStocks={filteredStocks}
-            isLoading={isLoading}
+          <LatestMarketInsights
+            data={marketOpportunities.marketInsights}
+            isLoading={marketOpportunities.isLoading}
+            error={marketOpportunities.error}
           />
         </div>
       </ErrorBoundary>
@@ -71,15 +81,17 @@ export const DashboardContent: FC<DashboardContentProps> = ({
       {/* Market Intel Section */}
       <ErrorBoundary>
         <div className="space-y-4">
-          {marketData && (
-            <MarketSentimentNewsFeed
-              isLoading={isLoading}
-              marketData={marketData}
-            />
-          )}
+          <MarketSentimentNewsFeed
+            marketData={marketSentiment.marketData}
+            isLoading={marketSentiment.isLoading}
+            error={marketSentiment.error}
+          />
           <MainWorkspace />
         </div>
       </ErrorBoundary>
     </div>
   );
-};
+});
+
+// Display name for debugging purposes
+DashboardContent.displayName = 'DashboardContent';
