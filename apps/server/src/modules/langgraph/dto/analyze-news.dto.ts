@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, Matches, Length, IsArray } from 'class-validator';
+import { IsString, IsOptional, Matches, Length, IsArray, IsBoolean } from 'class-validator';
 
 export class AnalyzeNewsDto {
   @ApiPropertyOptional({
@@ -29,4 +29,12 @@ export class AnalyzeNewsDto {
     each: true
   })
   tickers?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Option to bypass cache for testing',
+    example: false
+  })
+  @IsBoolean()
+  @IsOptional()
+  bypassCache?: boolean;
 }

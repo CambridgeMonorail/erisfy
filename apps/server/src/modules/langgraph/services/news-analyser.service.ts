@@ -1,229 +1,370 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ChatOpenAI } from "@langchain/openai";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { BaseMessage } from "@langchain/core/messages";
+import { PrismaService } from '../../../prisma.service';
 import { NewsAnalysisState } from '../interfaces/news-analysis-state.interface';
-import { StructuredLLMResponse } from '../../openai/interfaces/news-analysis.interface';
+import { StructuredLLMResponse, StockInfo } from '../../openai/interfaces/news-analysis.interface';
+import { LLMAnalyzerService } from './llm-analyzer.service';
+import { ArticleManagerService } from './article-manager.service';
+import { TickerExtractorService } from './ticker-extractor.service';
+import { MarketSentimentResponseDto } from '../dto/market-sentiment-response.dto';
+import { SentimentType } from '@erisfy/api';
+
+interface PrismaAnalysisResult {
+  id: string;
+  analysis: string;
+  query: string;
+  sectors: string[];
+  isDefaultQuery: boolean;
+  marketSentiment: string;
+  createdAt: Date;
+  updatedAt: Date;
+  stockData: Array<{ ticker: string }>;
+}
+
+interface StoredAnalysis {
+  id: string;
+  analysis: string;
+  sectors: string[];
+  marketSentiment: string;
+  tickers: string[];
+  stockData: Array<{ ticker: string }>;
+}
+
+interface StockSnapshot {
+  ticker: string;
+  price: number;
+  dayChange: number;
+  dayChangePercent: number;
+  marketCap: number;
+  snapshotTime: Date;
+}
 
 @Injectable()
 export class NewsAnalyserService {
   private readonly logger = new Logger(NewsAnalyserService.name);
-  private readonly llm: ChatOpenAI;
 
-  constructor(private readonly configService: ConfigService) {
-    const apiKey = this.configService.getOrThrow<string>('OPENAI_API_KEY');
-    this.llm = new ChatOpenAI({
-      modelName: "gpt-4",
-      temperature: 0,
-      openAIApiKey: apiKey
-    });
-  }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly llmAnalyzer: LLMAnalyzerService,
+    private readonly articleManager: ArticleManagerService,
+    private readonly tickerExtractor: TickerExtractorService
+  ) {}
 
   async analyseNews(state: NewsAnalysisState): Promise<NewsAnalysisState> {
     try {
-      if (!state.articles || state.articles.length === 0) {
+      if (!state.articles?.length) {
         this.logger.warn('No articles provided for analysis');
-        state.analysis = "No news articles found for analysis.";
-        return state;
+        return {
+          ...state,
+          analysis: "No news articles found for analysis.",
+          error: "No articles provided",
+          stockInfo: null
+        };
       }
 
-      this.logger.log(`Starting analysis of ${state.articles.length} news articles`);
-
-      // Debug log the incoming state
-      this.logger.debug('Incoming state:', {
-        articleCount: state.articles.length,
-        query: state.query,
-        tickers: state.tickers,
-        isDefaultQuery: state.isDefaultQuery
-      });
-
-      // Log article details with validation
-      state.articles.forEach((article, index) => {
-        this.logger.debug(`Article ${index + 1} validation:`, {
-          hasTitle: !!article.title,
-          titleLength: article.title?.length,
-          hasDescription: !!article.description,
-          descriptionLength: article.description?.length,
-          url: article.url,
-          publishedAt: article.publishedAt
-        });
-      });
-
-      // Construct the prompt - adjust based on whether it's default or specific query
-      const systemPrompt = new SystemMessage({
-        content: state.isDefaultQuery
-          ? `You are a financial analyst assistant. Review these top financial news articles and provide a response as a JSON object with the following keys:
-      {
-        "analysis": "<A concise overview of the major market themes or events today>",
-        "sectors": ["<list of key sectors or industries affected>"],
-        "marketSentiment": "<one of: positive, negative, neutral>",
-        "tickers": ["<list of notable company mentions or stock tickers>"]
+      // Check cache if not bypassed
+      if (!state.bypassCache) {
+        const cachedResult = await this.findRecentAnalysis(state);
+        if (cachedResult) {
+          return this.processExistingAnalysis(state, cachedResult);
+        }
       }
 
-      Example output:
-      {
-        "analysis": "The S&P 500 experienced a decline due to tariff concerns and market uncertainty.",
-        "sectors": ["Financials", "Technology"],
-        "marketSentiment": "negative",
-        "tickers": ["SPY", "AAPL"]
-      }
+      // Log incoming state
+      this.logIncomingState(state);
 
-      Focus on the most impactful stories and their broader market implications.
-      Return only the JSON object without any additional text.`
-          : `You are a financial analyst assistant. Analyse the provided news articles and provide a response as a JSON object with the following keys:
-      {
-        "analysis": "<A concise explanation of the key themes or events being discussed>",
-        "sectors": ["<list of impacted market sectors or industries>"],
-        "marketSentiment": "<one of: positive, negative, neutral>",
-        "tickers": ["<list of specific company names or stock tickers mentioned>"]
-      }
-
-      Example output:
-      {
-        "analysis": "Market uncertainty remains as trade tensions affect tech and financial sectors.",
-        "sectors": ["Technology", "Financials"],
-        "marketSentiment": "negative",
-        "tickers": ["GOOG", "MSFT"]
-      }
-
-      Be concise but thorough in your analysis.
-      Return only a valid JSON object with no extra commentary.`
-      });
-
-      // Format articles for the prompt with validation
-      const newsContent = state.articles.map((article, i) => {
-        const title = article.title?.trim() || 'No title available';
-        const description = article.description?.trim() || 'No description available';
-        return `Article ${i + 1}:\nTitle: ${title}\nSummary: ${description}\n`;
-      }).join('\n');
-
-      this.logger.debug('Formatted news content length:', {
-        contentLength: newsContent.length,
-        articleCount: state.articles.length
-      });
-
-      const userPrompt = new HumanMessage({
-        content: `Please analyze these financial news articles:\n\n${newsContent}`
-      });
-
-      this.logger.debug('Sending prompts to LLM:', {
-        systemPromptLength: systemPrompt.content.length,
-        userPromptLength: userPrompt.content.length
-      });
-
-      // Add detailed content logging for development
-      this.logger.debug('System Prompt Content:', {
-        content: systemPrompt.content
-      });
-      this.logger.debug('User Prompt Content:', {
-        content: userPrompt.content
-      });
+      // Format articles for analysis
+      const formattedContent = this.articleManager.formatArticlesForPrompt(state.articles);
 
       // Get analysis from LLM
-      const response = await this.llm.invoke([systemPrompt, userPrompt]);
+      const analysis = await this.llmAnalyzer.analyzeNewsContent(
+        formattedContent,
+        state.isDefaultQuery || false
+      );
 
-      this.logger.debug('Raw LLM response:', {
-        type: response instanceof BaseMessage ? 'BaseMessage' : typeof response,
-        hasContent: response instanceof BaseMessage ? !!response.content : false
-      });
-
-      // Safely extract text content from the response
-      let analysisContent: string;
-      try {
-        if (response instanceof BaseMessage) {
-          analysisContent = response.content?.toString() || '';
-        } else if (typeof response === 'object' && response !== null) {
-          analysisContent = JSON.stringify(response);
-        } else {
-          analysisContent = String(response || '');
-        }
-
-        // Store raw analysis content
-        state.analysis = analysisContent;
-
-        // Try to parse the JSON response
-        try {
-          const parsedAnalysis = JSON.parse(analysisContent) as StructuredLLMResponse;
-          state.structuredAnalysis = parsedAnalysis;
-
-          // Update tickers from structured response
-          if (parsedAnalysis.tickers && parsedAnalysis.tickers.length > 0) {
-            state.tickers = parsedAnalysis.tickers;
-          }
-
-          // Update sentiment and sectors
-          if (parsedAnalysis.marketSentiment) {
-            state.sentiment = parsedAnalysis.marketSentiment;
-          }
-
-          if (parsedAnalysis.sectors && parsedAnalysis.sectors.length > 0) {
-            state.sectors = parsedAnalysis.sectors;
-          }
-
-          this.logger.debug('Parsed structured analysis:', {
-            hasAnalysis: !!parsedAnalysis.analysis,
-            sectorCount: parsedAnalysis.sectors.length,
-            tickerCount: parsedAnalysis.tickers.length,
-            sentiment: parsedAnalysis.marketSentiment,
-            sectors: parsedAnalysis.sectors.join(', ')
-          });
-        } catch (parseError) {
-          this.logger.warn('Failed to parse structured analysis - falling back to regex extraction:', {
-            error: parseError.message,
-            rawContent: analysisContent.substring(0, 100) + '...'
-          });
-
-          // Fallback to regex extraction for tickers
-          const tickerMatch = analysisContent.match(/\b[A-Z]{1,5}\b/g);
-          if (tickerMatch) {
-            state.tickers = [...new Set(tickerMatch)]; // Remove duplicates
-          }
-        }
-
-        this.logger.debug('Final analysis state:', {
-          hasStructuredAnalysis: !!state.structuredAnalysis,
-          tickersFound: state.tickers?.length || 0,
-          allTickers: state.tickers?.join(', ') || 'none',
-          sentiment: state.sentiment || 'unknown',
-          sectors: state.sectors?.join(', ') || 'none'
-        });
-
-      } catch (parseError) {
-        this.logger.error('Error processing LLM response:', {
-          error: parseError.message,
-          responseType: typeof response,
-          response: response instanceof BaseMessage ? 'BaseMessage' : response
-        });
-        throw parseError;
-      }
-
-      this.logger.log('News analysis completed successfully', {
-        analysisLength: analysisContent.length,
-        hasStructuredData: !!state.structuredAnalysis,
-        extractedTickers: state.tickers?.join(', ') || 'none',
-        sentiment: state.sentiment,
-        sectorCount: state.sectors?.length || 0
-      });
-
-      return state;
+      // Process and store analysis
+      return this.processAndStoreAnalysis(state, analysis);
 
     } catch (error) {
-      this.logger.error('Error analyzing news:', {
-        error: error.message,
-        stack: error.stack,
-        state: {
-          articleCount: state.articles?.length,
-          hasQuery: !!state.query,
-          hasTickers: !!state.tickers?.length,
-          responseState: {
-            hasAnalysis: !!state.analysis,
-            analysisLength: state.analysis?.length
+      this.logger.error('Error analyzing news:', error);
+      return {
+        ...state,
+        error: `Failed to analyze news: ${error.message}`,
+        stockInfo: null
+      };
+    }
+  }
+
+  private async findRecentAnalysis(state: NewsAnalysisState) {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+    try {
+      const analysis = await this.prisma.newsAnalysisResult.findFirst({
+        where: {
+          query: state.query,
+          isDefaultQuery: state.isDefaultQuery || false,
+          createdAt: { gte: oneHourAgo }
+        },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          stockData: {
+            select: { ticker: true }
+          }
+        }
+      }) as PrismaAnalysisResult | null;
+
+      if (analysis) {
+        // Transform PrismaAnalysisResult to StoredAnalysis
+        const tickers = analysis.stockData.map(s => s.ticker);
+        return {
+          id: analysis.id,
+          analysis: analysis.analysis,
+          sectors: analysis.sectors,
+          marketSentiment: analysis.marketSentiment,
+          tickers,
+          stockData: analysis.stockData
+        };
+      }
+
+      return null;
+    } catch (error) {
+      this.logger.error('Error retrieving recent analysis', error);
+      return null;
+    }
+  }
+
+  private async processExistingAnalysis(state: NewsAnalysisState, existingAnalysis: StoredAnalysis) {
+    this.logger.log('Found recent analysis in database');
+
+    // Extract any additional tickers from the articles' content
+    const extractedTickers = this.tickerExtractor.extractTickersFromArticles(state.articles);
+
+    // Combine existing and newly extracted tickers
+    const allTickers = Array.from(new Set([
+      ...existingAnalysis.tickers,
+      ...extractedTickers
+    ]));
+
+    const stockSnapshots = await this.getStockSnapshots(existingAnalysis.id);
+    const stockInfoMap = this.processStockSnapshots(stockSnapshots);
+
+    return {
+      ...state,
+      analysis: existingAnalysis.analysis,
+      structuredAnalysis: {
+        analysis: existingAnalysis.analysis,
+        sectors: existingAnalysis.sectors || [],
+        marketSentiment: this.llmAnalyzer.validateMarketSentiment(existingAnalysis.marketSentiment),
+        tickers: allTickers
+      },
+      sectors: existingAnalysis.sectors || [],
+      sentiment: this.llmAnalyzer.validateMarketSentiment(existingAnalysis.marketSentiment),
+      tickers: allTickers,
+      stockInfoMap,
+      stockInfo: Object.values(stockInfoMap)[0] || null
+    };
+  }
+
+  private async processAndStoreAnalysis(
+    state: NewsAnalysisState,
+    analysis: StructuredLLMResponse
+  ): Promise<NewsAnalysisState> {
+    // Handle missing tickers with fallback extraction
+    if (!analysis.tickers?.length) {
+      const extractedTickers = this.tickerExtractor.extractTickersFromArticles(state.articles);
+      if (extractedTickers.length > 0) {
+        analysis.tickers = extractedTickers;
+      }
+    }
+
+    // Store analysis in database
+    await this.storeAnalysisResult(state, analysis);
+
+    // Return updated state
+    return {
+      ...state,
+      analysis: analysis.analysis,
+      structuredAnalysis: analysis,
+      sectors: analysis.sectors || [],
+      sentiment: analysis.marketSentiment,
+      tickers: analysis.tickers || [],
+      stockInfo: state.stockInfo || null
+    };
+  }
+
+  private async storeAnalysisResult(state: NewsAnalysisState, analysis: StructuredLLMResponse) {
+    try {
+      const articleIds = await this.articleManager.findOrCreateArticles(state.articles);
+      const tickers = analysis.tickers || [];
+
+      // Create stock snapshots for each ticker if we have market data
+      const stockSnapshots = [];
+      for (const ticker of tickers) {
+        const stockInfo = state.stockInfoMap?.[ticker];
+        if (stockInfo) {
+          const snapshot = await this.prisma.stockDataSnapshot.create({
+            data: {
+              ticker: stockInfo.ticker,
+              price: stockInfo.price,
+              dayChange: stockInfo.dayChange,
+              dayChangePercent: stockInfo.dayChangePercent,
+              marketCap: stockInfo.marketCap,
+              snapshotTime: new Date(stockInfo.time)
+            }
+          });
+          stockSnapshots.push({ id: snapshot.id });
+        }
+      }
+
+      // Create the analysis result with all relationships
+      await this.prisma.newsAnalysisResult.create({
+        data: {
+          query: state.query || '',
+          isDefaultQuery: state.isDefaultQuery || false,
+          analysis: analysis.analysis,
+          marketSentiment: analysis.marketSentiment,
+          sectors: analysis.sectors || [],
+          articles: {
+            connect: articleIds
+          },
+          stockData: {
+            connect: stockSnapshots
           }
         }
       });
-      state.error = `Failed to analyze news: ${error.message}`;
-      return state;
+
+      this.logger.debug('Stored analysis result with relationships', {
+        articleCount: articleIds.length,
+        stockSnapshotCount: stockSnapshots.length,
+        tickerCount: tickers.length
+      });
+    } catch (error) {
+      this.logger.error('Failed to store analysis result:', error);
+      throw error;
     }
+  }
+
+  private async getStockSnapshots(analysisId: string) {
+    return this.prisma.stockDataSnapshot.findMany({
+      where: {
+        analysisResults: {
+          some: { id: analysisId }
+        }
+      }
+    });
+  }
+
+  private processStockSnapshots(snapshots: StockSnapshot[]): Record<string, StockInfo> {
+    return snapshots.reduce((acc: Record<string, StockInfo>, snapshot) => {
+      acc[snapshot.ticker] = {
+        ticker: snapshot.ticker,
+        price: snapshot.price,
+        dayChange: snapshot.dayChange,
+        dayChangePercent: snapshot.dayChangePercent,
+        marketCap: snapshot.marketCap,
+        time: snapshot.snapshotTime.toISOString()
+      };
+      return acc;
+    }, {});
+  }
+
+  private async getStockSnapshotIds(stockInfoMap: Record<string, StockInfo>) {
+    const snapshots = await Promise.all(
+      Object.values(stockInfoMap).map(info =>
+        this.prisma.stockDataSnapshot.findFirst({
+          where: {
+            ticker: info.ticker,
+            snapshotTime: new Date(info.time)
+          },
+          select: { id: true }
+        })
+      )
+    );
+
+    return snapshots
+      .filter((snapshot): snapshot is { id: string } =>
+        snapshot !== null && typeof snapshot.id === 'string'
+      )
+      .map(snapshot => ({ id: snapshot.id }));
+  }
+
+  private logIncomingState(state: NewsAnalysisState) {
+    this.logger.log(`Starting analysis of ${state.articles.length} news articles`);
+    this.logger.debug('Incoming state:', {
+      articleCount: state.articles.length,
+      query: state.query,
+      tickers: state.tickers,
+      isDefaultQuery: state.isDefaultQuery
+    });
+  }
+
+  private transformToMarketSentimentResponse(state: NewsAnalysisState): MarketSentimentResponseDto {
+    if (!state.structuredAnalysis) {
+      this.logger.warn('No structured analysis available for market sentiment response');
+    }
+
+    // Create a default stock info if missing
+    const defaultStockInfo = {
+      ticker: 'N/A',
+      price: 0,
+      dayChange: 0,
+      dayChangePercent: 0,
+      marketCap: 0,
+      time: new Date().toISOString(),
+    };
+
+    const mapSentiment = (sentiment: string | undefined): SentimentType => {
+      switch (sentiment?.toLowerCase()) {
+        case 'positive':
+          return 'bullish';
+        case 'negative':
+          return 'bearish';
+        default:
+          return 'neutral';
+      }
+    };
+
+    // Ensure we have valid tickers from all possible sources
+    const tickers = Array.from(new Set([
+      ...(state.tickers || []),
+      ...(state.structuredAnalysis?.tickers || []),
+      ...Object.keys(state.stockInfoMap || {})
+    ])).filter(ticker => ticker && ticker !== 'N/A');
+
+    // Create stock info map from available stock data
+    const stockInfoMap: Record<string, StockInfo> = state.stockInfoMap ? { ...state.stockInfoMap } : {};
+
+    // Add placeholder entries for any tickers without stock info
+    tickers.forEach(ticker => {
+      if (!stockInfoMap[ticker]) {
+        stockInfoMap[ticker] = {
+          ticker,
+          price: 0,
+          dayChange: 0,
+          dayChangePercent: 0,
+          marketCap: 0,
+          time: new Date().toISOString()
+        };
+      }
+    });
+
+    const response: MarketSentimentResponseDto = {
+      structuredAnalysis: {
+        analysis: state.structuredAnalysis?.analysis || state.analysis || 'No analysis available',
+        sectors: state.structuredAnalysis?.sectors || state.sectors || [],
+        marketSentiment: mapSentiment(state.structuredAnalysis?.marketSentiment || state.sentiment),
+        tickers: tickers
+      },
+      sentiment: mapSentiment(state.structuredAnalysis?.marketSentiment || state.sentiment),
+      stockInfoMap,
+      stockInfo: Object.values(stockInfoMap)[0] || defaultStockInfo
+    };
+
+    this.logger.debug('Transformed market sentiment response:', {
+      tickerCount: tickers.length,
+      stockInfoMapSize: Object.keys(stockInfoMap).length,
+      sentiment: response.sentiment
+    });
+
+    return response;
   }
 }

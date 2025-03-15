@@ -11,6 +11,13 @@ import {
   ShoppingBasket, // Consumer Staples
   ShoppingCart, // Consumer Discretionary
   Zap, // Energy
+  BarChart3, // Overall stock market/Equity market
+  LineChart, // Bond market
+  Car, // Automotive sector
+  Grid, // Multiple sectors
+  TrendingUp, // Overall U.S. stock market
+  Gem, // Commodity market
+  DollarSign, // General financial market
   type LucideIcon,
 } from 'lucide-react';
 
@@ -24,6 +31,7 @@ import {
 } from '@erisfy/shadcnui';
 
 import { type MarketSector } from '@erisfy/api';  // Import the shared type
+import { useEffect } from 'react';
 
 export type Story = {
   title: string;
@@ -50,33 +58,53 @@ const categoryIcons: Record<MarketSector, LucideIcon> = {
   "Information Technology": Laptop,
   "Communication Services": Radio,
   "Real Estate": Building2,
+  "Overall stock market": BarChart3,
+  "Bond market": LineChart,
+  "Automotive sector": Car,
+  "Multiple sectors": Grid,
+  "Overall U.S. stock market": TrendingUp,
+  "Equity market": BarChart3,
+  "Commodity market": Gem,
+  "General financial market": DollarSign,
 };
 
 export function NewsStoryCard({ story, className }: NewsStoryCardProps) {
-  const CategoryIcon = categoryIcons[story.market_sector] || Newspaper;  
-
-console.log('story', story);
- // log story.market_sector
- console.log('story.market_sector', story.market_sector);
-
+  // Debug the incoming story prop
+  useEffect(() => {
+    console.log('[NewsStoryCard] Received story:', {
+      story,
+      title: story?.title,
+      hasRequiredFields: !!(
+        story?.title && 
+        story?.one_line_summary && 
+        story?.whats_happening && 
+        story?.market_impact && 
+        story?.market_sector
+      ),
+      market_sector: story?.market_sector,
+      hasValidSector: !!categoryIcons[story?.market_sector]
+    });
+  }, [story]);
+  
+  const CategoryIcon = categoryIcons[story.market_sector] || Newspaper;
 
   return (
     <Card className={`h-full flex flex-col transition-all duration-300 hover:shadow-lg overflow-hidden ${className ?? ''}`}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between mb-2">
-          <Badge 
-            variant="secondary" 
+          <Badge
+            variant="secondary"
             className="text-xs font-medium px-2 py-1"
             data-testid="news-story-category-badge"
           >
-            {story.market_sector}  
+            {story.market_sector}
           </Badge>
-          <CategoryIcon 
-            className="w-5 h-5 text-blue-500" 
-            aria-label={`${story.market_sector} sector icon`}  
+          <CategoryIcon
+            className="w-5 h-5 text-blue-500"
+            aria-label={`${story.market_sector} sector icon`}
           />
         </div>
-        <CardTitle 
+        <CardTitle
           className="text-xl font-bold leading-tight mb-2 line-clamp-2"
           aria-label={story.title}
         >

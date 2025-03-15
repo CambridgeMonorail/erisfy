@@ -22,7 +22,28 @@ export class OpenAiController {
    * Get market stories analyzed by OpenAI
    */
   @Get('market-stories')
-  @ApiOperation({ summary: 'Get current market stories analyzed by AI' })
+  @ApiOperation({
+    summary: 'GPT-analyzed market stories',
+    description: `Direct GPT analysis of current market stories.
+
+      Data Source:
+      - Real-time market news
+      - Direct GPT-4 processing
+
+      Features:
+      - Raw GPT insights
+      - Minimal processing/filtering
+      - Quick turnaround
+
+      Best For:
+      - Rapid market assessment
+      - Custom analysis needs
+      - Testing GPT responses
+
+      For more structured analysis:
+      - Use /news-analysis/analyze for full pipeline
+      - Use /market-insights for curated insights`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved market stories',
@@ -80,7 +101,29 @@ export class OpenAiController {
    * Analyze news articles with OpenAI
    */
   @Post('news-analysis')
-  @ApiOperation({ summary: 'Analyze news articles for market impact' })
+  @ApiOperation({
+    summary: 'Direct GPT news analysis',
+    description: `Raw GPT-4 analysis of news articles.
+
+      Processing:
+      - Direct GPT-4 prompt
+      - Minimal pre/post processing
+      - Free-form text response
+
+      Use Cases:
+      - Custom analysis needs
+      - Quick market insights
+      - Exploratory analysis
+
+      Limitations:
+      - No data enrichment
+      - No market data integration
+      - Less structured output
+
+      For comprehensive analysis:
+      - Use /news-analysis/analyze for full pipeline
+      - Use /market-insights for curated news`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully analyzed news articles',
@@ -103,7 +146,30 @@ export class OpenAiController {
    * Analyze news articles with OpenAI and return structured data
    */
   @Post('news-analysis/structured')
-  @ApiOperation({ summary: 'Analyze news articles and return structured market impact data' })
+  @ApiOperation({
+    summary: 'Structured GPT news analysis',
+    description: `GPT-4 analysis with structured JSON output.
+
+      Output Format:
+      - Consistent JSON structure
+      - Standardized fields
+      - Machine-readable format
+
+      Fields Include:
+      - Market sentiment
+      - Key themes
+      - Sector impacts
+      - Risk assessment
+
+      Best For:
+      - Automated processing
+      - Data integration
+      - Systematic trading
+
+      For richer analysis:
+      - Use /news-analysis/analyze for full pipeline
+      - Use /market-insights for curated insights`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully analyzed news articles with structured output',

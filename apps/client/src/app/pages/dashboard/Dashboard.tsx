@@ -35,7 +35,7 @@ export const DashboardPage: FC = () => {
         setIsLoading(false);
       }
     };
-    
+
     void fetchData();
   }, []);
 
@@ -56,9 +56,9 @@ export const DashboardPage: FC = () => {
     setSearchQuery(query);
   }, []);
 
-  const filteredStocks = useMemo(() => 
-    stocks.filter((stock) => 
-      stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredStocks = useMemo(() =>
+    stocks.filter((stock) =>
+      stock.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
       stock.companyName.toLowerCase().includes(searchQuery.toLowerCase())
     ),
     [stocks, searchQuery]
@@ -276,7 +276,7 @@ export const DashboardPage: FC = () => {
         </DashboardCard>
 
         {/* Quick Actions Toolbar - now with aria labels */}
-        <div 
+        <div
           className="fixed right-0 top-1/4 transform -translate-y-1/2 space-y-2"
           role="toolbar"
           aria-label="Quick actions"
@@ -328,17 +328,72 @@ export const DashboardPage: FC = () => {
             isLoading={isMarketNewsLoading}
             error={marketNewsError}
             news={marketNews}
+            marketData={{
+              structuredAnalysis: {
+                analysis: "Tech stocks rebounded today as interest rate fears eased.",
+                sectors: ["Technology", "Finance", "Healthcare"],
+                marketSentiment: "neutral",
+                tickers: ["AAPL", "MSFT", "GOOGL"]
+              },
+              sentiment: "neutral",
+              stockInfoMap: {
+                AAPL: {
+                  ticker: "AAPL",
+                  price: 150.00,
+                  dayChange: 2.00,
+                  dayChangePercent: 1.35,
+                  marketCap: 2500000000,
+                  time: "2025-03-08T00:52:47Z"
+                },
+                MSFT: {
+                  ticker: "MSFT",
+                  price: 250.00,
+                  dayChange: 3.00,
+                  dayChangePercent: 1.20,
+                  marketCap: 3000000000,
+                  time: "2025-03-08T00:52:47Z"
+                },
+                GOOGL: {
+                  ticker: "GOOGL",
+                  price: 2800.00,
+                  dayChange: 50.00,
+                  dayChangePercent: 1.80,
+                  marketCap: 1800000000,
+                  time: "2025-03-08T00:52:47Z"
+                }
+              },
+              stockInfo: {
+                ticker: "AAPL",
+                price: 150.00,
+                dayChange: 2.00,
+                dayChangePercent: 1.35,
+                marketCap: 2500000000,
+                time: "2025-03-08T00:52:47Z"
+              }
+            }}
           />
           <DashboardCard
             title="General News"
             description="Get the latest general news impacting the market."
           >
-            <MarketSentimentNewsFeed
-              className="mb-4"
-              isLoading={isGeneralNewsLoading}
-              error={generalNewsError}
-              news={generalNews}
-            />
+            <div className="space-y-4">
+              {isGeneralNewsLoading ? (
+                <p>Loading general news...</p>
+              ) : generalNewsError ? (
+                <p className="text-destructive">{generalNewsError.message}</p>
+              ) : generalNews && generalNews.length > 0 ? (
+                <ul className="space-y-4">
+                  {generalNews.map((item) => (
+                    <li key={item.id} className="border-b pb-4">
+                      <h4 className="font-semibold mb-2">{item.title}</h4>
+                      <p className="text-sm text-muted-foreground">{item.summary}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground">No general news available</p>
+              )}
+            </div>
           </DashboardCard>
         </DashboardCard>
 

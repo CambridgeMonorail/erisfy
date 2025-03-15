@@ -34,6 +34,16 @@ export function NewsCarousel({
   className = '',
   options = {},
 }: NewsCarouselProps) {
+  // Debug the stories prop
+  useEffect(() => {
+    console.log('[NewsCarousel] Received stories:', {
+      stories,
+      count: stories?.length || 0,
+      isArray: Array.isArray(stories),
+      firstStory: stories?.[0] || null
+    });
+  }, [stories]);
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     ...DEFAULT_OPTIONS,
     ...options,
@@ -74,8 +84,11 @@ export function NewsCarousel({
   }, [emblaApi, onSelect]);
 
   if (stories.length === 0) {
+    console.log('[NewsCarousel] No stories, returning null');
     return null;
   }
+
+  console.log('[NewsCarousel] Rendering carousel with', stories.length, 'stories');
 
   return (
     <div

@@ -1,11 +1,15 @@
-import { ApiConfig, UsersEndpoint, NewsEndpoint } from "@erisfy/api";
+// We expose these API clients for backward compatibility, but new code should
+// use the endpoint instances directly from @erisfy/api
+import { MarketSentimentEndpoint, NewsEndpoint, MarketInsightsEndpoint, getApiBaseUrl } from '@erisfy/api';
 
-const API_CONFIG: ApiConfig = {
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+const config = {
+  baseURL: getApiBaseUrl(),
+  timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   }
 };
 
-export const usersApi = new UsersEndpoint(API_CONFIG);
-export const newsApi = new NewsEndpoint(API_CONFIG);
+export const marketSentimentApi = new MarketSentimentEndpoint(config);
+export const newsApi = new NewsEndpoint(config);
+export const marketInsightsApi = new MarketInsightsEndpoint(config);
