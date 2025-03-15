@@ -11,6 +11,13 @@ import {
   ShoppingBasket, // Consumer Staples
   ShoppingCart, // Consumer Discretionary
   Zap, // Energy
+  BarChart3, // Overall stock market/Equity market
+  LineChart, // Bond market
+  Car, // Automotive sector
+  Grid, // Multiple sectors
+  TrendingUp, // Overall U.S. stock market
+  Gem, // Commodity market
+  DollarSign, // General financial market
   type LucideIcon,
 } from 'lucide-react';
 
@@ -50,6 +57,14 @@ const categoryIcons: Record<MarketSector, LucideIcon> = {
   "Information Technology": Laptop,
   "Communication Services": Radio,
   "Real Estate": Building2,
+  "Overall stock market": BarChart3,
+  "Bond market": LineChart,
+  "Automotive sector": Car,
+  "Multiple sectors": Grid,
+  "Overall U.S. stock market": TrendingUp,
+  "Equity market": BarChart3,
+  "Commodity market": Gem,
+  "General financial market": DollarSign,
 };
 
 export function NewsStoryCard({ story, className }: NewsStoryCardProps) {

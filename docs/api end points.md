@@ -53,15 +53,20 @@ Returns the most recent market data record with curated stories.
 ```json
 {
   "id": "string",           // Unique identifier for the market insights record
-  "date": "string",        // ISO 8601 timestamp of when the insights were generated
-  "stories": [             // Array of market stories and their analysis
+  "date": "string",         // Date of the market insights in YYYY-MM-DD format
+  "createdAt": "string",    // ISO 8601 timestamp of when the record was created
+  "updatedAt": "string",    // ISO 8601 timestamp of when the record was last updated
+  "stories": [              // Array of market stories and their analysis
     {
-      "id": "string",      // Unique identifier for the story
-      "title": "string",   // Story headline
+      "id": "string",       // Unique identifier for the story
+      "title": "string",    // Story headline
       "one_line_summary": "string",  // Concise summary of the story
       "whats_happening": "string",   // Detailed explanation of the event
       "market_impact": "string",     // Analysis of potential market implications
-      "market_sector": "string"      // Affected market sector
+      "market_sector": "string",     // Affected market sector
+      "marketDataRecordId": "string", // Reference to parent market data record
+      "createdAt": "string",         // ISO 8601 timestamp of creation
+      "updatedAt": "string"          // ISO 8601 timestamp of last update
     }
   ]
 }
@@ -69,10 +74,11 @@ Returns the most recent market data record with curated stories.
 
 **Notes:**
 
-- The `date` field uses ISO 8601 format (e.g., "2025-03-13T17:41:18.423Z")
+- The `date` field is in YYYY-MM-DD format (e.g., "2025-03-14")
+- Timestamp fields use ISO 8601 format (e.g., "2025-03-14T07:17:52.326Z")
 - Stories are ordered by relevance and impact
 - Empty stories array indicates no current market stories
-- Market sectors align with standard industry classification
+- Market sectors include standard categories and special designations like "Overall stock market"
 
 #### GET /market-insights/trigger
 
@@ -296,3 +302,26 @@ API endpoints are subject to rate limiting to prevent abuse. Current limits:
 - Timestamps are in ISO 8601 format
 - All requests must include `Content-Type: application/json` header
 - CORS is enabled for development (`localhost:4200`) and production (`cambridgemonorail.github.io`)
+
+## Sample Response Shapes (for documentation)
+
+# Market News Response Shape:
+# {
+#   "id": "string",
+#   "date": "string",
+#   "createdAt": "string",
+#   "updatedAt": "string",
+#   "stories": [
+#     {
+#       "id": "string",
+#       "title": "string",
+#       "one_line_summary": "string",
+#       "whats_happening": "string",
+#       "market_impact": "string",
+#       "market_sector": "string",
+#       "marketDataRecordId": "string",
+#       "createdAt": "string",
+#       "updatedAt": "string"
+#     }
+#   ]
+# }

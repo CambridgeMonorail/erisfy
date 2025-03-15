@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { NewsItem, ApiError } from '@erisfy/api';
+import { MarketSector, ApiError, MarketStory } from '@erisfy/api';
 import { marketInsightsApi } from '../api/clients';
+import { Story } from '@erisfy/shadcnui-blocks';
 
 export function useMarketNews() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<ApiError | null>(null);
-  const [news, setNews] = useState<NewsItem[]>([]);
+  const [news, setNews] = useState<Story[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const fetchNews = async () => {
@@ -15,15 +16,15 @@ export function useMarketNews() {
       const response = await marketInsightsApi.getLatestMarketInsight();
 
       if (response.data) {
-        // Transform market stories into NewsItem format and generate unique ids
-        const newsItems: NewsItem[] = response.data.stories.map((story, index) => ({
-          id: `${response.data.date}-${index}`, // Generate unique id using date and index
+        // Directly map MarketStory objects to Story objects expected by NewsStoryCard
+        const stories: Story[] = response.data.stories.map((story) => ({
           title: story.title,
-          summary: story.one_line_summary,
-          relevance: [story.market_sector],
-          publishedAt: response.data.date
+          one_line_summary: story.one_line_summary,
+          whats_happening: story.whats_happening,
+          market_impact: story.market_impact,
+          market_sector: story.market_sector as MarketSector
         }));
-        setNews(newsItems);
+        setNews(stories);
       }
       setError(null);
     } catch (err) {

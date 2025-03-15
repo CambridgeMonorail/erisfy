@@ -21,7 +21,7 @@ export class NewsEndpoint extends BaseApiClient {
       title: story.title,
       summary: story.one_line_summary,
       relevance: [story.market_sector],
-      publishedAt: response.data.createdAt // Use the parent record's createdAt as publishedAt
+      publishedAt: response.data.createdAt // Use the parent record's createdAt
     }));
 
     return {

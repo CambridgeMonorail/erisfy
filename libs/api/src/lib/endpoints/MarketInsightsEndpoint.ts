@@ -33,10 +33,19 @@ export class MarketInsightsEndpoint extends BaseApiClient {
         return response;
       }
 
-      // If we get raw MarketDataInsights, wrap it in ApiResponse format
-      if (response && typeof response === 'object' && 'date' in response && 'stories' in response) {
+      // Validate that the response has the required properties of MarketDataInsights
+      if (
+        response &&
+        typeof response === 'object' &&
+        'id' in response &&
+        'stories' in response &&
+        'date' in response &&
+        'createdAt' in response &&
+        'updatedAt' in response
+      ) {
+        // Use type assertion only after validating the required properties
         return {
-          data: response as MarketDataInsights,
+          data: response as unknown as MarketDataInsights,
           status: 200,
           message: 'Latest market insight retrieved successfully'
         };

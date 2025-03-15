@@ -11,9 +11,6 @@ import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { useMarketNews } from '../hooks/useMarketNews';
 import { StockData } from '../utils/mockData';
-import { MarketSector } from '@erisfy/api';
-
-const DEFAULT_SECTOR: MarketSector = "Information Technology";
 
 export interface AIPoweredMarketOverviewProps {
   className?: string;
@@ -79,10 +76,9 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
     );
   }
 
-  const latestNewsDate = news[0]?.publishedAt ? new Date(news[0].publishedAt) : new Date();
+  const latestNewsDate = new Date();
 
   console.log('[AIPoweredMarketOverview] Rendering news data:', {
-    date: latestNewsDate,
     newsCount: news.length
   });
 
@@ -116,13 +112,7 @@ export const AIPoweredMarketOverview: FC<AIPoweredMarketOverviewProps> = ({
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <NewsCarousel stories={news.map(item => ({
-          title: item.title,
-          one_line_summary: item.summary,
-          whats_happening: item.summary,
-          market_impact: '',
-          market_sector: (item.relevance?.[0] as MarketSector) || DEFAULT_SECTOR
-        }))} />
+        <NewsCarousel stories={news} />
       </CardContent>
     </Card>
   );
