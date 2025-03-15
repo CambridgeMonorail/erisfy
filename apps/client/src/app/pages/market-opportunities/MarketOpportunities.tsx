@@ -22,7 +22,15 @@ const SECTOR_TO_INDUSTRY: Record<MarketSector, "Software" | "Banking" | "Pharmac
   "Consumer Discretionary": "Banking",
   "Consumer Staples": "Banking",
   "Communication Services": "Software",
-  "Real Estate": "Banking"
+  "Real Estate": "Banking",
+  "Overall stock market": "Banking",
+  "Bond market": "Banking",
+  "Automotive sector": "Oil & Gas",
+  "Multiple sectors": "Banking",
+  "Overall U.S. stock market": "Banking",
+  "Equity market": "Banking",
+  "Commodity market": "Oil & Gas",
+  "General financial market": "Banking"
 };
 
 // Default to USA for stock listings
@@ -31,36 +39,23 @@ const DEFAULT_COUNTRY = 'USA' as const;
 export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({
   className,
 }) => {
+  // Custom hook for responsive design
   const isMobile = useMediaQuery('(max-width: 780px)');
-  const { data: marketInsights, isLoading: isMarketsLoading, error: marketsError, refetch: refetchMarkets } = useMarketOpportunities();
-  const { marketData, isLoading: isMarketDataLoading, error: marketDataError, refetch: refetchMarketData } = useMarketSentiment();
 
-  console.log('[MarketOpportunitiesPage] Current state:', {
-    isMobile,
-    hasMarketInsights: !!marketInsights,
-    storiesCount: marketInsights?.stories?.length,
-    isMarketsLoading,
-    marketsError,
-    hasMarketData: !!marketData,
-    marketDataContent: {
-      hasStructuredAnalysis: marketData?.structuredAnalysis !== undefined,
-      structuredAnalysis: marketData?.structuredAnalysis ? {
-        hasAnalysis: !!marketData.structuredAnalysis.analysis,
-        analysisPreview: marketData.structuredAnalysis.analysis?.substring(0, 50),
-        sectorsCount: marketData.structuredAnalysis.sectors?.length,
-        sentiment: marketData.structuredAnalysis.marketSentiment,
-        tickersCount: marketData.structuredAnalysis.tickers?.length
-      } : 'undefined',
-      stockInfoMapSize: marketData?.stockInfoMap ? Object.keys(marketData.stockInfoMap).length : 0,
-      stockInfo: marketData?.stockInfo ? {
-        ticker: marketData.stockInfo.ticker,
-        hasPrice: marketData.stockInfo.price !== undefined,
-        hasChange: marketData.stockInfo.dayChange !== undefined
-      } : 'undefined'
-    },
-    isMarketDataLoading,
-    marketDataError
-  });
+  // Data fetching hooks
+  const {
+    data: marketInsights,
+    isLoading: isMarketsLoading,
+    error: marketsError,
+    refetch: refetchMarkets
+  } = useMarketOpportunities();
+
+  const {
+    marketData,
+    isLoading: isMarketDataLoading,
+    error: marketDataError,
+    refetch: refetchMarketData
+  } = useMarketSentiment();
 
   // Transform market insights stories into filtered stocks format
   const filteredStocks = useMemo(() => {
@@ -77,8 +72,11 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({
     }));
   }, [marketInsights]);
 
+  // Derived state
   const isLoading = isMarketsLoading || isMarketDataLoading;
   const error = marketsError || marketDataError;
+
+  // Combined refetch function
   const refetch = async () => {
     await Promise.all([refetchMarkets(), refetchMarketData()]);
   };
@@ -89,8 +87,7 @@ export const MarketOpportunitiesPage: FC<MarketOpportunitiesProps> = ({
       data-testid="market-opportunities-page"
       className={cn(
         'h-full min-h-full w-full text-primary-900 flex-col',
-        isMobile ? 'flex' : 'hidden',
-        'md:flex',
+        isMobile ? 'flex' : 'hidden md:flex',
         className,
       )}
     >
