@@ -5,15 +5,34 @@ const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY = 2000; // 2 seconds
 
 /**
- * Hook for fetching the latest market insights data
+ * Error type for market insight data fetching
  */
-export function useLatestMarketInsight() {
+export type MarketInsightError = ApiError | null;
+
+/**
+ * Result type returned by useLatestMarketInsight hook
+ */
+export type MarketInsightResult = {
+  data: MarketDataInsights | null;
+  isLoading: boolean;
+  error: MarketInsightError;
+  refetch: () => Promise<void>;
+  reset: () => void;
+};
+
+/**
+ * Hook for fetching the latest market insights data
+ * @returns Object containing data, loading state, error, refetch and reset functions
+ */
+export function useLatestMarketInsight(): MarketInsightResult {
   const [data, setData] = useState<MarketDataInsights | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<ApiError | null>(null);
+  const [error, setError] = useState<MarketInsightError>(null);
   const isMountedRef = useRef(true);
   const fetchInProgressRef = useRef(false);
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Fetch function moved outside of useEffect to be accessible by refetch and reset
   const fetchLatestInsight = useCallback(async (attempt = 1): Promise<void> => {
     // Prevent concurrent fetches
     if (fetchInProgressRef.current) return;
@@ -34,10 +53,7 @@ export function useLatestMarketInsight() {
       if (!isMountedRef.current) return;
 
       // Check response format
-      console.log('[useLatestMarketInsight] Received API response:', response);
-      
       if (!response?.data) {
-        console.error('[useLatestMarketInsight] Invalid response - missing data property:', response);
         throw new ApiError(500, 'Invalid market insights data received');
       }
 
@@ -45,8 +61,6 @@ export function useLatestMarketInsight() {
       setData(response.data);
       setError(null);
     } catch (err) {
-      console.error('[useLatestMarketInsight] Error fetching data:', err);
-      
       // Only process errors if still mounted
       if (!isMountedRef.current) return;
 
@@ -57,48 +71,59 @@ export function useLatestMarketInsight() {
       );
 
       if (shouldRetry) {
-        const retryDelay = BASE_RETRY_DELAY * attempt;
-        console.log(`[useLatestMarketInsight] Will retry in ${retryDelay}ms`);
-        setTimeout(() => {
+        const retryDelay = BASE_RETRY_DELAY * Math.pow(2, attempt - 1); // Exponential backoff
+        
+        // Clear any existing timeout
+        if (retryTimeoutRef.current) {
+          clearTimeout(retryTimeoutRef.current);
+        }
+        
+        retryTimeoutRef.current = setTimeout(() => {
           fetchInProgressRef.current = false;
           void fetchLatestInsight(attempt + 1);
+          retryTimeoutRef.current = null;
         }, retryDelay);
         return;
       }
 
-      console.log('[useLatestMarketInsight] Max retries reached or non-retryable error');
-      setError(err instanceof ApiError ? err : new ApiError(500, 'Failed to fetch market opportunities'));
+      setError(err instanceof ApiError ? err : new ApiError(500, 'Failed to fetch market insights'));
       setData(null);
     } finally {
       if (isMountedRef.current) {
         setIsLoading(false);
+        fetchInProgressRef.current = false;
       }
-      fetchInProgressRef.current = false;
     }
   }, []);
 
-  // Log data changes
-  useEffect(() => {
-    console.log('[useLatestMarketInsight] Data updated:', {
-      hasData: !!data,
-      storiesCount: data?.stories?.length || 0
-    });
-    
-    if (data?.stories) {
-      console.log('[useLatestMarketInsight] First story:', data.stories[0]);
-    }
-  }, [data]);
-
   // Initial fetch on mount and cleanup on unmount
   useEffect(() => {
-    console.log('[useLatestMarketInsight] Hook mounted, initiating fetch');
     isMountedRef.current = true;
     void fetchLatestInsight(1);
 
     return () => {
-      console.log('[useLatestMarketInsight] Hook unmounting');
       isMountedRef.current = false;
+      
+      // Clear any pending retry timeout
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
     };
+  }, [fetchLatestInsight]);
+
+  const reset = useCallback(() => {
+    setData(null);
+    setIsLoading(true);
+    setError(null);
+    
+    // Clear any existing timeout
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+    
+    void fetchLatestInsight(1);
   }, [fetchLatestInsight]);
 
   return {
@@ -106,11 +131,6 @@ export function useLatestMarketInsight() {
     isLoading,
     error,
     refetch: fetchLatestInsight,
-    reset: useCallback(() => {
-      setData(null);
-      setIsLoading(true);
-      setError(null);
-      void fetchLatestInsight(1);
-    }, [fetchLatestInsight]),
+    reset,
   };
 }

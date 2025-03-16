@@ -1,4 +1,4 @@
-import { type FC, useEffect } from 'react';
+import { type FC, useMemo } from 'react';
 import {
   Card,
   CardHeader,
@@ -10,66 +10,67 @@ import { Spinner, NewsCarousel } from '@erisfy/shadcnui-blocks';
 import { AlertCircle } from 'lucide-react';
 import type { MarketDataInsights } from '@erisfy/api';
 
+/**
+ * Props for the LatestMarketInsights component
+ */
 export interface LatestMarketInsightsProps {
+  /** Optional CSS class name to apply additional styling */
   className?: string;
+  /** Market data and news stories to display */
   data?: MarketDataInsights;
+  /** Whether the data is currently loading */
   isLoading: boolean;
+  /** Error that occurred during data fetching, if any */
   error?: Error | null;
 }
 
+/**
+ * Displays the latest market insights and news stories
+ * 
+ * Shows appropriate loading, error, and empty states based on the provided props.
+ */
 export const LatestMarketInsights: FC<LatestMarketInsightsProps> = ({
   className = '',
   data,
   isLoading,
   error,
 }) => {
-  // Add detailed debugging for props and rendering conditions
-  useEffect(() => {
-    console.log('[LatestMarketInsights] Component props:', {
-      data,
-      hasData: !!data,
-      storiesCount: data?.stories?.length || 0,
-      isLoading,
-      hasError: !!error,
-    });
+  // Format the date once when data changes
+  const formattedDate = useMemo(() => {
+    if (!data?.date) return '';
     
-    if (data) {
-      console.log('[LatestMarketInsights] Data structure:', {
-        id: data.id,
-        date: data.date,
-        storiesArray: Array.isArray(data.stories),
-        stories: data.stories,
+    try {
+      return new Date(data.date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       });
+    } catch {
+      return 'Invalid date';
     }
-    
-    // Log which rendering condition will be triggered
-    if (isLoading) {
-      console.log('[LatestMarketInsights] Will render loading state');
-    } else if (error) {
-      console.log('[LatestMarketInsights] Will render error state:', error.message);
-    } else if (!data?.stories || data.stories.length === 0) {
-      console.log('[LatestMarketInsights] Will render empty state - no stories available');
-      console.log('[LatestMarketInsights] Condition details:', {
-        dataExists: !!data,
-        storiesExists: !!data?.stories,
-        storiesLength: data?.stories?.length || 0
-      });
-    } else {
-      console.log('[LatestMarketInsights] Will render news carousel with', data.stories.length, 'stories');
-    }
-  }, [data, isLoading, error]);
+  }, [data?.date]);
 
+  // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64 bg-background/50 rounded-lg">
+      <div 
+        className="flex justify-center items-center h-64 bg-background/50 rounded-lg"
+        role="status"
+      >
         <Spinner size="lg" aria-label="Loading market news" />
       </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
-      <Card className={cn('border-destructive bg-destructive/5', className)}>
+      <Card 
+        className={cn('border-destructive bg-destructive/5', className)}
+        role="alert"
+        aria-live="assertive"
+      >
         <CardHeader>
           <div className="flex items-center space-x-2">
             <AlertCircle className="h-5 w-5 text-destructive" aria-hidden="true" />
@@ -85,16 +86,13 @@ export const LatestMarketInsights: FC<LatestMarketInsightsProps> = ({
     );
   }
 
+  // Empty state
   if (!data?.stories || data.stories.length === 0) {
-    console.log('[LatestMarketInsights] Rendering empty state because:', {
-      dataExists: !!data,
-      storiesExists: !!data?.stories,
-      storiesIsArray: Array.isArray(data?.stories),
-      storiesLength: data?.stories?.length || 0
-    });
-    
     return (
-      <Card className={cn('border-muted bg-muted/5', className)}>
+      <Card 
+        className={cn('border-muted bg-muted/5', className)}
+        aria-live="polite"
+      >
         <CardContent className="p-6">
           <p className="text-center text-muted-foreground">
             No market news available
@@ -104,21 +102,18 @@ export const LatestMarketInsights: FC<LatestMarketInsightsProps> = ({
     );
   }
 
-  console.log('[LatestMarketInsights] Rendering news carousel with stories:', data.stories);
-
+  // Content state with stories
   return (
     <Card className={cn('bg-card border shadow-md', className)}>
       <CardHeader className="border-b bg-muted/5">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold">Market News</CardTitle>
-          <p className="text-sm text-muted-foreground font-medium">
-            {new Date(data.date).toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
+          <time 
+            dateTime={data.date instanceof Date ? data.date.toISOString() : data.date}
+            className="text-sm text-muted-foreground font-medium"
+          >
+            {formattedDate}
+          </time>
         </div>
       </CardHeader>
       <CardContent className="p-4">
