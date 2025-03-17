@@ -27,8 +27,9 @@ export class OpenAiController {
     description: `Direct GPT analysis of current market stories.
 
       Data Source:
-      - Real-time market news
-      - Direct GPT-4 processing
+      - Direct call to OpenAI API
+      - May retrieve initial data from database before processing
+      - No results stored in database
 
       Features:
       - Raw GPT insights
@@ -58,7 +59,28 @@ export class OpenAiController {
    * Send a custom prompt to OpenAI
    */
   @Post('prompt')
-  @ApiOperation({ summary: 'Send a custom prompt to OpenAI' })
+  @ApiOperation({
+    summary: 'Send a custom prompt to OpenAI',
+    description: `Processes a custom user prompt using OpenAI's API.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access
+
+      Features:
+      - Custom prompt processing
+      - Configurable system prompt
+      - Adjustable temperature parameter
+
+      Use Cases:
+      - Content generation
+      - Custom data analysis
+      - Testing prompts
+
+      Rate Limits:
+      - Subject to OpenAI API rate limits
+      - Token usage monitoring applied`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully processed prompt',
@@ -80,7 +102,28 @@ export class OpenAiController {
    * Analyze content with OpenAI
    */
   @Post('analyze')
-  @ApiOperation({ summary: 'Analyze content using OpenAI' })
+  @ApiOperation({
+    summary: 'Analyze content using OpenAI',
+    description: `Analyzes provided content using OpenAI's API.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access or storage
+
+      Features:
+      - Content sentiment analysis
+      - Key point extraction
+      - Custom analysis prompt support
+
+      Use Cases:
+      - Financial text analysis
+      - Report summarization
+      - Content evaluation
+
+      Processing:
+      - Single-pass GPT analysis
+      - No post-processing applied to results`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully analyzed content',
@@ -104,6 +147,11 @@ export class OpenAiController {
   @ApiOperation({
     summary: 'Direct GPT news analysis',
     description: `Raw GPT-4 analysis of news articles.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access or storage of results
+      - User-provided articles in request body
 
       Processing:
       - Direct GPT-4 prompt
@@ -149,6 +197,11 @@ export class OpenAiController {
   @ApiOperation({
     summary: 'Structured GPT news analysis',
     description: `GPT-4 analysis with structured JSON output.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access or storage of results
+      - User-provided articles in request body
 
       Output Format:
       - Consistent JSON structure

@@ -20,6 +20,10 @@ export class MarketNewsController {
     summary: 'Trigger market news update',
     description: `Manually triggers the market news curation pipeline.
 
+      Data Source:
+      - Fetches from multiple external news APIs
+      - Updates local database via Prisma
+
       Process:
       - Fetches from multiple news sources
       - Applies AI analysis pipeline
@@ -78,11 +82,9 @@ export class MarketNewsController {
     summary: 'Get latest market insights',
     description: `Returns comprehensive market insights with curated analysis.
 
-      Data Sources:
-      - Aggregated financial news
-      - AI analysis results
-      - Market data correlation
-      - Expert validations
+      Data Source:
+      - Retrieves data directly from database via Prisma
+      - No external API calls
 
       Content Types:
       - Market summaries
@@ -195,6 +197,10 @@ export class MarketNewsController {
   @ApiOperation({
     summary: 'Get latest market news',
     description: `Returns optimized market news and analysis feed.
+
+      Data Source:
+      - Service layer that retrieves cached data from database
+      - No direct external API calls
 
       Optimizations:
       - Smart content caching

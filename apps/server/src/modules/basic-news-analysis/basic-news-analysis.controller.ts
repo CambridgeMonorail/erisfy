@@ -21,8 +21,9 @@ export class BasicNewsAnalysisController {
     description: `Simple rule-based analysis of news content without AI/LLM processing.
 
       Data Source:
-      - Raw text input from user only
-      - No external API calls or data enrichment
+      - Processes user-provided text in request body
+      - Saves results to database via Prisma
+      - No external API calls during analysis
 
       Features:
       - Basic sentiment scoring (positive/negative/neutral)
@@ -67,8 +68,9 @@ export class BasicNewsAnalysisController {
     description: `Retrieves previously analyzed content from database.
 
       Data Source:
-      - Database query of past basic analyses
-      - No real-time updates
+      - Retrieves historical data directly from database via Prisma
+      - No external API calls
+      - Returns only previously analyzed content
 
       Features:
       - Historical sentiment trends

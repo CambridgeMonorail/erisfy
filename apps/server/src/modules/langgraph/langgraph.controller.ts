@@ -17,10 +17,11 @@ export class LangGraphController {
     summary: 'Multi-agent AI news analysis pipeline',
     description: `Primary endpoint for comprehensive financial news analysis using an advanced multi-agent system.
 
-      Data Sources:
-      - Real-time news APIs (primary source)
-      - Market data integration
-      - Historical analysis database
+      Data Source:
+      - Multiple external news APIs
+      - May access database for historical data
+      - Results temporarily cached in memory/database
+      - Uses OpenAI API for analysis
 
       Pipeline Steps:
       1. Smart News Fetching
@@ -99,6 +100,11 @@ export class LangGraphController {
     summary: 'Latest AI-powered market sentiment',
     description: `Retrieves current market sentiment from multi-agent analysis system.
 
+      Data Source:
+      - Cached analysis results from database
+      - Real-time calculation if no recent cache exists
+      - May trigger external API calls if data is stale
+
       Data Sources:
       - Aggregated news analysis results
       - Real-time market indicators
@@ -130,7 +136,21 @@ export class LangGraphController {
   @Post('clear-cache')
   @ApiOperation({
     summary: 'Clear news analysis cache',
-    description: 'Clears cached news analysis results from the last 2 hours'
+    description: `Clears cached news analysis results from the last 2 hours.
+
+      Data Source:
+      - Removes temporary cache entries from database
+      - No external API calls
+
+      Effect:
+      - Forces fresh analysis on next request
+      - Removes potentially outdated data
+      - Resets analysis pipeline state
+
+      Use Cases:
+      - After major market events
+      - When testing new analysis parameters
+      - To clear stale data`
   })
   @ApiResponse({
     status: 200,
