@@ -153,6 +153,34 @@ Content-Type: {{contentType}}
     "max_results": 3
 }
 
+### Market Sentiment Debug Endpoints
+
+### Get Market Sentiment (Direct)
+# Returns the latest market sentiment analysis and related stock data
+# This is useful for debugging the ticker population issue
+GET {{baseUrl}}/news-analysis/market-sentiment
+Content-Type: {{contentType}}
+
+### Get Market Sentiment with Debug Info
+# Returns the market sentiment with additional debug information
+GET {{baseUrl}}/news-analysis/market-sentiment?debug=true
+Content-Type: {{contentType}}
+
+### Analyze Default News (Bypass Cache)
+# Analyzes top financial news with cache bypass to test ticker extraction
+POST {{baseUrl}}/news-analysis/analyze
+Content-Type: {{contentType}}
+
+{
+  "bypassCache": true
+}
+
+### Clear Market Sentiment Cache
+# Administrative endpoint to clear cached market sentiment data
+# This helps testing with fresh data
+POST {{baseUrl}}/news-analysis/clear-cache
+Content-Type: {{contentType}}
+
 ### Sample Response Shapes (for documentation)
 
 # Market News Response Shape:

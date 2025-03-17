@@ -57,6 +57,63 @@ export class OpenAiService {
   }
 
   /**
+   * Interprets news stories and structures them into market insights
+   * @param stories Array of news stories to interpret
+   * @returns Structured market stories response as JSON
+   * @throws OpenAiException if the API call fails
+   */
+  async interpretMarketStories(stories: Array<{ title: string; description: string }>): Promise<MarketStoriesResponse> {
+    try {
+      this.logger.log('Interpreting market stories with OpenAI');
+
+      const prompt = `Review these news stories and identify the five biggest stories that are likely to impact financial markets and stock prices:\n\n${
+        stories.map((story, i) => `Story ${i + 1}:\nTitle: ${story.title}\nDescription: ${story.description}\n`).join('\n')
+      }\n\nAnalyze these stories and structure the data as JSON with the following format:
+      {
+        "date": "${new Date().toISOString().split('T')[0]}",
+        "stories": [
+          {
+            "title": "Story title",
+            "one_line_summary": "Brief one-line summary",
+            "whats_happening": "Detailed explanation",
+            "market_impact": "Expected market impact",
+            "market_sector": "Affected market sector"
+          }
+        ]
+      }`;
+
+      const messages: OpenAIMessage[] = [
+        {
+          role: 'system',
+          content: 'You are a helpful financial assistant who responds with clean, properly formatted JSON without any Markdown formatting.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ];
+
+      const rawContent = await this.sendCompletionRequest(messages, 0.3);
+
+      try {
+        return JSON.parse(rawContent) as MarketStoriesResponse;
+      } catch (parseError) {
+        this.logger.error(`Failed to parse OpenAI response: ${parseError.message}`);
+        throw new OpenAiException('Invalid response format from OpenAI');
+      }
+    } catch (error) {
+      this.logger.error(`OpenAI API error: ${error.message}`);
+      if (error instanceof OpenAiException) {
+        throw error;
+      }
+      throw new OpenAiException(
+        error.message || 'Failed to communicate with OpenAI API',
+        error.status || 500
+      );
+    }
+  }
+
+  /**
    * Analyzes news articles and their potential market impact
    * @param state News analysis state containing articles to analyze
    * @param structured Whether to return a structured analysis (JSON) or free text

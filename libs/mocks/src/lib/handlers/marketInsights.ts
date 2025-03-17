@@ -1,12 +1,12 @@
 import { http, HttpResponse } from 'msw';
 
-import { createMarketDataInsights } from '../factories/marketInsights';
+import { createMarketDataInsights, createMarketDataInsightsArray } from '../factories/marketInsights';
 import { MarketDataInsights } from '@erisfy/api';
 
-// Update API base URL to match the actual API URL used in the application
-const API_BASE_URL = 'https://api.erisfy.com';
+// Use relative path for API endpoints since we're in a browser context
+const API_BASE_URL = '';
 
-console.log('[MSW] Setting up market insights handlers with BASE_URL:', API_BASE_URL);
+console.log('[MSW] Setting up market insights handlers');
 
 export const marketInsightsHandlers = [
   // Handler for /api/market-insights/latest endpoint
@@ -14,14 +14,9 @@ export const marketInsightsHandlers = [
     console.log('[MSW] Handling GET request to /api/market-insights/latest');
     console.log('[MSW] Request URL:', request.url);
 
-    // Create a mock insight with today's date
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+    // Generate realistic market insights data using the factory
+    const mockInsight = createMarketDataInsights();
 
-    const mockInsight = createMarketDataInsights({ date: formattedDate });
     console.log('[MSW] Responding with mock insight:', mockInsight);
 
     return HttpResponse.json(mockInsight);
@@ -38,14 +33,14 @@ export const marketInsightsHandlers = [
     console.log('[MSW] Query params - date:', date);
     console.log('[MSW] Query params - market_sector:', market_sector);
 
-    // Create an array of insights
-    const mockInsights: MarketDataInsights[] = [createMarketDataInsights(date ? { date } : undefined)];
+    // Create an array of insights using the factory
+    const mockInsights: MarketDataInsights[] = date
+      ? [createMarketDataInsights({ date })]
+      : createMarketDataInsightsArray(2); // Create 2 records for different dates if no date specified
 
     let filteredInsights = mockInsights;
 
-    if (date) {
-      filteredInsights = mockInsights.filter(insight => insight.date === date);
-    }
+    // Filter is already handled in factory when date is provided
 
     if (market_sector) {
       filteredInsights = filteredInsights.filter(insight =>
@@ -61,6 +56,7 @@ export const marketInsightsHandlers = [
     console.log('[MSW] Handling POST request to /api/market-insights');
 
     const data = await request.json() as Partial<MarketDataInsights>;
+    // Use the factory with override data
     const mockInsight = createMarketDataInsights(data);
 
     console.log('[MSW] Created mock insight from POST data:', mockInsight);
@@ -72,6 +68,7 @@ export const marketInsightsHandlers = [
     console.log('[MSW] Date param:', params['date']);
 
     const data = await request.json() as Partial<MarketDataInsights>;
+    // Use the factory with the date parameter and override data
     const mockInsight = createMarketDataInsights({
       date: params['date'] as string,
       ...data

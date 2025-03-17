@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NewsAnalysisState } from '../interfaces/news-analysis-state.interface';
+import { PrismaService } from '../../../prisma.service';
 
 @Injectable()
 export class StockDataService {
@@ -8,7 +9,10 @@ export class StockDataService {
   private readonly apiKey: string;
   private readonly apiBaseUrl: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService
+  ) {
     this.apiKey = this.configService.getOrThrow<string>('FINANCIAL_DATASETS_API_KEY');
     this.apiBaseUrl = this.configService.getOrThrow<string>('FINANCIAL_DATASETS_API_BASE_URL');
   }
@@ -29,23 +33,44 @@ export class StockDataService {
     }
 
     try {
-      const stockDataPromises = state.tickers.map(ticker => this.fetchStockData(ticker));
-      const stockResults = await Promise.allSettled(stockDataPromises);
-
       // Initialize stockInfoMap if it doesn't exist
       state.stockInfoMap = {};
 
-      // Process results and populate stockInfoMap
-      stockResults.forEach((result, index) => {
-        const ticker = state.tickers[index];
-        if (result.status === 'fulfilled') {
-          state.stockInfoMap[ticker] = result.value;
-          // Set the first successful result as the primary stockInfo for backward compatibility
+      // Process each ticker
+      await Promise.all(state.tickers.map(async ticker => {
+        // Try to get recent data from database first
+        const recentSnapshot = await this.getRecentStockSnapshot(ticker);
+
+        if (recentSnapshot) {
+          this.logger.log(`Using recent stock data for ${ticker} from database`);
+          const stockInfo = {
+            ticker: recentSnapshot.ticker,
+            price: recentSnapshot.price,
+            dayChange: recentSnapshot.dayChange,
+            dayChangePercent: recentSnapshot.dayChangePercent,
+            marketCap: recentSnapshot.marketCap,
+            time: recentSnapshot.snapshotTime.toISOString()
+          };
+          state.stockInfoMap[ticker] = stockInfo;
+          // Set first result as primary stockInfo for backward compatibility
           if (!state.stockInfo) {
-            state.stockInfo = result.value;
+            state.stockInfo = stockInfo;
           }
-        } else {
-          this.logger.error(`Failed to fetch data for ${ticker}:`, result.reason);
+          return;
+        }
+
+        // If no recent data, fetch from API
+        try {
+          const newStockData = await this.fetchStockData(ticker);
+          state.stockInfoMap[ticker] = newStockData;
+          if (!state.stockInfo) {
+            state.stockInfo = newStockData;
+          }
+
+          // Store the new data in database
+          await this.storeStockSnapshot(newStockData);
+        } catch (error) {
+          this.logger.error(`Failed to fetch data for ${ticker}:`, error);
           const errorStockInfo = {
             ticker,
             price: 0,
@@ -53,19 +78,18 @@ export class StockDataService {
             dayChangePercent: 0,
             marketCap: 0,
             time: new Date().toISOString(),
-            error: result.reason.message
+            error: error.message
           };
           state.stockInfoMap[ticker] = errorStockInfo;
-          // If this is the first ticker and we don't have stockInfo set yet, use this as fallback
           if (!state.stockInfo) {
             state.stockInfo = errorStockInfo;
           }
         }
-      });
+      }));
 
     } catch (error) {
-      this.logger.error('Error fetching stock data', error);
-      state.error = `Failed to fetch stock data: ${error.message}`;
+      this.logger.error('Error processing stock data', error);
+      state.error = `Failed to process stock data: ${error.message}`;
       state.stockInfo = {
         ticker: state.tickers[0] || 'UNKNOWN',
         price: 0,
@@ -78,6 +102,36 @@ export class StockDataService {
     }
 
     return state;
+  }
+
+  private async getRecentStockSnapshot(ticker: string) {
+    // Look for data from last 15 minutes
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+    return this.prisma.stockDataSnapshot.findFirst({
+      where: {
+        ticker: ticker,
+        snapshotTime: {
+          gte: fifteenMinutesAgo
+        }
+      },
+      orderBy: {
+        snapshotTime: 'desc'
+      }
+    });
+  }
+
+  private async storeStockSnapshot(stockData: any) {
+    return this.prisma.stockDataSnapshot.create({
+      data: {
+        ticker: stockData.ticker,
+        price: stockData.price,
+        dayChange: stockData.dayChange,
+        dayChangePercent: stockData.dayChangePercent,
+        marketCap: stockData.marketCap,
+        snapshotTime: new Date(stockData.time)
+      }
+    });
   }
 
   private async fetchStockData(ticker: string) {

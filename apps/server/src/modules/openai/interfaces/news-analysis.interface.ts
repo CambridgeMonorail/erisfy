@@ -113,6 +113,8 @@ export interface StructuredNewsAnalysis {
   summary: string;
 }
 
+export type MarketSentiment = 'positive' | 'negative' | 'neutral';
+
 /**
  * Interface for structured LLM analysis response
  */
@@ -122,7 +124,7 @@ export interface StructuredLLMResponse {
   /** List of affected market sectors */
   sectors: string[];
   /** Overall market sentiment */
-  marketSentiment: 'positive' | 'negative' | 'neutral';
+  marketSentiment: MarketSentiment;
   /** List of mentioned stock tickers */
   tickers: string[];
 }

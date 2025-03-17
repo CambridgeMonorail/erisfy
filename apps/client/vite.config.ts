@@ -10,23 +10,31 @@ export default defineConfig({
   base: '/erisfy/',
   server: {
     port: 4200,
-    host: 'localhost',
+    host: 'localhost'
   },
   preview: {
     port: 4300,
     host: 'localhost',
   },
   plugins: [
-    react(), 
-    nxViteTsPaths(), 
+    react({
+      // Proper source map support for React components
+      jsxRuntime: 'automatic',
+      babel: {
+        plugins: [],
+        babelrc: false,
+        configFile: false,
+      }
+    }),
+    nxViteTsPaths(),
     nxCopyAssetsPlugin([
       '*.md',
-      'mockServiceWorker.js' // Add this line
+      'mockServiceWorker.js'
     ])
   ],
   css: {
     preprocessorOptions: {
-      css: {
+      scss: {
         additionalData: `@import "../../../libs/common-tailwind/src/preflight.css"; @import "../../../libs/common-tailwind/src/shadcn-theme.css";`,
       },
     },
@@ -35,10 +43,6 @@ export default defineConfig({
     'process.env': {},
     global: {},
   },
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
   build: {
     outDir: '../../dist/apps/client',
     emptyOutDir: true,
@@ -46,6 +50,12 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        sourcemapExcludeSources: false
+      }
+    }
   },
   test: {
     watch: false,
@@ -58,4 +68,8 @@ export default defineConfig({
       provider: 'v8',
     },
   },
+  // Ensure proper optimization settings for debugging
+  optimizeDeps: {
+    exclude: []
+  }
 });

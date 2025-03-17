@@ -6,16 +6,25 @@ interface WindowWithEnv extends Window {
 }
 
 const getEnvVar = (key: string, fallback: string): string => {
+  // Check process.env first
   if (typeof process !== 'undefined' && process.env && process.env[key]) {
     return process.env[key] as string;
   }
-  if (typeof window !== 'undefined' && (window as WindowWithEnv).__env?.[key]) {
-    return (window as WindowWithEnv).__env[key] as string;
+
+  // Check window.__env with proper type safety
+  if (typeof window !== 'undefined') {
+    const customWindow = window as WindowWithEnv;
+    const envValue = customWindow.__env?.[key];
+    if (envValue !== undefined) {
+      return envValue;
+    }
   }
-  // Vite-specific environment variables
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
+
+  // Check Vite-specific environment variables
+  if (typeof import.meta !== 'undefined' && import.meta.env && key in import.meta.env) {
     return import.meta.env[key] ?? fallback;
   }
+
   return fallback;
 };
 

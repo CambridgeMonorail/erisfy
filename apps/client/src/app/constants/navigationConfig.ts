@@ -1,4 +1,4 @@
-import { createElement } from 'react';
+import { createElement, lazy } from 'react';
 import { SidebarConfiguration } from '../types/sidebarTypes';
 import {
   Swords,
@@ -9,28 +9,29 @@ import {
   Settings,
 } from 'lucide-react';
 import { Logo } from '@erisfy/shadcnui-blocks';
-
-import { LandingPage } from '../pages/landing/Landing';
-import { AboutPage } from '../pages/about/About';
-import { BlogPage } from '../pages/blog/Blog';
-import { IndividualBlogPostPage } from '../pages/blog/IndividualBlogPost';
-import { ColorPalettePage } from '../pages/color-palette/ColorPalette';
-import { ContactPage } from '../pages/contact/Contact';
-import { FAQPage } from '../pages/faq/FAQ';
-import { FeaturesPage } from '../pages/features/Features';
-import { LibraryPage } from '../pages/library/Library';
-import { NotFound } from '../pages/not-found/NotFound';
-import { PricingPage } from '../pages/pricing/Pricing';
-import { StatusBoardPage } from '../pages/status-board/StatusBoard';
-import { TermsAndConditionsPage } from '../pages/terms-and-conditions/TermsAndConditions';
-import { ScreenerResultsPage } from '../pages/screener-results/ScreenerResults';
-import { StockDetailPage } from '../pages/stock-detail/StockDetail';
-import { FilterSelectionScreen } from '../pages/filter-selection/FilterSelectionScreen';
-import { MarketOpportunitiesPage } from '../pages/market-opportunities/MarketOpportunities';
-import { OnboardingFlow } from '../pages/onboarding/OnboardingFlow';
-import { PortfolioPage } from '../pages/portfolio/Portfolio';
-import { SettingsPage } from '../pages/settings/Settings';
 import { MenuItem, MenubarLayout } from '@erisfy/shell';
+
+// Lazy load all page components with named exports
+const LandingPage = lazy(() => import('../pages/landing/Landing').then(m => ({ default: m.LandingPage })));
+const AboutPage = lazy(() => import('../pages/about/About').then(m => ({ default: m.AboutPage })));
+const BlogPage = lazy(() => import('../pages/blog/Blog').then(m => ({ default: m.BlogPage })));
+const IndividualBlogPostPage = lazy(() => import('../pages/blog/IndividualBlogPost').then(m => ({ default: m.IndividualBlogPostPage })));
+const ColorPalettePage = lazy(() => import('../pages/color-palette/ColorPalette').then(m => ({ default: m.ColorPalettePage })));
+const ContactPage = lazy(() => import('../pages/contact/Contact').then(m => ({ default: m.ContactPage })));
+const FAQPage = lazy(() => import('../pages/faq/FAQ').then(m => ({ default: m.FAQPage })));
+const FeaturesPage = lazy(() => import('../pages/features/Features').then(m => ({ default: m.FeaturesPage })));
+const LibraryPage = lazy(() => import('../pages/library/Library').then(m => ({ default: m.LibraryPage })));
+const NotFound = lazy(() => import('../pages/not-found/NotFound').then(m => ({ default: m.NotFound })));
+const PricingPage = lazy(() => import('../pages/pricing/Pricing').then(m => ({ default: m.PricingPage })));
+const StatusBoardPage = lazy(() => import('../pages/status-board/StatusBoard').then(m => ({ default: m.StatusBoardPage })));
+const TermsAndConditionsPage = lazy(() => import('../pages/terms-and-conditions/TermsAndConditions').then(m => ({ default: m.TermsAndConditionsPage })));
+const ScreenerResultsPage = lazy(() => import('../pages/screener-results/ScreenerResults').then(m => ({ default: m.ScreenerResultsPage })));
+const StockDetailPage = lazy(() => import('../pages/stock-detail/StockDetail').then(m => ({ default: m.StockDetailPage })));
+const FilterSelectionScreen = lazy(() => import('../pages/filter-selection/FilterSelectionScreen').then(m => ({ default: m.FilterSelectionScreen })));
+const MarketOpportunitiesPage = lazy(() => import('../pages/market-opportunities/MarketOpportunities').then(m => ({ default: m.MarketOpportunitiesPage })));
+const OnboardingFlow = lazy(() => import('../pages/onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
+const PortfolioPage = lazy(() => import('../pages/portfolio/Portfolio').then(m => ({ default: m.PortfolioPage })));
+const SettingsPage = lazy(() => import('../pages/settings/Settings').then(m => ({ default: m.SettingsPage })));
 
 /**
  * Object containing all the paths used in the application.
@@ -230,25 +231,18 @@ export const navigationConfig = {
 };
 
 /**
- * Helper function to create a route object.
- * @param path - The URL path for the route.
- * @param component - The React component to render for the route.
- * @param useLayout - Whether to wrap the component with the MenubarLayout component.
- * @param menuItems - The menu items to pass to the MenubarLayout component.
- * @param mode - The mode to pass to the MenubarLayout component.
- * @param title - The title to pass to the MenubarLayout component.
- * @param LogoIcon - The logo icon component to pass to the MenubarLayout component.
- * @returns The route object.
+ * Helper function to create a route object with proper layout wrapping and lazy loading.
  */
 const createRoute = (
   path: string,
-  component: React.ComponentType,
+  Component: React.LazyExoticComponent<React.ComponentType>,
   useLayout = true,
   menuItems: MenuItem[] = navigationConfig.menuItems,
   mode = navigationConfig.mode,
   title = 'ERISFY',
   LogoIcon: React.ComponentType = Landmark,
 ) => {
+  const element = createElement(Component);
   return useLayout
     ? {
         path,
@@ -263,15 +257,13 @@ const createRoute = (
             name: 'erisfy',
             width: '24px',
           }),
-          children: createElement(component),
+          children: element,
         }),
       }
-    : { path, element: createElement(component) };
+    : { path, element };
 };
 
-/**
- * Array of route objects for the application.
- */
+// Configure routes with lazy-loaded components
 navigationConfig.routes = [
   createRoute(paths.landing, LandingPage, false),
   createRoute(paths.about, AboutPage),

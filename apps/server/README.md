@@ -24,80 +24,60 @@ The Erisfy Server is a NestJS-based backend that:
 - Provides REST APIs for market news and analysis
 - Manages automated data collection from various sources
 - Processes and stores market data using PostgreSQL
-- Integrates with OpenAI for market analysis
-- Runs scheduled background jobs for data updates
+- Integrates with multiple external services:
+  - OpenAI for market analysis
+  - Financial Datasets API for market data
+  - Tavily API for intelligent news search
 
 ### Key Modules
 
 #### LangGraph Module
+The core multi-agent system that powers financial news analysis. See [LangGraph Documentation](src/modules/langgraph/README.md) for details.
 
-The LangGraph module is a sophisticated multi-agent system that powers our financial news analysis pipeline. It combines:
+#### Market News Module
+Handles real-time market news retrieval and analysis, integrating with:
+- Tavily API for news search
+- OpenAI for analysis
+- PostgreSQL for storage
 
-- News fetching from TheNewsAPI
-- AI-powered analysis using OpenAI GPT-4
-- Financial metrics integration from Financial Datasets API
+#### Stock Data Module
+Manages financial market data integration through:
+- Financial Datasets API
+- Real-time data processing
+- Historical data management
 
-[View detailed LangGraph documentation](src/modules/langgraph/README.md)
+#### Basic News Analysis Module
+Provides simplified news analysis capabilities for basic use cases.
+
+#### Onboarding Module
+Handles user onboarding flows and preferences.
 
 ## API Documentation
 
-The API documentation is available through Swagger UI, which provides an interactive interface to explore and test all available endpoints.
+The API documentation is available through Swagger UI when running the development server.
 
 ### Accessing Swagger Documentation
 
 1. Start the development server:
-
    ```bash
    pnpm nx serve server
    ```
 
 2. Open your browser and navigate to:
-
-   ```txt
+   ```
    http://localhost:3001/api/docs
    ```
 
-### Using Swagger UI
+### Available API Endpoints
 
-The Swagger UI provides:
+The API is organized into the following groups:
 
-- Interactive API documentation
-- Request/response examples for each endpoint
-- Built-in API testing interface
-- Authentication configuration
-- Schema definitions for all DTOs and responses
-
-Key features:
-
-### Try it out
-
-Test endpoints directly from the browser
-
-### Models
-
-View detailed request/response schemas
-
-### Authorization
-
-Configure auth tokens for protected endpoints
-
-### Response codes
-
-See all possible response statuses and their meanings
-
-API endpoints are organized by tags:
-
-### Market Insights
-
-Market news and analysis endpoints
-
-### Onboarding
-
-User onboarding management endpoints
-
-### News
-
-General news endpoints
+- `market-insights`: Market news and analysis endpoints
+- `news-analysis`: AI-powered financial news analysis
+- `onboardings`: User onboarding management
+- `news`: General news endpoints
+- `stock-data`: Financial market data endpoints
+- `basic-news-analysis`: Simplified news analysis endpoints
 
 ## Development
 
@@ -109,21 +89,26 @@ General news endpoints
 
 ### Environment Variables
 
-Create a `.env.development` file in the server directory by copying `.env.example`:
+Required environment variables in `.env.development`:
 
 ```bash
-cp .env.example .env.development
-```
-
-Required environment variables:
-
-```bash
+# Database Configuration
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/erisfydb?schema=public"
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=erisfydb
 POSTGRES_PORT=5432
 POSTGRES_HOST=localhost
+
+# API Keys
+OPENAI_API_KEY=your_openai_api_key
+FINANCIAL_DATASETS_API_KEY=your_financial_datasets_api_key
+TAVILY_API_KEY=your_tavily_api_key
+FINANCIAL_DATASETS_API_BASE_URL=your_financial_datasets_api_base_url
+
+# Server Configuration
+PORT=3001
+NODE_ENV=development
 ```
 
 ### External API Keys
@@ -131,15 +116,15 @@ POSTGRES_HOST=localhost
 The server requires API keys for several external services. Refer to the [API Key Setup Guide](../../docs/how-to/api-key-setup.md) for detailed instructions on obtaining API keys for:
 
 - OpenAI Platform - For market analysis and AI-powered insights
-- The News API - For financial news aggregation
 - Financial Datasets API - For stock market data and financial metrics
+- Tavily API - For intelligent news search
 
 Add these API keys to your `.env.development` file:
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key
-NEWS_API_KEY=your_thenewsapi_key
 FINANCIAL_DATASETS_API_KEY=your_financial_datasets_key
+TAVILY_API_KEY=your_tavily_api_key
 ```
 
 ### Docker Database Setup

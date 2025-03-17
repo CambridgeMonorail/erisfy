@@ -33,13 +33,22 @@ export class TavilyService {
     try {
       // Set default query if not provided
       if (!searchParams.query) {
-        searchParams.query = 'today financial market headlines';
+        searchParams.query = 'todays financial market headlines';
       }
 
-      this.logger.log(`Sending search request to Tavily API: ${searchParams.query}`);
+      // Create payload with defaults and exclusions
+      const payload = {
+        ...searchParams,
+        // Set include_raw_content to true by default unless explicitly set by the consumer
+        include_raw_content: searchParams.include_raw_content !== undefined ? searchParams.include_raw_content : true,
+        exclude_domains: [
+          ...(searchParams.exclude_domains || []),
+          'www.cnbc.com/finance',
+          'https://sg.finance.yahoo.com/news',
+        ]
+      };
 
-      // Create the request payload (without API key in the body)
-      const payload = { ...searchParams };
+      this.logger.log(`Sending search request to Tavily API: ${payload.query}`);
 
       // Send the request to Tavily API with Bearer token authentication
       const response = await fetch(this.apiUrl, {

@@ -20,15 +20,45 @@
   ],
   "configurations": [
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug NestJS Server",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nx", "serve", "server", "--inspect-brk"],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+        "webpack:///./src/*": "${workspaceFolder}/apps/server/src/*",
+        "webpack:///./*": "${workspaceFolder}/apps/server/*",
+        "webpack:///*": "*"
+      },
+      "stopOnEntry": false,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ]
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Debug Client in Chrome",
       "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/apps/client/src",
+      "webRoot": "${workspaceFolder}",
       "preLaunchTask": "start client",
       "sourceMapPathOverrides": {
-        "webpack:///apps/client/src/*": "${workspaceFolder}/apps/client/src/*"
+        "webpack:///src/*": "${webRoot}/apps/client/src/*",
+        "webpack://client/src/*": "${webRoot}/apps/client/src/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*"
       },
+      "sourceMaps": true,
+      "trace": true,
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
+      "runtimeArgs": ["--disable-background-timer-throttling", "--disable-backgrounding-occluded-windows"],
       "skipFiles": [
         "<node_internals>/**",
         "**/node_modules/**"

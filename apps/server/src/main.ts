@@ -1,9 +1,4 @@
 import 'reflect-metadata';
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -23,15 +18,19 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Configure Swagger
+  // Configure Swagger documentation to match actual controller endpoints
   const config = new DocumentBuilder()
     .setTitle('Erisfy API')
     .setDescription('REST API documentation for the Erisfy market news analysis and data processing server')
     .setVersion('1.0')
-    .addTag('market-insights', 'Market news and analysis endpoints')
-    .addTag('news-analysis', 'AI-powered financial news analysis and sentiment endpoints')
-    .addTag('onboardings', 'User onboarding management endpoints')
-    .addTag('news', 'General news endpoints')
+    // Tags match the actual @ApiTags used in controllers
+    .addTag('market-insights', 'Real-time market news and insights with AI analysis')
+    .addTag('news-analysis', 'Advanced AI-powered financial news analysis using LangGraph')
+    .addTag('basic-news-analysis', 'Simple sentiment and topic extraction from news content')
+    .addTag('onboardings', 'User onboarding workflow management')
+    .addTag('openai', 'OpenAI integration for market analysis')
+    .addTag('stock-data', 'Stock market data and analysis')
+    .addTag('Tavily', 'Financial information search and research')
     .addBearerAuth()
     .build();
 
@@ -41,10 +40,10 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
   Logger.log(
-    `📚 Swagger documentation available at: http://localhost:${port}/${globalPrefix}/docs`,
+    `📚 Swagger documentation available at: http://localhost:${port}/${globalPrefix}/docs`
   );
 }
 

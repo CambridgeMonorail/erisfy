@@ -22,7 +22,29 @@ export class OpenAiController {
    * Get market stories analyzed by OpenAI
    */
   @Get('market-stories')
-  @ApiOperation({ summary: 'Get current market stories analyzed by AI' })
+  @ApiOperation({
+    summary: 'GPT-analyzed market stories',
+    description: `Direct GPT analysis of current market stories.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - May retrieve initial data from database before processing
+      - No results stored in database
+
+      Features:
+      - Raw GPT insights
+      - Minimal processing/filtering
+      - Quick turnaround
+
+      Best For:
+      - Rapid market assessment
+      - Custom analysis needs
+      - Testing GPT responses
+
+      For more structured analysis:
+      - Use /news-analysis/analyze for full pipeline
+      - Use /market-insights for curated insights`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved market stories',
@@ -37,7 +59,28 @@ export class OpenAiController {
    * Send a custom prompt to OpenAI
    */
   @Post('prompt')
-  @ApiOperation({ summary: 'Send a custom prompt to OpenAI' })
+  @ApiOperation({
+    summary: 'Send a custom prompt to OpenAI',
+    description: `Processes a custom user prompt using OpenAI's API.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access
+
+      Features:
+      - Custom prompt processing
+      - Configurable system prompt
+      - Adjustable temperature parameter
+
+      Use Cases:
+      - Content generation
+      - Custom data analysis
+      - Testing prompts
+
+      Rate Limits:
+      - Subject to OpenAI API rate limits
+      - Token usage monitoring applied`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully processed prompt',
@@ -59,7 +102,28 @@ export class OpenAiController {
    * Analyze content with OpenAI
    */
   @Post('analyze')
-  @ApiOperation({ summary: 'Analyze content using OpenAI' })
+  @ApiOperation({
+    summary: 'Analyze content using OpenAI',
+    description: `Analyzes provided content using OpenAI's API.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access or storage
+
+      Features:
+      - Content sentiment analysis
+      - Key point extraction
+      - Custom analysis prompt support
+
+      Use Cases:
+      - Financial text analysis
+      - Report summarization
+      - Content evaluation
+
+      Processing:
+      - Single-pass GPT analysis
+      - No post-processing applied to results`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully analyzed content',
@@ -80,7 +144,34 @@ export class OpenAiController {
    * Analyze news articles with OpenAI
    */
   @Post('news-analysis')
-  @ApiOperation({ summary: 'Analyze news articles for market impact' })
+  @ApiOperation({
+    summary: 'Direct GPT news analysis',
+    description: `Raw GPT-4 analysis of news articles.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access or storage of results
+      - User-provided articles in request body
+
+      Processing:
+      - Direct GPT-4 prompt
+      - Minimal pre/post processing
+      - Free-form text response
+
+      Use Cases:
+      - Custom analysis needs
+      - Quick market insights
+      - Exploratory analysis
+
+      Limitations:
+      - No data enrichment
+      - No market data integration
+      - Less structured output
+
+      For comprehensive analysis:
+      - Use /news-analysis/analyze for full pipeline
+      - Use /market-insights for curated news`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully analyzed news articles',
@@ -103,7 +194,35 @@ export class OpenAiController {
    * Analyze news articles with OpenAI and return structured data
    */
   @Post('news-analysis/structured')
-  @ApiOperation({ summary: 'Analyze news articles and return structured market impact data' })
+  @ApiOperation({
+    summary: 'Structured GPT news analysis',
+    description: `GPT-4 analysis with structured JSON output.
+
+      Data Source:
+      - Direct call to OpenAI API
+      - No database access or storage of results
+      - User-provided articles in request body
+
+      Output Format:
+      - Consistent JSON structure
+      - Standardized fields
+      - Machine-readable format
+
+      Fields Include:
+      - Market sentiment
+      - Key themes
+      - Sector impacts
+      - Risk assessment
+
+      Best For:
+      - Automated processing
+      - Data integration
+      - Systematic trading
+
+      For richer analysis:
+      - Use /news-analysis/analyze for full pipeline
+      - Use /market-insights for curated insights`
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully analyzed news articles with structured output',

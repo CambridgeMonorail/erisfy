@@ -24,7 +24,20 @@ export class TavilyController {
   @Post('search')
   @ApiOperation({
     summary: 'Search for financial information',
-    description: 'Uses Tavily API to search for financial news, market data, and analysis based on the provided query'
+    description: `Uses Tavily API to search for financial news, market data, and analysis based on the provided query.
+
+      Data Source:
+      - Direct call to external Tavily API
+      - No local database access
+
+      Features:
+      - Real-time financial information search
+      - Web search capabilities via Tavily's search engine
+      - Returns relevant articles and summaries
+
+      Rate Limits:
+      - Subject to Tavily API rate limits
+      - Requests authenticated via API key`
   })
   @ApiBody({ type: SearchRequestDto })
   @ApiResponse({
